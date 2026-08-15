@@ -14,7 +14,7 @@
     --ink:#20342E;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;height:100%;overflow:hidden;}
+  html,body{margin:0;padding:0;min-height:100%;overflow-y:auto;}
   body{
     font-family:'Baloo 2','Comic Sans MS',system-ui,sans-serif;
     background:
@@ -23,7 +23,7 @@
       radial-gradient(circle at 50% 90%, #FFD1CB 0%, transparent 45%),
       var(--cream);
     color:var(--ink);
-    height:100vh;
+    min-height:100vh;
     display:flex;
     flex-direction:column;
     user-select:none;
