@@ -464,8 +464,9 @@
      ANIMAL POOL
      Each round picks 3 random animals from this list, so the
      game rarely feels repeated. Image files are expected at:
-       images/<Name>.png   (capitalized, transparent background)
-     e.g. images/Cat.png, images/Tiger.png, images/Dolphin.png
+       images/<N> <NAME>.png   (N = position in this list, 1-based;
+       NAME in UPPERCASE; transparent background)
+     e.g. images/1 CAT.png, images/14 TIGER.png, images/35 DOLPHIN.png
      Replace ninaWatermark's src (NINA_AQUI.png) with your own
      character art, or remove the .watermark block if not needed.
      ========================================================= */
@@ -508,9 +509,10 @@
     const stage = document.createElement("div");
     stage.className = "animal-stage";
 
+    const fileNumber = ANIMALS.indexOf(name) + 1;
     const img = document.createElement("img");
     img.className = "animal-img";
-    img.src = "images/" + name + ".png";
+    img.src = "images/" + fileNumber + " " + name.toUpperCase() + ".png";
     img.alt = name;
     img.draggable = false;
     img.addEventListener("error", function(){
