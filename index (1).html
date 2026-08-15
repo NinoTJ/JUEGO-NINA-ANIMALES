@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Drag the Name - Nina's World</title>
+<style>
+  :root{
+    --cream:#FFF8ED;
+    --neon-green:#39FF88;
+    --deep-teal:#0E5C4A;
+    --sun-yellow:#FFC93C;
+    --coral:#FF6B5E;
+    --ink:#20342E;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;}
+  body{
+    font-family:'Baloo 2','Comic Sans MS',system-ui,sans-serif;
+    background:
+      radial-gradient(circle at 15% 20%, #FFE8A3 0%, transparent 35%),
+      radial-gradient(circle at 85% 15%, #B7F0D6 0%, transparent 40%),
+      radial-gradient(circle at 50% 90%, #FFD1CB 0%, transparent 45%),
+      var(--cream);
+    color:var(--ink);
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    user-select:none;
+  }
+  @font-face{
+    font-family:'Baloo 2';
+    src:local('Baloo 2');
+  }
+
+  header{
+    padding:14px 20px 6px;
+    text-align:center;
+    flex-shrink:0;
+  }
+  h1{
+    margin:0;
+    font-size:clamp(20px,5vw,32px);
+    color:var(--deep-teal);
+    letter-spacing:0.5px;
+  }
+  h1 span{color:var(--coral);}
+  .progress-wrap{
+    max-width:420px;
+    margin:10px auto 0;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .progress-bar{
+    flex:1;
+    height:14px;
+    background:#E4DCC8;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:inset 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--neon-green),var(--sun-yellow));
+    border-radius:20px;
+    transition:width .5s ease;
+  }
+  .progress-label{
+    font-size:14px;
+    font-weight:700;
+    color:var(--deep-teal);
+    white-space:nowrap;
+  }
+
+  main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:10px 16px 0;
+    min-height:0;
+  }
+
+  .stage{
+    display:flex;
+    justify-content:center;
+    align-items:flex-end;
+    gap:clamp(10px,4vw,40px);
+    width:100%;
+    max-width:900px;
+    flex:1;
+    min-height:0;
+    padding-top:10px;
+  }
+
+  .animal-slot{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    flex:1;
+    max-width:230px;
+    height:100%;
+  }
+
+  .platform{
+    width:88%;
+    max-width:170px;
+    height:16px;
+    background:linear-gradient(180deg,#C9A876,#A8814F);
+    border-radius:50%;
+    box-shadow:0 6px 0 #8a6a3e, 0 10px 14px rgba(0,0,0,0.2);
+    margin-top:-8px;
+  }
+
+  .animal-img-wrap{
+    position:relative;
+    width:100%;
+    aspect-ratio:1/1;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .animal-img{
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+    filter:drop-shadow(0 8px 6px rgba(0,0,0,0.15));
+    animation:bob 3s ease-in-out infinite;
+  }
+  .animal-slot:nth-child(2) .animal-img{animation-delay:.4s;}
+  .animal-slot:nth-child(3) .animal-img{animation-delay:.8s;}
+  @keyframes bob{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-6px);}
+  }
+
+  .dropzone{
+    margin-top:10px;
+    width:88%;
+    max-width:190px;
+    min-height:52px;
+    border:3px dashed #C9A876;
+    border-radius:16px;
+    background:rgba(255,255,255,0.6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:clamp(14px,3vw,18px);
+    font-weight:700;
+    color:#B79C6E;
+    transition:all .2s ease;
+    padding:6px;
+    text-align:center;
+  }
+  .dropzone.over{
+    background:rgba(57,255,136,0.18);
+    border-color:var(--neon-green);
+    transform:scale(1.05);
+  }
+  .dropzone.filled{
+    border-style:solid;
+    border-color:var(--deep-teal);
+    background:rgba(14,92,74,0.08);
+    color:var(--deep-teal);
+  }
+  .dropzone.wrong{
+    animation:shake .4s;
+    border-color:var(--coral);
+    background:rgba(255,107,94,0.15);
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-8px);}
+    75%{transform:translateX(8px);}
+  }
+
+  .bank{
+    flex-shrink:0;
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    flex-wrap:wrap;
+    padding:26px 10px 24px;
+  }
+
+  .name-chip{
+    padding:12px 22px;
+    background:linear-gradient(180deg,#ffffff,#F3EEDF);
+    border:3px solid var(--deep-teal);
+    border-radius:40px;
+    font-size:clamp(15px,3.4vw,20px);
+    font-weight:800;
+    color:var(--deep-teal);
+    cursor:grab;
+    box-shadow:0 4px 0 #0E5C4A55, 0 6px 10px rgba(0,0,0,0.12);
+    touch-action:none;
+    transition:transform .15s ease, opacity .2s ease;
+  }
+  .name-chip:active{cursor:grabbing;}
+  .name-chip.dragging{
+    opacity:0.4;
+  }
+  .name-chip.correct-hidden{
+    display:none;
+  }
+  .name-chip.floating{
+    position:fixed;
+    z-index:999;
+    pointer-events:none;
+    transform:scale(1.1) rotate(-2deg);
+    box-shadow:0 10px 20px rgba(0,0,0,0.25);
+  }
+
+  .feedback-overlay{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+    z-index:1200;
+  }
+  .feedback-badge{
+    background:var(--neon-green);
+    color:#0E5C4A;
+    font-weight:900;
+    font-size:clamp(26px,7vw,48px);
+    padding:18px 40px;
+    border-radius:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    transform:scale(0);
+  }
+  .feedback-badge.show{
+    animation:pop .55s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+  @keyframes pop{
+    0%{transform:scale(0) rotate(-10deg);}
+    60%{transform:scale(1.15) rotate(3deg);}
+    100%{transform:scale(1) rotate(0deg);}
+  }
+
+  #confetti-canvas{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:1100;
+  }
+
+  .end-screen{
+    position:fixed;
+    inset:0;
+    background:rgba(32,52,46,0.92);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:1300;
+    flex-direction:column;
+    text-align:center;
+    padding:20px;
+  }
+  .end-screen.show{display:flex;}
+  .end-screen h2{
+    color:var(--sun-yellow);
+    font-size:clamp(26px,6vw,42px);
+    margin-bottom:10px;
+  }
+  .end-screen p{
+    color:#fff;
+    font-size:18px;
+    margin-bottom:24px;
+  }
+  .end-screen button{
+    padding:14px 32px;
+    font-size:18px;
+    font-weight:800;
+    border:none;
+    border-radius:40px;
+    background:var(--neon-green);
+    color:var(--deep-teal);
+    cursor:pointer;
+    box-shadow:0 6px 0 #1e9e5c;
+  }
+  .end-screen button:active{
+    transform:translateY(4px);
+    box-shadow:0 2px 0 #1e9e5c;
+  }
+
+  @media (max-width:520px){
+    .stage{gap:8px;}
+    .platform{height:12px;}
+  }
+
+  .watermark{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .watermark span{
+    font-size:clamp(40px,10vw,110px);
+    font-weight:900;
+    color:var(--deep-teal);
+    opacity:0.06;
+    white-space:nowrap;
+  }
+  header, main, .feedback-overlay, .end-screen, #confetti-canvas{
+    position:relative;
+    z-index:1;
+  }
+
+  /* ---------- Mascota Nina ---------- */
+  .mascot-wrap{
+    position:fixed;
+    right:6px;
+    bottom:0;
+    z-index:500;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    pointer-events:none;
+  }
+  .mascot-img{
+    height:clamp(110px,20vh,190px);
+    width:auto;
+    filter:drop-shadow(0 8px 14px rgba(0,0,0,0.25));
+    animation:mascotIdle 2.6s ease-in-out infinite;
+    transform-origin:bottom center;
+  }
+  @keyframes mascotIdle{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-6px);}
+  }
+  .mascot-img.happy{
+    animation:mascotJump .55s ease-in-out 2;
+  }
+  @keyframes mascotJump{
+    0%,100%{transform:translateY(0) rotate(0deg);}
+    30%{transform:translateY(-30px) rotate(-5deg);}
+    55%{transform:translateY(0) rotate(4deg);}
+    75%{transform:translateY(-12px) rotate(-2deg);}
+  }
+  .mascot-img.oops{
+    animation:mascotShake .5s ease-in-out;
+  }
+  @keyframes mascotShake{
+    0%,100%{transform:rotate(0deg);}
+    25%{transform:rotate(-4deg);}
+    75%{transform:rotate(4deg);}
+  }
+  .speech-bubble{
+    position:relative;
+    max-width:150px;
+    background:#fff;
+    border:3px solid var(--deep-teal);
+    border-radius:18px;
+    padding:8px 12px;
+    font-size:13px;
+    font-weight:800;
+    color:var(--deep-teal);
+    text-align:center;
+    margin-bottom:-4px;
+    opacity:0;
+    transform:scale(0.6) translateY(8px);
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .speech-bubble.show{
+    opacity:1;
+    transform:scale(1) translateY(0);
+  }
+  .speech-bubble::after{
+    content:"";
+    position:absolute;
+    bottom:-11px;
+    right:28px;
+    border-width:10px 8px 0 8px;
+    border-style:solid;
+    border-color:var(--deep-teal) transparent transparent transparent;
+  }
+  .speech-bubble::before{
+    content:"";
+    position:absolute;
+    bottom:-7px;
+    right:29px;
+    border-width:8px 7px 0 7px;
+    border-style:solid;
+    border-color:#fff transparent transparent transparent;
+    z-index:1;
+  }
+  @media (max-width:520px){
+    .mascot-img{height:clamp(70px,15vh,110px);}
+    .speech-bubble{max-width:120px;font-size:11px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="watermark" id="watermark">
+  <img src="images/Gemini_Generated_Image_1rkoqs1rkoqs1rko-removebg-preview.png" alt="" onerror="this.style.display='none'">
+  <span>Nina's World</span>
+</div>
+
+<div class="mascot-wrap" id="mascotWrap">
+  <div class="speech-bubble" id="speechBubble"></div>
+  <img class="mascot-img" id="mascotImg" src="images/Gemini_Generated_Image_1rkoqs1rkoqs1rko-removebg-preview.png" alt="Nina">
+</div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<header>
+  <h1>Drag the <span>Name</span></h1>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 50</div>
+  </div>
+</header>
+
+<main>
+  <div class="stage" id="stage"></div>
+  <div class="bank" id="bank"></div>
+</main>
+
+<div class="feedback-overlay" id="feedbackOverlay">
+  <div class="feedback-badge" id="feedbackBadge">Great!</div>
+</div>
+
+<div class="end-screen" id="endScreen">
+  <h2>🎉 You completed all 50 animals! 🎉</h2>
+  <p>You're an English animal expert!</p>
+  <button id="restartBtn">Play Again</button>
+</div>
+
+<script>
+/* =========================================================
+   CONFIGURACION: lista de los 50 animales
+   Los archivos de imagen deben llamarse igual que aqui,
+   con extension .png, dentro de la carpeta /images/
+   Ejemplo: images/Cat.png , images/Dog.png , etc.
+   ========================================================= */
+const ANIMALS = [
+  "Cat","Dog","Cow","Pig","Horse","Sheep","Rabbit","Duck","Chicken","Rooster",
+  "Goat","Lion","Elephant","Tiger","Giraffe","Zebra","Monkey","Bear","Wolf","Fox",
+  "Deer","Panda","Kangaroo","Koala","Hippo","Bird","Owl","Penguin","Butterfly","Bee",
+  "Ladybug","Bat","Snail","Fish","Dolphin","Whale","Shark","Octopus","Crab","Starfish",
+  "Seal","Turtle","Frog","Snake","Mouse","Hedgehog","Donkey","Camel","Rhino","Squirrel"
+];
+const IMAGE_FOLDER = "images/"; // carpeta donde estan las 50 imagenes
+
+/* Los archivos estan nombrados como: "1 CAT.png", "2 DOG.png", "13 ELEPHANT.png", etc.
+   (numero de orden + espacio + nombre en MAYUSCULAS + .png) */
+function getImagePath(animal){
+  const index = ANIMALS.indexOf(animal) + 1; // numero de orden (1 a 50)
+  const fileName = `${index} ${animal.toUpperCase()}.png`;
+  return IMAGE_FOLDER + encodeURIComponent(fileName);
+}
+
+function getImagePathJfif(animal){
+  const index = ANIMALS.indexOf(animal) + 1;
+  const fileName = `${index} ${animal.toUpperCase()}.jfif`;
+  return IMAGE_FOLDER + encodeURIComponent(fileName);
+}
+
+/* ========================================================= */
+
+let queue = [];
+let currentRound = [];
+let solvedCount = 0;
+let placedInRound = 0;
+
+const stage = document.getElementById('stage');
+const bank = document.getElementById('bank');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+const feedbackOverlay = document.getElementById('feedbackOverlay');
+const feedbackBadge = document.getElementById('feedbackBadge');
+const endScreen = document.getElementById('endScreen');
+const mascotImg = document.getElementById('mascotImg');
+const speechBubble = document.getElementById('speechBubble');
+
+let bubbleTimeout = null;
+function mascotSay(text, mood){
+  mascotImg.classList.remove('happy','oops');
+  void mascotImg.offsetWidth;
+  if(mood) mascotImg.classList.add(mood);
+
+  speechBubble.textContent = text;
+  speechBubble.classList.add('show');
+  clearTimeout(bubbleTimeout);
+  bubbleTimeout = setTimeout(()=>{
+    speechBubble.classList.remove('show');
+  }, 2000);
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function startGame(){
+  queue = shuffle(ANIMALS);
+  solvedCount = 0;
+  endScreen.classList.remove('show');
+  updateProgress();
+  nextRound();
+  mascotSay("Let's play!", 'happy');
+}
+
+function updateProgress(){
+  const pct = Math.round((solvedCount/ANIMALS.length)*100);
+  progressFill.style.width = pct + "%";
+  progressLabel.textContent = solvedCount + " / " + ANIMALS.length;
+}
+
+function nextRound(){
+  if(queue.length === 0){
+    mascotSay("You did it all!", 'happy');
+    setTimeout(()=>{ endScreen.classList.add('show'); }, 400);
+    return;
+  }
+  const roundMsgs = ["New round!","Here we go!","Let's continue!","On to more!"];
+  mascotSay(roundMsgs[Math.floor(Math.random()*roundMsgs.length)], 'happy');
+  const roundSize = Math.min(3, queue.length);
+  currentRound = queue.splice(0, roundSize);
+  placedInRound = 0;
+  renderRound();
+}
+
+function renderRound(){
+  stage.innerHTML = "";
+  bank.innerHTML = "";
+
+  const shuffledNames = shuffle(currentRound);
+
+  currentRound.forEach(animal=>{
+    const slot = document.createElement('div');
+    slot.className = 'animal-slot';
+    slot.innerHTML = `
+      <div class="animal-img-wrap">
+        <img class="animal-img" src="${getImagePath(animal)}" alt="${animal}" onerror="this.onerror=null;this.src='${getImagePathJfif(animal)}';">
+      </div>
+      <div class="platform"></div>
+      <div class="dropzone" data-answer="${animal}">Drop here</div>
+    `;
+    stage.appendChild(slot);
+  });
+
+  shuffledNames.forEach(animal=>{
+    const chip = document.createElement('div');
+    chip.className = 'name-chip';
+    chip.textContent = animal;
+    chip.dataset.answer = animal;
+    bank.appendChild(chip);
+    attachDragHandlers(chip);
+  });
+
+  attachDropzoneHandlers();
+}
+
+/* ---------- Drag & drop: mouse + touch ---------- */
+
+let draggedChip = null;
+let dragOffsetX = 0, dragOffsetY = 0;
+
+function attachDragHandlers(chip){
+  chip.addEventListener('mousedown', onDragStart);
+  chip.addEventListener('touchstart', onDragStart, {passive:false});
+}
+
+function onDragStart(e){
+  const chip = e.currentTarget;
+  if(chip.classList.contains('correct-hidden')) return;
+  draggedChip = chip;
+  const rect = chip.getBoundingClientRect();
+  const point = e.touches ? e.touches[0] : e;
+  dragOffsetX = point.clientX - rect.left;
+  dragOffsetY = point.clientY - rect.top;
+
+  chip.style.width = rect.width+"px";
+  chip.classList.add('floating');
+  document.body.appendChild(chip);
+  moveChip(point.clientX, point.clientY);
+
+  document.addEventListener('mousemove', onDragMove);
+  document.addEventListener('touchmove', onDragMove, {passive:false});
+  document.addEventListener('mouseup', onDragEnd);
+  document.addEventListener('touchend', onDragEnd);
+  e.preventDefault();
+}
+
+function onDragMove(e){
+  if(!draggedChip) return;
+  const point = e.touches ? e.touches[0] : e;
+  moveChip(point.clientX, point.clientY);
+  e.preventDefault();
+
+  document.querySelectorAll('.dropzone').forEach(dz=>dz.classList.remove('over'));
+  const dz = getDropzoneAtPoint(point.clientX, point.clientY);
+  if(dz) dz.classList.add('over');
+}
+
+function moveChip(x,y){
+  draggedChip.style.left = (x - dragOffsetX) + "px";
+  draggedChip.style.top = (y - dragOffsetY) + "px";
+}
+
+function getDropzoneAtPoint(x,y){
+  const els = document.elementsFromPoint(x,y);
+  return els.find(el => el.classList && el.classList.contains('dropzone'));
+}
+
+function onDragEnd(e){
+  if(!draggedChip) return;
+  const point = e.changedTouches ? e.changedTouches[0] : e;
+  const dz = getDropzoneAtPoint(point.clientX, point.clientY);
+  document.querySelectorAll('.dropzone').forEach(d=>d.classList.remove('over'));
+
+  const chip = draggedChip;
+  chip.classList.remove('floating');
+  chip.style.width = '';
+  chip.style.left = '';
+  chip.style.top = '';
+
+  if(dz && !dz.classList.contains('filled')){
+    if(dz.dataset.answer === chip.dataset.answer){
+      handleCorrect(chip, dz);
+    } else {
+      bank.appendChild(chip);
+      dz.classList.add('wrong');
+      setTimeout(()=>dz.classList.remove('wrong'), 400);
+      const tryMsgs = ["Try again!","You can do it!","Almost!","Keep going!","Don't give up!"];
+      mascotSay(tryMsgs[Math.floor(Math.random()*tryMsgs.length)], 'oops');
+    }
+  } else {
+    bank.appendChild(chip);
+  }
+
+  draggedChip = null;
+  document.removeEventListener('mousemove', onDragMove);
+  document.removeEventListener('touchmove', onDragMove);
+  document.removeEventListener('mouseup', onDragEnd);
+  document.removeEventListener('touchend', onDragEnd);
+}
+
+function attachDropzoneHandlers(){
+  // dropzones son objetivos pasivos; la logica de destino esta en onDragEnd via elementsFromPoint
+}
+
+function handleCorrect(chip, dz){
+  dz.textContent = chip.textContent;
+  dz.classList.add('filled');
+  chip.classList.add('correct-hidden');
+  placedInRound++;
+  solvedCount++;
+  updateProgress();
+  showFeedback();
+  launchConfetti();
+
+  const happyMsgs = ["Great job!","You got it!","Awesome!","Congrats!","Well done!","Yay!"];
+  mascotSay(happyMsgs[Math.floor(Math.random()*happyMsgs.length)], 'happy');
+
+  if(placedInRound === currentRound.length){
+    setTimeout(nextRound, 1100);
+  }
+}
+
+function showFeedback(){
+  const msgs = ["Great!","Correct!","Awesome!","Excellent!","Perfect!"];
+  feedbackBadge.textContent = msgs[Math.floor(Math.random()*msgs.length)];
+  feedbackOverlay.style.display = 'flex';
+  feedbackBadge.classList.remove('show');
+  void feedbackBadge.offsetWidth;
+  feedbackBadge.classList.add('show');
+  setTimeout(()=>{ feedbackOverlay.style.display='none'; }, 650);
+}
+
+/* ---------- Confeti ---------- */
+const canvas = document.getElementById('confetti-canvas');
+const ctx = canvas.getContext('2d');
+let confettiParticles = [];
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function launchConfetti(){
+  const colors = ['#39FF88','#FFC93C','#FF6B5E','#0E5C4A','#7BD8FF'];
+  for(let i=0;i<45;i++){
+    confettiParticles.push({
+      x: canvas.width/2 + (Math.random()-0.5)*200,
+      y: canvas.height*0.35,
+      vx: (Math.random()-0.5)*8,
+      vy: Math.random()*-8-4,
+      size: Math.random()*8+4,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rot: Math.random()*360,
+      vrot: (Math.random()-0.5)*10,
+      life: 100
+    });
+  }
+}
+
+function animateConfetti(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  confettiParticles.forEach(p=>{
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.35;
+    p.rot += p.vrot;
+    p.life--;
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot*Math.PI/180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size);
+    ctx.restore();
+  });
+  confettiParticles = confettiParticles.filter(p=>p.life>0 && p.y < canvas.height+50);
+  requestAnimationFrame(animateConfetti);
+}
+animateConfetti();
+
+document.getElementById('restartBtn').addEventListener('click', startGame);
+
+startGame();
+</script>
+</body>
+</html>
