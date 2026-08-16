@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Nina's World - Drag the Name</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #8b5cf6;
+      --primary-dark: #6d28d9;
+      --primary-light: #c084fc;
+      --accent-yellow: #facc15;
+      --accent-yellow-dark: #ca8a04;
+      --accent-pink: #f472b6;
+      --accent-pink-dark: #db2777;
+      --accent-cyan: #38bdf8;
+      --accent-cyan-dark: #0284c7;
+      --accent-green: #4ade80;
+      --accent-green-dark: #16a34a;
+      --bg-top: #3b82f6;
+      --bg-bottom: #9333ea;
+      --text-color: #2e1065;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      font-family: 'Fredoka', cursive, sans-serif;
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+      color: #fff;
+    }
+
+    /* Watermark Background */
+    .watermark-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.07;
+      background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22180%22%20height%3D%2290%22%20viewBox%3D%220%200%20180%2090%22%3E%3Ctext%20x%3D%2210%22%20y%3D%2250%22%20fill%3D%22%23ffffff%22%20font-family%3D%22Fredoka%2C%20sans-serif%22%20font-weight%3D%22800%22%20font-size%3D%2220%22%20transform%3D%22rotate%28-20%2010%2050%29%22%3ENina%27s%20World%3C%2Ftext%3E%3C%2Fsvg%3E");
+      background-repeat: repeat;
+    }
+
+    /* Animated Clouds & Sun */
+    .sun {
+      position: absolute;
+      top: 25px;
+      left: 30px;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, #fef08a 0%, #facc15 70%, #eab308 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 40px #fde047;
+      animation: pulse-sun 4s infinite alternate ease-in-out;
+      z-index: 1;
+    }
+
+    @keyframes pulse-sun {
+      0% { transform: scale(0.95); box-shadow: 0 0 25px #fde047; }
+      100% { transform: scale(1.05); box-shadow: 0 0 50px #fde047; }
+    }
+
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 50px;
+      z-index: 1;
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.15));
+      animation: move-cloud linear infinite;
+    }
+
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 50%;
+    }
+
+    .cloud-1 {
+      width: 140px;
+      height: 45px;
+      top: 60px;
+      left: -160px;
+      animation-duration: 32s;
+    }
+    .cloud-1::before { width: 60px; height: 60px; top: -30px; left: 20px; }
+    .cloud-1::after { width: 45px; height: 45px; top: -20px; right: 20px; }
+
+    .cloud-2 {
+      width: 100px;
+      height: 35px;
+      top: 130px;
+      left: -120px;
+      animation-duration: 24s;
+      animation-delay: 10s;
+      opacity: 0.7;
+    }
+    .cloud-2::before { width: 40px; height: 40px; top: -20px; left: 15px; }
+    .cloud-2::after { width: 30px; height: 30px; top: -12px; right: 15px; }
+
+    @keyframes move-cloud {
+      from { transform: translateX(-200px); }
+      to { transform: translateX(calc(100vw + 200px)); }
+    }
+
+    .game-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 960px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 16px;
+      margin: 0 auto;
+    }
+
+    /* Top HUD Header */
+    header {
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      border-radius: 24px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--accent-yellow);
+      text-shadow: 3px 3px 0px #7c2d12, -2px -2px 0 #7c2d12, 2px -2px 0 #7c2d12, -2px 2px 0 #7c2d12;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-title span {
+      font-size: 0.8rem;
+      color: #ffffff;
+      font-weight: 700;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+      letter-spacing: 1px;
+    }
+
+    /* Hearts / Lives display */
+    .lives-container {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 6px 14px;
+      border-radius: 50px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .heart {
+      width: 32px;
+      height: 32px;
+      display: inline-block;
+      background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23ef4444%22%3E%3Cpath%20d%3D%22M11.645%2020.91l-.007-.003-.022-.012a15.247%2015.247%200%2001-.383-.218%2025.18%2025.18%200%2001-4.244-3.17C4.688%2015.36%202.25%2012.174%202.25%208.25%202.25%205.322%204.714%203%207.688%203A5.5%205.5%200%200112%205.052%205.5%205.5%200%200116.313%203c2.973%200%205.437%202.322%205.437%205.25%200%203.925-2.438%207.111-4.739%209.256a25.175%2025.175%200%2001-4.244%203.17%2015.247%2015.247%200%2001-.383.219l-.022.012-.007.004-.003.001a.752.752%200%2001-.704%200l-.003-.001z%22%2F%3E%3C%2Fsvg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      filter: drop-shadow(0 3px 3px rgba(0,0,0,0.3));
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .heart.lost {
+      filter: grayscale(1) opacity(0.3);
+      transform: scale(0.7);
+      animation: heart-break 0.5s ease-out forwards;
+    }
+
+    @keyframes heart-break {
+      0% { transform: scale(1.3) rotate(0deg); }
+      50% { transform: scale(1.4) rotate(15deg); }
+      100% { transform: scale(0.7) rotate(0deg); }
+    }
+
+    .timer-score-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .score-badge {
+      background: linear-gradient(180deg, var(--accent-yellow) 0%, var(--accent-yellow-dark) 100%);
+      color: #451a03;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 3px 12px;
+      border-radius: 20px;
+      box-shadow: 0 4px 0 #854d0e, 0 6px 10px rgba(0,0,0,0.15);
+      border: 2px solid #fff;
+    }
+
+    /* Timer Bar */
+    .timer-container {
+      width: 140px;
+      height: 16px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      overflow: hidden;
+      position: relative;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    .timer-bar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #4ade80 0%, #a3e635 60%, #ef4444 100%);
+      border-radius: 20px;
+      transition: width 1s linear, background-color 0.3s;
+    }
+
+    .instructions {
+      text-align: center;
+      margin: 8px 0;
+    }
+
+    .instructions p {
+      display: inline-block;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(8px);
+      padding: 6px 20px;
+      border-radius: 30px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+
+    /* 3D Main Stage Grid */
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 10px 0;
+      flex-grow: 1;
+      align-items: center;
+    }
+
+    /* 3D Floating Pedestal */
+    .animal-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(243, 244, 246, 0.85) 100%);
+      border-radius: 28px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      box-shadow: 0 12px 0 var(--primary-dark), 0 20px 25px rgba(0, 0, 0, 0.3);
+      border: 4px solid #ffffff;
+      min-height: 250px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .animal-card::before {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      width: 80%;
+      height: 16px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 50%;
+      filter: blur(6px);
+      z-index: -1;
+    }
+
+    /* Pixar-Style Animal Image Container */
+    .animal-img-wrapper {
+      width: 100%;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .animal-img {
+      max-width: 100%;
+      max-height: 130px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.25));
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .animal-card.correct .animal-img {
+      animation: animal-bounce 0.8s ease-in-out;
+    }
+
+    @keyframes animal-bounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-20px) scale(1.1) rotate(-5deg); }
+      50% { transform: translateY(0) scale(0.95); }
+      75% { transform: translateY(-10px) scale(1.05) rotate(5deg); }
+    }
+
+    /* Drop Zone Target Box */
+    .drop-zone {
+      width: 100%;
+      height: 52px;
+      border: 3px dashed var(--primary-light);
+      background: rgba(139, 92, 246, 0.08);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .drop-zone.drag-over {
+      border-color: var(--accent-yellow);
+      background: rgba(250, 204, 21, 0.25);
+      transform: scale(1.04);
+      box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
+      animation: pulse-border 1s infinite alternate;
+    }
+
+    @keyframes pulse-border {
+      0% { border-color: var(--accent-yellow); }
+      100% { border-color: var(--accent-pink); }
+    }
+
+    .drop-zone.matched {
+      border: 3px solid var(--accent-green);
+      background: linear-gradient(180deg, #dcfce7 0%, #86efac 100%);
+      box-shadow: 0 0 20px rgba(74, 222, 128, 0.6);
+    }
+
+    /* Draggable Word Bank Container */
+    .word-bank {
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      border-radius: 28px;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      min-height: 85px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      margin-bottom: 8px;
+    }
+
+    /* 3D Draggable Word Label Pill */
+    .word-pill {
+      background: linear-gradient(180deg, var(--accent-yellow) 0%, var(--accent-yellow-dark) 100%);
+      color: #451a03;
+      font-size: 1.3rem;
+      font-weight: 800;
+      padding: 10px 24px;
+      border-radius: 50px;
+      border: 3px solid #ffffff;
+      box-shadow: 0 6px 0 #a16207, 0 10px 15px rgba(0,0,0,0.2);
+      cursor: grab;
+      touch-action: none;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .word-pill:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 9px 0 #a16207, 0 14px 20px rgba(0,0,0,0.25);
+    }
+
+    .word-pill:active, .word-pill.dragging {
+      cursor: grabbing;
+      opacity: 0.9;
+      transform: scale(1.08) rotate(3deg);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+      z-index: 1000 !important;
+    }
+
+    .word-pill.placed {
+      cursor: default;
+      background: linear-gradient(180deg, var(--accent-green) 0%, var(--accent-green-dark) 100%);
+      color: #064e3b;
+      box-shadow: 0 4px 0 #15803d;
+      border-color: #ffffff;
+      font-size: 1.2rem;
+      padding: 8px 18px;
+      width: 90%;
+      text-align: center;
+    }
+
+    /* Mascot Nina Placeholder Container */
+    .mascot-container {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      width: 100px;
+      height: 100px;
+      z-index: 20;
+      pointer-events: none;
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.3));
+      animation: float-mascot 3s ease-in-out infinite alternate;
+    }
+
+    .mascot-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    @keyframes float-mascot {
+      0% { transform: translateY(0) rotate(-2deg); }
+      100% { transform: translateY(-8px) rotate(3deg); }
+    }
+
+    /* Shaking animation for incorrect drop */
+    .shake {
+      animation: shake-anim 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @keyframes shake-anim {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(4px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+      40%, 60% { transform: translate3d(6px, 0, 0); }
+    }
+
+    /* Toast encouraging message popups */
+    .toast-msg {
+      position: fixed;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: linear-gradient(180deg, var(--accent-pink) 0%, var(--accent-pink-dark) 100%);
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: 800;
+      padding: 12px 28px;
+      border-radius: 50px;
+      border: 4px solid #fff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* Modal Dialog Overlays */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f3e8ff 100%);
+      border-radius: 36px;
+      padding: 32px 24px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 20px 0 var(--primary-dark), 0 30px 50px rgba(0,0,0,0.5);
+      border: 6px solid #ffffff;
+      transform: scale(0.8);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-card h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--primary-dark);
+      text-shadow: 2px 2px 0 #fff;
+    }
+
+    .modal-card p {
+      font-size: 1.15rem;
+      color: #4b5563;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .modal-stats {
+      background: rgba(139, 92, 246, 0.1);
+      border-radius: 20px;
+      padding: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-around;
+      border: 2px dashed var(--primary-light);
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #6b7280;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* 3D Action Button */
+    .btn-3d {
+      display: inline-block;
+      width: 100%;
+      padding: 14px 28px;
+      font-family: 'Fredoka', cursive, sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(180deg, var(--accent-green) 0%, var(--accent-green-dark) 100%);
+      border: 3px solid #ffffff;
+      border-radius: 50px;
+      box-shadow: 0 8px 0 #14532d, 0 12px 20px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .btn-3d:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 0 #14532d, 0 15px 22px rgba(0, 0, 0, 0.35);
+    }
+
+    .btn-3d:active {
+      transform: translateY(4px);
+      box-shadow: 0 4px 0 #14532d, 0 6px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4000;
+    }
+
+    /* Media Queries for Responsive Scale */
+    @media (max-width: 768px) {
+      .game-container { padding: 8px 10px; }
+      header { padding: 8px 12px; }
+      .brand-title h1 { font-size: 1.3rem; }
+      .brand-title span { font-size: 0.7rem; }
+      .heart { width: 26px; height: 26px; }
+      .timer-container { width: 100px; height: 14px; }
+      .instructions p { font-size: 0.95rem; padding: 4px 14px; }
+      
+      .stage-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin: 4px 0;
+      }
+
+      .animal-card {
+        min-height: auto;
+        flex-direction: row;
+        padding: 8px 12px;
+        gap: 12px;
+      }
+
+      .animal-img-wrapper {
+        width: 90px;
+        height: 75px;
+      }
+
+      .animal-img {
+        max-height: 75px;
+      }
+
+      .drop-zone {
+        height: 48px;
+        flex-grow: 1;
+      }
+
+      .word-bank {
+        padding: 10px;
+        gap: 8px;
+        min-height: 70px;
+        flex-wrap: wrap;
+      }
+
+      .word-pill {
+        font-size: 1.1rem;
+        padding: 8px 16px;
+      }
+
+      .mascot-container {
+        width: 70px;
+        height: 70px;
+        bottom: 4px;
+        right: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Watermark Pattern Background -->
+  <div class="watermark-bg"></div>
+
+  <!-- Animated Environment Background -->
+  <div class="sun"></div>
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Main Game Layout Container -->
+  <div class="game-container">
+    
+    <!-- Top HUD Header -->
+    <header>
+      <div class="brand-title">
+        <h1>Nina's World</h1>
+        <span>DRAG THE NAME</span>
+      </div>
+
+      <div class="lives-container" id="lives-box" aria-label="Lives remaining">
+        <span class="heart" id="heart-1"></span>
+        <span class="heart" id="heart-2"></span>
+        <span class="heart" id="heart-3"></span>
+      </div>
+
+      <div class="timer-score-box">
+        <div class="score-badge">SCORE: <span id="score-text">0</span></div>
+        <div class="timer-container" title="Time remaining">
+          <div class="timer-bar" id="timer-bar"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Subtitle Instruction -->
+    <div class="instructions">
+      <p>✨ Drag each name to the right animal! ✨</p>
+    </div>
+
+    <!-- Main Stage Grid (3 Animals) -->
+    <main class="stage-grid" id="stage-grid">
+      <!-- Generated dynamically by JavaScript -->
+    </main>
+
+    <!-- Draggable Word Bank -->
+    <section class="word-bank" id="word-bank">
+      <!-- Generated dynamically by JavaScript -->
+    </section>
+
+    <!-- Mascot Nina Corner Anchor -->
+    <div class="mascot-container">
+      <img src="NINA_AQUI.png" alt="Nina Mascot" class="mascot-img" id="nina-mascot-img">
+    </div>
+
+  </div>
+
+  <!-- Encouraging Toast Notification -->
+  <div class="toast-msg" id="toast-msg">Try again, you can do it! 💪</div>
+
+  <!-- Victory Overlay Modal -->
+  <div class="modal-overlay" id="victory-modal">
+    <div class="modal-card">
+      <h2>YOU WIN! 🎉</h2>
+      <p>Awesome job! You matched all the animals!</p>
+      
+      <div class="modal-stats">
+        <div class="stat-item">
+          <span class="stat-value" id="final-score">0</span>
+          <span class="stat-label">Score</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="final-time">0s</span>
+          <span class="stat-label">Time Left</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="final-lives">3/3</span>
+          <span class="stat-label">Hearts</span>
+        </div>
+      </div>
+
+      <button class="btn-3d" id="btn-next-round">Play Again 🚀</button>
+    </div>
+  </div>
+
+  <!-- Game Over Overlay Modal -->
+  <div class="modal-overlay" id="gameover-modal">
+    <div class="modal-card" style="box-shadow: 0 20px 0 #991b1b, 0 30px 50px rgba(0,0,0,0.5);">
+      <h2 style="color: #dc2626;">TIME'S UP! ⏰</h2>
+      <p>Don't worry! Practice makes perfect.</p>
+      
+      <div class="modal-stats">
+        <div class="stat-item" style="width: 100%;">
+          <span class="stat-value" id="gameover-score">0</span>
+          <span class="stat-label">Total Score</span>
+        </div>
+      </div>
+
+      <button class="btn-3d" id="btn-restart" style="background: linear-gradient(180deg, #f87171 0%, #dc2626 100%); box-shadow: 0 8px 0 #7f1d1d;">Try Again 💪</button>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. CONFIGURATION & DATA ARRAY (EDITABLE)
+    // ==========================================
+    // Add or modify animals here. The game randomly picks 3 per round.
+    const ANIMAL_DATA = [
+      { id: 'lion', name: 'Lion', image: 'https://ninasworld.github.io/animales/LION.png' },
+      { id: 'elephant', name: 'Elephant', image: 'https://ninasworld.github.io/animales/ELEPHANT.png' },
+      { id: 'monkey', name: 'Monkey', image: 'https://ninasworld.github.io/animales/MONKEY.png' },
+      { id: 'giraffe', name: 'Giraffe', image: 'https://ninasworld.github.io/animales/GIRAFFE.png' },
+      { id: 'panda', name: 'Panda', image: 'https://ninasworld.github.io/animales/PANDA.png' },
+      { id: 'tiger', name: 'Tiger', image: 'https://ninasworld.github.io/animales/TIGER.png' },
+      { id: 'zebra', name: 'Zebra', image: 'https://ninasworld.github.io/animales/ZEBRA.png' },
+      { id: 'koala', name: 'Koala', image: 'https://ninasworld.github.io/animales/KOALA.png' },
+      { id: 'penguin', name: 'Penguin', image: 'https://ninasworld.github.io/animales/PENGUIN.png' },
+      { id: 'rabbit', name: 'Rabbit', image: 'https://ninasworld.github.io/animales/RABBIT.png' },
+      { id: 'bear', name: 'Bear', image: 'https://ninasworld.github.io/animales/BEAR.png' },
+      { id: 'fox', name: 'Fox', image: 'https://ninasworld.github.io/animales/FOX.png' }
+    ];
+
+    const ROUND_TIME_LIMIT = 60; // Seconds per round
+
+    // Game state variables
+    let currentRoundAnimals = [];
+    let lives = 3;
+    let score = 0;
+    let matchesMade = 0;
+    let timeLeft = ROUND_TIME_LIMIT;
+    let timerInterval = null;
+    let isDragging = false;
+    let activeDraggedElement = null;
+    let touchOffset = { x: 0, y: 0 };
+    let initialPillPos = { x: 0, y: 0 };
+
+    // ==========================================
+    // 2. AUDIO SYNTHESIZER (No external audio files)
+    // ==========================================
+    class SoundEffects {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+      }
+
+      playPop() {
+        this.init();
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.1);
+      }
+
+      playSuccess() {
+        this.init();
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.08);
+          gain.gain.setValueAtTime(0.25, this.ctx.currentTime + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.08 + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(this.ctx.currentTime + idx * 0.08);
+          osc.stop(this.ctx.currentTime + idx * 0.08 + 0.2);
+        });
+      }
+
+      playError() {
+        this.init();
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(140, this.ctx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.25);
+      }
+
+      playFanfare() {
+        this.init();
+        if (!this.ctx) return;
+        const melody = [
+          { f: 523.25, d: 0.15 }, { f: 659.25, d: 0.15 },
+          { f: 783.99, d: 0.15 }, { f: 1046.50, d: 0.4 }
+        ];
+        let now = this.ctx.currentTime;
+        melody.forEach(note => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(note.f, now);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + note.d);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + note.d);
+          now += note.d;
+        });
+      }
+    }
+
+    const soundFX = new SoundEffects();
+
+    // Helper: SVG inline placeholder generator if GitHub images are missing/loading
+    function getFallbackSvg(name) {
+      const colors = ['#f472b6', '#38bdf8', '#4ade80', '#facc15', '#c084fc'];
+      const bg = colors[Math.abs(name.charCodeAt(0)) % colors.length];
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" rx="30" fill="${bg}"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-size="48">🐾</text><text x="50%" y="75%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="16" fill="#ffffff">${name}</text></svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    function getNinaMascotFallback() {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#f472b6" stroke="#ffffff" stroke-width="4"/><circle cx="35" cy="40" r="6" fill="#ffffff"/><circle cx="65" cy="40" r="6" fill="#ffffff"/><circle cx="35" cy="40" r="3" fill="#000000"/><circle cx="65" cy="40" r="3" fill="#000000"/><path d="M 35 65 Q 50 80 65 65" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round"/><text x="50" y="25" font-family="sans-serif" font-weight="bold" font-size="12" fill="#ffffff" text-anchor="middle">NINA</text></svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    // Handle Nina Mascot Error
+    document.getElementById('nina-mascot-img').onerror = function() {
+      this.src = getNinaMascotFallback();
+    };
+
+    // ==========================================
+    // 3. GAME INITIALIZATION & STAGE RENDER
+    // ==========================================
+    function initGame() {
+      lives = 3;
+      score = 0;
+      updateHUD();
+      startNewRound();
+    }
+
+    function startNewRound() {
+      matchesMade = 0;
+      timeLeft = ROUND_TIME_LIMIT;
+      updateTimerDisplay();
+
+      // Pick 3 unique random animals from array
+      const shuffled = [...ANIMAL_DATA].sort(() => 0.5 - Math.random());
+      currentRoundAnimals = shuffled.slice(0, 3);
+
+      renderStage();
+      renderWordBank();
+      startTimer();
+    }
+
+    function renderStage() {
+      const stage = document.getElementById('stage-grid');
+      stage.innerHTML = '';
+
+      currentRoundAnimals.forEach(animal => {
+        const card = document.createElement('div');
+        card.className = 'animal-card';
+        card.dataset.animalId = animal.id;
+
+        card.innerHTML = `
+          <div class="animal-img-wrapper">
+            <img src="${animal.image}" alt="${animal.name}" class="animal-img" onerror="this.src='${getFallbackSvg(animal.name)}'">
+          </div>
+          <div class="drop-zone" data-animal-id="${animal.id}">
+            <!-- Dropped word label appears here -->
+          </div>
+        `;
+
+        stage.appendChild(card);
+      });
+    }
+
+    function renderWordBank() {
+      const bank = document.getElementById('word-bank');
+      bank.innerHTML = '';
+
+      // Shuffle names for word bank
+      const shuffledWords = [...currentRoundAnimals].sort(() => 0.5 - Math.random());
+
+      shuffledWords.forEach(animal => {
+        const pill = document.createElement('div');
+        pill.className = 'word-pill';
+        pill.textContent = animal.name;
+        pill.dataset.animalId = animal.id;
+
+        // Attach touch & pointer listeners for universal dragging
+        attachDragListeners(pill);
+
+        bank.appendChild(pill);
+      });
+    }
+
+    // ==========================================
+    // 4. CROSS-DEVICE POINTER DRAG & DROP
+    // ==========================================
+    function attachDragListeners(element) {
+      element.addEventListener('pointerdown', onPointerDown);
+    }
+
+    function onPointerDown(e) {
+      if (e.target.classList.contains('placed')) return;
+      
+      soundFX.playPop();
+      isDragging = true;
+      activeDraggedElement = e.currentTarget;
+
+      const rect = activeDraggedElement.getBoundingClientRect();
+      touchOffset.x = e.clientX - rect.left;
+      touchOffset.y = e.clientY - rect.top;
+
+      initialPillPos.x = rect.left;
+      initialPillPos.y = rect.top;
+
+      // Make position fixed for floating drag overlay
+      activeDraggedElement.style.position = 'fixed';
+      activeDraggedElement.style.width = `${rect.width}px`;
+      activeDraggedElement.style.height = `${rect.height}px`;
+      activeDraggedElement.classList.add('dragging');
+      
+      moveAt(e.clientX, e.clientY);
+
+      document.addEventListener('pointermove', onPointerMove);
+      document.addEventListener('pointerup', onPointerUp);
+      document.addEventListener('pointercancel', onPointerUp);
+    }
+
+    function moveAt(clientX, clientY) {
+      if (!activeDraggedElement) return;
+      activeDraggedElement.style.left = `${clientX - touchOffset.x}px`;
+      activeDraggedElement.style.top = `${clientY - touchOffset.y}px`;
+    }
+
+    function onPointerMove(e) {
+      if (!isDragging || !activeDraggedElement) return;
+      moveAt(e.clientX, e.clientY);
+
+      // Highlight drop target underneath
+      activeDraggedElement.style.visibility = 'hidden';
+      const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
+      activeDraggedElement.style.visibility = 'visible';
+
+      // Clear previous hover states
+      document.querySelectorAll('.drop-zone').forEach(dz => dz.classList.remove('drag-over'));
+
+      if (elemBelow) {
+        const dropZone = elemBelow.closest('.drop-zone');
+        if (dropZone && !dropZone.classList.contains('matched')) {
+          dropZone.classList.add('drag-over');
+        }
+      }
+    }
+
+    function onPointerUp(e) {
+      if (!isDragging || !activeDraggedElement) return;
+
+      document.removeEventListener('pointermove', onPointerMove);
+      document.removeEventListener('pointerup', onPointerUp);
+      document.removeEventListener('pointercancel', onPointerUp);
+
+      activeDraggedElement.style.visibility = 'hidden';
+      const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
+      activeDraggedElement.style.visibility = 'visible';
+
+      document.querySelectorAll('.drop-zone').forEach(dz => dz.classList.remove('drag-over'));
+
+      let dropZone = elemBelow ? elemBelow.closest('.drop-zone') : null;
+
+      if (dropZone && !dropZone.classList.contains('matched')) {
+        const targetId = dropZone.dataset.animalId;
+        const draggedId = activeDraggedElement.dataset.animalId;
+
+        if (targetId === draggedId) {
+          // CORRECT MATCH!
+          handleCorrectMatch(activeDraggedElement, dropZone);
+        } else {
+          // WRONG MATCH!
+          handleWrongMatch(activeDraggedElement);
+        }
+      } else {
+        // Returned to word bank
+        resetPillPosition(activeDraggedElement);
+      }
+
+      isDragging = false;
+      activeDraggedElement = null;
+    }
+
+    function resetPillPosition(pill) {
+      pill.classList.remove('dragging');
+      pill.style.position = '';
+      pill.style.left = '';
+      pill.style.top = '';
+      pill.style.width = '';
+      pill.style.height = '';
+    }
+
+    function handleCorrectMatch(pill, dropZone) {
+      soundFX.playSuccess();
+      matchesMade++;
+      score += 100 + timeLeft * 2;
+      updateHUD();
+
+      dropZone.classList.add('matched');
+      const parentCard = dropZone.closest('.animal-card');
+      if (parentCard) parentCard.classList.add('correct');
+
+      // Place pill nicely inside the target zone
+      pill.classList.remove('dragging');
+      pill.classList.add('placed');
+      pill.style.position = 'static';
+      pill.style.width = '100%';
+      pill.style.height = '100%';
+      pill.style.left = '';
+      pill.style.top = '';
+
+      dropZone.appendChild(pill);
+
+      // Trigger Confetti Pop
+      triggerConfettiBurst(dropZone);
+
+      // Check Round Completion
+      if (matchesMade >= 3) {
+        clearInterval(timerInterval);
+        setTimeout(showVictory, 800);
+      }
+    }
+
+    function handleWrongMatch(pill) {
+      soundFX.playError();
+      resetPillPosition(pill);
+
+      // Shake active board
+      const stage = document.getElementById('stage-grid');
+      stage.classList.add('shake');
+      setTimeout(() => stage.classList.remove('shake'), 500);
+
+      // Show encouraging message
+      showToast('Try again, you can do it! 💪');
+
+      // Deduct Life
+      lives--;
+      updateHUD();
+
+      if (lives <= 0) {
+        clearInterval(timerInterval);
+        setTimeout(showGameOver, 600);
+      }
+    }
+
+    // ==========================================
+    // 5. TIMER & HUD LOGIC
+    // ==========================================
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          soundFX.playError();
+          lives--;
+          updateHUD();
+
+          if (lives <= 0) {
+            showGameOver();
+          } else {
+            showToast("Time's up for this round! Try again! ⏰");
+            startNewRound();
+          }
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const timerBar = document.getElementById('timer-bar');
+      const pct = Math.max(0, (timeLeft / ROUND_TIME_LIMIT) * 100);
+      timerBar.style.width = `${pct}%`;
+
+      if (pct < 30) {
+        timerBar.style.background = 'linear-gradient(90deg, #ef4444 0%, #b91c1c 100%)';
+      } else {
+        timerBar.style.background = 'linear-gradient(90deg, #4ade80 0%, #a3e635 60%, #ef4444 100%)';
+      }
+    }
+
+    function updateHUD() {
+      document.getElementById('score-text').textContent = score;
+
+      // Update Hearts
+      for (let i = 1; i <= 3; i++) {
+        const heartEl = document.getElementById(`heart-${i}`);
+        if (i <= lives) {
+          heartEl.classList.remove('lost');
+        } else {
+          heartEl.classList.add('lost');
+        }
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast-msg');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // ==========================================
+    // 6. CONFETTI EFFECT
+    // ==========================================
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    const ctx = confettiCanvas.getContext('2d');
+    let confettiParticles = [];
+
+    function resizeCanvas() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerConfettiBurst(originElem) {
+      const rect = originElem ? originElem.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2, width: 0, height: 0 };
+      const originX = rect.left + rect.width / 2;
+      const originY = rect.top + rect.height / 2;
+
+      const colors = ['#facc15', '#f472b6', '#38bdf8', '#4ade80', '#c084fc', '#ffffff'];
+
+      for (let i = 0; i < 40; i++) {
+        confettiParticles.push({
+          x: originX,
+          y: originY,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 0.8) * 12,
+          size: Math.random() * 8 + 6,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 10,
+          opacity: 1
+        });
+      }
+
+      if (!window.confettiAnimating) {
+        window.confettiAnimating = true;
+        requestAnimationFrame(updateConfetti);
+      }
+    }
+
+    function updateConfetti() {
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+      confettiParticles.forEach((p, idx) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.3; // Gravity
+        p.opacity -= 0.015;
+        p.rotation += p.vRot;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+
+        if (p.opacity <= 0) {
+          confettiParticles.splice(idx, 1);
+        }
+      });
+
+      if (confettiParticles.length > 0) {
+        requestAnimationFrame(updateConfetti);
+      } else {
+        window.confettiAnimating = false;
+      }
+    }
+
+    // ==========================================
+    // 7. MODAL CONTROLS & FLOW
+    // ==========================================
+    function showVictory() {
+      soundFX.playFanfare();
+      triggerConfettiBurst(null);
+
+      document.getElementById('final-score').textContent = score;
+      document.getElementById('final-time').textContent = `${timeLeft}s`;
+      document.getElementById('final-lives').textContent = `${lives}/3`;
+
+      document.getElementById('victory-modal').classList.add('active');
+    }
+
+    function showGameOver() {
+      document.getElementById('gameover-score').textContent = score;
+      document.getElementById('gameover-modal').classList.add('active');
+    }
+
+    document.getElementById('btn-next-round').addEventListener('click', () => {
+      soundFX.playPop();
+      document.getElementById('victory-modal').classList.remove('active');
+      startNewRound();
+    });
+
+    document.getElementById('btn-restart').addEventListener('click', () => {
+      soundFX.playPop();
+      document.getElementById('gameover-modal').classList.remove('active');
+      initGame();
+    });
+
+    // Start Game on Page Load
+    window.addEventListener('load', () => {
+      initGame();
+    });
+  </script>
+</body>
+</html>
