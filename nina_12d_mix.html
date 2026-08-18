@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nina's World - Learn 50 English Animals</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --neon-pink: #FF2E93;
+            --neon-cyan: #00F0FF;
+            --neon-yellow: #FFEA00;
+            --neon-purple: #9D00FF;
+            --neon-green: #00FF66;
+            --dark-cyber: #0B0E1B;
+            --card-glass: rgba(20, 26, 48, 0.75);
+            --border-glass: rgba(0, 240, 255, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--dark-cyber);
+            color: #FFFFFF;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            background: radial-gradient(circle at 50% 20%, #1a103c 0%, #080a14 70%, #030408 100%);
+        }
+
+        .cyber-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-image:
+                linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 46, 147, 0.07) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 1;
+            perspective: 500px;
+            transform-style: preserve-3d;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .cyber-grid.grid-intense {
+            animation-duration: 6s;
+            filter: brightness(1.9) saturate(1.6) hue-rotate(-25deg);
+            transition: filter 0.6s ease;
+        }
+
+        #timer-text.timer-hot { color: #FFA500; text-shadow: 0 0 8px rgba(255,120,0,0.9); }
+
+        #streak-badge.streak-hot {
+            animation: streakPulse 0.6s ease-in-out infinite;
+        }
+
+        @keyframes streakPulse {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 6px rgba(255,153,0,0.6); }
+            50% { transform: scale(1.15); text-shadow: 0 0 16px rgba(255,153,0,1); }
+        }
+
+        #fx-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .glass-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2px solid var(--border-glass);
+            border-radius: 28px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 240, 255, 0.15);
+        }
+
+        .neon-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #00F0FF 0%, #FF2E93 50%, #FFEA00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.6));
+        }
+
+        .btn-12d {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 20px;
+            padding: 10px 18px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-12d:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 10px 25px rgba(0, 240, 255, 0.5);
+        }
+
+        .btn-12d:active {
+            transform: translateY(2px) scale(0.97);
+        }
+
+        .btn-cyan { background: linear-gradient(135deg, #00F0FF 0%, #0088FF 100%); color: #040814; }
+        .btn-pink { background: linear-gradient(135deg, #FF2E93 0%, #D80068 100%); color: #FFFFFF; }
+        .btn-yellow { background: linear-gradient(135deg, #FFEA00 0%, #FF9900 100%); color: #040814; }
+        .btn-purple { background: linear-gradient(135deg, #9D00FF 0%, #6200EA 100%); color: #FFFFFF; }
+        .btn-green { background: linear-gradient(135deg, #00FF66 0%, #00B84D 100%); color: #040814; }
+
+        nav button.active-mode-btn {
+            outline: 3px solid #FFFFFF;
+            outline-offset: 2px;
+        }
+
+        .hud-stat-badge {
+            background: rgba(11, 14, 27, 0.85);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50px;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+        }
+
+        .nina-mascot-container {
+            position: fixed;
+            bottom: 12px; right: 12px;
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            pointer-events: auto;
+        }
+
+        .speech-bubble-12d {
+            background: rgba(15, 23, 42, 0.92);
+            border: 2px solid #FF2E93;
+            color: #FFF;
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: 0 8px 25px rgba(255, 46, 147, 0.4);
+            margin-bottom: 8px;
+            max-width: 260px;
+            text-align: center;
+            animation: floatBubble 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .speech-bubble-12d::after {
+            content: '';
+            position: absolute;
+            bottom: -8px; right: 32px;
+            border-width: 8px 8px 0;
+            border-style: solid;
+            border-color: #FF2E93 transparent;
+            display: block; width: 0;
+        }
+
+        @keyframes floatBubble {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .nina-character-img {
+            width: clamp(90px, 14vw, 140px);
+            height: auto;
+            cursor: pointer;
+            filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.6));
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: ninaIdle 4s ease-in-out infinite;
+        }
+
+        .nina-character-img:hover {
+            transform: scale(1.08) rotate(2deg);
+        }
+
+        @keyframes ninaIdle {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(-1deg); }
+        }
+
+        .animal-thumb {
+            width: 56px;
+            height: 56px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+        }
+
+        .animal-thumb-lg {
+            width: 130px;
+            height: 130px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6));
+        }
+
+        .animal-thumb-xl {
+            width: 170px;
+            height: 170px;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 14px rgba(0,0,0,0.6));
+        }
+
+        .node-card-12d {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 2px solid rgba(0, 240, 255, 0.3);
+            border-radius: 22px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 70px;
+        }
+
+        .node-card-12d:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+            transform: scale(1.02);
+        }
+
+        .node-card-12d.selected {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 25px rgba(255, 46, 147, 0.7);
+            transform: scale(1.04);
+        }
+
+        .node-card-12d.matched {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 102, 0.15);
+            pointer-events: none;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
+        }
+
+        .anchor-point {
+            width: 20px; height: 20px;
+            background: var(--neon-cyan);
+            border: 3px solid #FFF;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 10px var(--neon-cyan);
+            z-index: 10;
+        }
+
+        .match-col-left .anchor-point { right: -12px; }
+        .match-col-right .anchor-point { left: -12px; }
+
+        .memory-card { perspective: 1000px; height: 110px; cursor: pointer; }
+
+        .memory-card-inner {
+            position: relative; width: 100%; height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            border-radius: 20px;
+        }
+
+        .memory-card.flipped .memory-card-inner { transform: rotateY(180deg); }
+
+        .memory-card-front, .memory-card-back {
+            position: absolute; width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            border: 2px solid var(--border-glass);
+        }
+
+        .memory-card-front {
+            background: linear-gradient(135deg, #1E1035 0%, #0D162B 100%);
+            color: var(--neon-cyan);
+            font-size: 2rem;
+        }
+
+        .memory-card-back {
+            background: linear-gradient(135deg, #2A1B4E 0%, #172445 100%);
+            transform: rotateY(180deg);
+            border-color: var(--neon-pink);
+        }
+
+        .letter-slot {
+            width: 44px; height: 52px;
+            border: 2px dashed var(--neon-cyan);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; font-weight: 700;
+            color: var(--neon-yellow);
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .letter-tile {
+            width: 48px; height: 52px;
+            background: linear-gradient(135deg, #9D00FF 0%, #00F0FF 100%);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; font-weight: 900; color: #FFF;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(157, 0, 255, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .letter-tile:hover { transform: translateY(-4px) scale(1.08); box-shadow: 0 10px 20px rgba(0, 240, 255, 0.6); }
+
+        .timer-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00FF66 0%, #FFEA00 50%, #FF2E93 100%);
+            border-radius: 20px;
+            transition: width 0.2s linear;
+        }
+
+        .codex-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+            gap: 12px;
+            max-height: 440px;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .codex-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 18px;
+            padding: 8px 4px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .codex-card.unlocked {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(255, 46, 147, 0.15) 100%);
+            border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .codex-card .codex-icon-img {
+            width: 40px; height: 40px; object-fit: contain;
+            filter: grayscale(1) opacity(0.3);
+            transition: filter 0.3s ease;
+        }
+
+        .codex-card.unlocked .codex-icon-img { filter: grayscale(0) opacity(1); }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(3, 4, 8, 0.85);
+            backdrop-filter: blur(14px);
+            z-index: 150;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 16px;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .nina-input {
+            width: 100%; padding: 12px 16px; border-radius: 14px;
+            background: rgba(0,0,0,0.4); border: 2px solid rgba(0,255,255,0.4);
+            color: #fff; font-size: 1rem; text-align: center; outline: none;
+            margin-bottom: 14px;
+        }
+        .nina-input:focus { border-color: #22d3ee; }
+
+        .ranking-row {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; padding: 8px 14px; border-radius: 12px;
+            background: rgba(0,0,0,0.3); margin-bottom: 6px; font-size: 0.9rem;
+        }
+        .ranking-row.is-player {
+            background: rgba(255, 215, 0, 0.18);
+            border: 2px solid #FFD700;
+            font-weight: bold;
+        }
+
+        /* Word search grid */
+        .ws-grid {
+            display: grid;
+            gap: 3px;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .ws-cell {
+            aspect-ratio: 1;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(0,240,255,0.25);
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: clamp(0.7rem, 2.6vw, 1rem);
+            color: #E2F6FF;
+            cursor: pointer;
+        }
+
+        .ws-cell.selected { background: rgba(255, 234, 0, 0.35); border-color: var(--neon-yellow); }
+        .ws-cell.found { background: rgba(0, 255, 102, 0.35); border-color: var(--neon-green); color: #fff; }
+
+        .target-chip {
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.06);
+            border: 2px solid rgba(0,240,255,0.3);
+            border-radius: 14px;
+            padding: 4px 10px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .target-chip.found { border-color: var(--neon-green); background: rgba(0,255,102,0.15); }
+        .target-chip img { width: 26px; height: 26px; object-fit: contain; }
+
+        .drop-slot {
+            border: 3px dashed rgba(0,240,255,0.4);
+            border-radius: 20px;
+            min-height: 90px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 4px;
+            padding: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .drop-slot.drag-over { border-color: var(--neon-yellow); background: rgba(255,234,0,0.1); transform: scale(1.03); }
+        .drop-slot.correct { border-color: var(--neon-green); background: rgba(0,255,102,0.15); }
+        .drop-slot.wrong { border-color: var(--neon-pink); background: rgba(255,46,147,0.15); }
+
+        .drag-ghost {
+            position: fixed;
+            z-index: 300;
+            pointer-events: none;
+            width: 90px; height: 90px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6));
+        }
+
+        .category-btn {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 4px;
+            padding: 14px 10px;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cyber-grid"></div>
+    <canvas id="fx-canvas"></canvas>
+
+    <div class="modal-overlay active" id="modal-welcome">
+        <div class="glass-card max-w-md w-full p-6 text-center border-2 border-cyan-400 flex flex-col items-center">
+            <div class="text-5xl mb-2">🦊</div>
+            <h2 class="neon-title text-2xl mb-1">Nina's World</h2>
+            <p class="text-gray-200 text-sm mb-4">What is your name, age and country?</p>
+            <input type="text" class="nina-input" id="input-player-name" placeholder="Your name (example: Nina)" maxlength="20">
+            <input type="number" class="nina-input" id="input-player-age" placeholder="Your age" min="1" max="12">
+            <input type="text" class="nina-input" id="input-player-country" list="country-options" placeholder="Your country (example: Ecuador)" maxlength="30" autocomplete="off">
+            <datalist id="country-options"></datalist>
+            <button class="btn-12d btn-cyan w-full text-lg py-3" id="btn-start-game">START 🚀</button>
+        </div>
+    </div>
+
+    <div class="relative z-10 min-h-screen flex flex-col items-center p-3 sm:p-5 max-w-6xl mx-auto">
+
+        <header class="w-full flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div class="flex items-center gap-3 cursor-pointer" id="logo-btn">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-400 to-pink-500 flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/40 border border-white/40">
+                    🦊
+                </div>
+                <div>
+                    <h1 class="neon-title text-xl sm:text-3xl tracking-wider">NINA'S WORLD</h1>
+                    <p class="text-xs text-cyan-300 font-semibold tracking-widest uppercase">Cyber Animal World (50 Animals · 10 Games)</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <div class="hud-stat-badge text-yellow-300">
+                    <span>⭐ SCORE:</span>
+                    <span id="score-val" class="font-mono text-lg">0</span>
+                </div>
+                <div class="hud-stat-badge text-pink-400">
+                    <span id="lives-container">❤️❤️❤️</span>
+                </div>
+                <div class="hud-stat-badge text-cyan-300">
+                    <span>🎮 LVL:</span>
+                    <span id="level-val" class="font-mono text-lg">1</span>
+                </div>
+                <div class="hud-stat-badge text-orange-300" id="streak-badge" style="display:none;">
+                    <span>🔥</span>
+                    <span id="streak-val" class="font-mono text-lg">0</span>
+                </div>
+                <button class="btn-12d btn-cyan text-sm py-2 px-4" id="btn-codex">
+                    📖 50 CODEX
+                </button>
+            </div>
+        </header>
+
+        <nav class="w-full grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4" id="mode-nav"></nav>
+
+        <div class="w-full glass-card p-2 rounded-full mb-4 relative overflow-hidden h-6 border border-cyan-500/30">
+            <div id="timer-bar" class="timer-bar-fill w-full"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-xs font-bold tracking-widest text-white shadow-sm" id="timer-text">
+                TIME: 45s
+            </div>
+        </div>
+
+        <main class="w-full glass-card p-4 sm:p-6 min-h-[460px] flex flex-col justify-between relative overflow-hidden" id="main-stage"></main>
+    </div>
+
+    <div class="nina-mascot-container">
+        <div class="speech-bubble-12d" id="nina-speech">
+            Welcome to Nina's World! Let's learn all 50 animals in English! 🎧✨
+        </div>
+        <img class="nina-character-img" id="nina-avatar" src="images/Gemini_Generated_Image_1rkoqs1rkoqs1rko-removebg-preview.png" alt="Nina">
+    </div>
+
+    <div class="modal-overlay" id="modal-codex">
+        <div class="glass-card max-w-2xl w-full p-6 text-center border-2 border-cyan-400">
+            <h2 class="neon-title text-2xl sm:text-3xl mb-1">50 ANIMALS CODEX 📖</h2>
+            <p class="text-xs text-cyan-200 mb-4">Tap any animal to hear Nina pronounce its name in English!</p>
+            <div class="codex-grid" id="codex-grid-container"></div>
+            <button class="btn-12d btn-pink mt-5" id="btn-close-codex">CLOSE CODEX ✖️</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-gameover">
+        <div class="glass-card max-w-md w-full p-6 text-center border-2 border-cyan-400 flex flex-col items-center max-h-[90vh] overflow-y-auto">
+            <div class="text-5xl mb-2" id="finalscreen-emoji">🎉</div>
+            <h2 class="neon-title text-2xl mb-1">Nina's World</h2>
+            <h3 class="text-lg font-bold text-cyan-300 mb-2" id="finalscreen-message">Great Job!</h3>
+            <div class="bg-black/40 border border-cyan-400/50 rounded-2xl p-4 w-full mb-4 text-center">
+                <div class="text-xs text-cyan-300">YOUR SCORE</div>
+                <div class="text-3xl font-bold font-mono text-yellow-300" id="finalscreen-score">0</div>
+            </div>
+            <div class="w-full mb-4">
+                <div class="text-xs text-cyan-300 mb-2 tracking-widest">🌍 WORLD RANKING (AGES 4-8)</div>
+                <div id="ranking-list"></div>
+            </div>
+            <button class="btn-12d btn-cyan w-full text-lg py-3" id="btn-restart">PLAY AGAIN 🎮</button>
+        </div>
+    </div>
+
+    <script>
+        // 50 Animals Complete Database - Real Images, Verified Against images/ Folder
+        const ANIMALS_DB = [
+            { id: "cat", name: "Cat", img: "images/1%20CAT.png", category: "Farm" },
+            { id: "dog", name: "Dog", img: "images/2%20DOG.png", category: "Farm" },
+            { id: "cow", name: "Cow", img: "images/3%20COW.png", category: "Farm" },
+            { id: "pig", name: "Pig", img: "images/4%20PIG.png", category: "Farm" },
+            { id: "horse", name: "Horse", img: "images/5%20HORSE.png", category: "Farm" },
+            { id: "sheep", name: "Sheep", img: "images/6%20SHEEP.png", category: "Farm" },
+            { id: "rabbit", name: "Rabbit", img: "images/7%20RABBIT.png", category: "Farm" },
+            { id: "duck", name: "Duck", img: "images/8%20DUCK.png", category: "Farm" },
+            { id: "chicken", name: "Chicken", img: "images/9%20CHICKEN.png", category: "Farm" },
+            { id: "rooster", name: "Rooster", img: "images/10%20ROOSTER.png", category: "Farm" },
+            { id: "goat", name: "Goat", img: "images/11%20GOAT.png", category: "Jungle" },
+            { id: "lion", name: "Lion", img: "images/12%20LION.png", category: "Jungle" },
+            { id: "elephant", name: "Elephant", img: "images/13%20ELEPHANT.png", category: "Jungle" },
+            { id: "tiger", name: "Tiger", img: "images/14%20TIGER.png", category: "Jungle" },
+            { id: "giraffe", name: "Giraffe", img: "images/15%20GIRAFFE.png", category: "Jungle" },
+            { id: "zebra", name: "Zebra", img: "images/16%20%20ZEBRA.png", category: "Jungle" },
+            { id: "monkey", name: "Monkey", img: "images/17%20MONKEY.png", category: "Jungle" },
+            { id: "hippo", name: "Hippo", img: "images/25%20HIPPO.png", category: "Jungle" },
+            { id: "camel", name: "Camel", img: "images/48%20CAMEL.png", category: "Jungle" },
+            { id: "rhino", name: "Rhino", img: "images/49%20RHINO.png", category: "Jungle" },
+            { id: "bear", name: "Bear", img: "images/18%20BEAR.png", category: "Forest" },
+            { id: "wolf", name: "Wolf", img: "images/19%20WOLF.png", category: "Forest" },
+            { id: "fox", name: "Fox", img: "images/20%20FOX.png", category: "Forest" },
+            { id: "deer", name: "Deer", img: "images/21%20DEER.png", category: "Forest" },
+            { id: "panda", name: "Panda", img: "images/22%20PANDA.png", category: "Forest" },
+            { id: "kangaroo", name: "Kangaroo", img: "images/23%20KANGAROO.png", category: "Forest" },
+            { id: "koala", name: "Koala", img: "images/24%20KOALA.png", category: "Forest" },
+            { id: "owl", name: "Owl", img: "images/27%20OWL.png", category: "Forest" },
+            { id: "hedgehog", name: "Hedgehog", img: "images/46%20HEDGEHOG.png", category: "Forest" },
+            { id: "squirrel", name: "Squirrel", img: "images/50%20SQUIRREL.png", category: "Forest" },
+            { id: "fish", name: "Fish", img: "images/34%20FISH.png", category: "Ocean" },
+            { id: "dolphin", name: "Dolphin", img: "images/35%20DOLPHIN.png", category: "Ocean" },
+            { id: "whale", name: "Whale", img: "images/36%20WHALE.png", category: "Ocean" },
+            { id: "shark", name: "Shark", img: "images/37%20SHARK.png", category: "Ocean" },
+            { id: "octopus", name: "Octopus", img: "images/38%20OCTOPUS.png", category: "Ocean" },
+            { id: "crab", name: "Crab", img: "images/39%20CRAB.png", category: "Ocean" },
+            { id: "starfish", name: "Starfish", img: "images/40%20STARFISH.png", category: "Ocean" },
+            { id: "seal", name: "Seal", img: "images/41%20SEAL.png", category: "Ocean" },
+            { id: "turtle", name: "Turtle", img: "images/42%20TURTLE.png", category: "Ocean" },
+            { id: "penguin", name: "Penguin", img: "images/28%20PENGUIN.png", category: "Ocean" },
+            { id: "bird", name: "Bird", img: "images/26%20BIRD.png", category: "Small" },
+            { id: "butterfly", name: "Butterfly", img: "images/29%20BUTTERFLAY.png", category: "Small" },
+            { id: "bee", name: "Bee", img: "images/30%20BEE.png", category: "Small" },
+            { id: "ladybug", name: "Ladybug", img: "images/31%20LADYBUG.png", category: "Small" },
+            { id: "bat", name: "Bat", img: "images/32%20BAT.png", category: "Small" },
+            { id: "snail", name: "Snail", img: "images/33%20SNAIL.png", category: "Small" },
+            { id: "frog", name: "Frog", img: "images/43%20FROG.png", category: "Small" },
+            { id: "snake", name: "Snake", img: "images/44%20SNAKE.png", category: "Small" },
+            { id: "mouse", name: "Mouse", img: "images/45%20MOUSE.png", category: "Small" },
+            { id: "donkey", name: "Donkey", img: "images/47%20DONKEY.png", category: "Small" },
+        ];
+
+        const GAME_MODES = [
+            { id: 'match_name', label: '✏️ MATCH NAME', color: 'btn-pink' },
+            { id: 'listen_tap', label: '🎧 LISTEN & TAP', color: 'btn-cyan' },
+            { id: 'memory', label: '🧠 MEMORY MATCH', color: 'btn-purple' },
+            { id: 'line_match', label: '🔗 LINE MATCH', color: 'btn-yellow' },
+            { id: 'word_search', label: '🔎 WORD SEARCH', color: 'btn-green' },
+            { id: 'catch_game', label: '🎯 CYBER CATCH', color: 'btn-pink' },
+            { id: 'speller', label: '🔤 SPELL WORD', color: 'btn-cyan' },
+            { id: 'true_false', label: '✅ TRUE OR FALSE', color: 'btn-purple' },
+            { id: 'classify', label: '🗂️ CLASSIFY', color: 'btn-yellow' },
+            { id: 'quiz', label: '❓ QUIZ TIME', color: 'btn-green' }
+        ];
+
+        class CyberAudio {
+            constructor() {
+                this.ctx = null;
+                this.synth = window.speechSynthesis;
+            }
+            initCtx() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                }
+            }
+            playTone(freq, type = 'sine', duration = 0.15, gainVal = 0.15) {
+                this.initCtx();
+                if (!this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch (e) {}
+            }
+            speak(text) {
+                if (!this.synth) return;
+                this.synth.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-US';
+                u.rate = 0.9;
+                u.pitch = 1.15;
+                this.synth.speak(u);
+            }
+            playSuccess(intensity = 1) {
+                const speed = Math.min(intensity, 1.3);
+                const gap = 80 / speed;
+                this.playTone(523.25, 'triangle', 0.1, 0.2);
+                setTimeout(() => this.playTone(659.25 * (1 + (speed - 1) * 0.3), 'triangle', 0.1, 0.2), gap);
+                setTimeout(() => this.playTone(783.99 * (1 + (speed - 1) * 0.3), 'triangle', 0.25, 0.25), gap * 2);
+            }
+            playStreakBonus() {
+                this.playTone(880, 'triangle', 0.09, 0.22);
+                setTimeout(() => this.playTone(1046.5, 'triangle', 0.09, 0.22), 90);
+                setTimeout(() => this.playTone(1318.5, 'triangle', 0.2, 0.25), 180);
+            }
+            playError() {
+                this.playTone(180, 'sawtooth', 0.2, 0.2);
+            }
+        }
+
+        const audio = new CyberAudio();
+
+        let gameState = {
+            currentMode: 'match_name',
+            score: 0,
+            lives: 3,
+            level: 1,
+            streak: 0,
+            unlockedAnimals: new Set(),
+            timerMax: 45,
+            timerRemaining: 45,
+            timerInterval: null,
+            modeData: {},
+            roundProgress: {},
+            playerName: '',
+            playerAge: '',
+            playerCountry: ''
+        };
+
+        const ROUND_TARGETS = {
+            match_name: 1, listen_tap: 1, quiz: 1, true_false: 1, classify: 1, speller: 1
+        };
+
+        // ===== Progression / "adrenaline" helpers (calibrated gently for ages 4-8) =====
+        const TOTAL_GAME_SECONDS = 180; // 3 minutes total, one single clock for the whole 10-game run
+
+        function levelIntensity(level) {
+            // Small, capped multiplier so sounds feel a bit peppier at higher levels without becoming jarring.
+            return Math.min(1 + (level - 1) * 0.04, 1.3);
+        }
+
+        function updateStreakDisplay() {
+            const badge = document.getElementById('streak-badge');
+            const val = document.getElementById('streak-val');
+            val.textContent = gameState.streak;
+            if (gameState.streak >= 2) {
+                badge.style.display = 'flex';
+                badge.classList.toggle('streak-hot', gameState.streak >= 4);
+            } else {
+                badge.style.display = 'none';
+                badge.classList.remove('streak-hot');
+            }
+        }
+
+        function registerStreak() {
+            gameState.streak++;
+            updateStreakDisplay();
+            // Every 3rd correct answer in a row: bonus points + happy chime + extra sparkle, no extra voice line (keeps it calm for young kids)
+            if (gameState.streak > 0 && gameState.streak % 3 === 0) {
+                const bonus = 25;
+                gameState.score += bonus;
+                audio.playStreakBonus();
+                triggerConfetti();
+                return bonus;
+            }
+            return 0;
+        }
+
+        function resetStreak() {
+            gameState.streak = 0;
+            updateStreakDisplay();
+        }
+
+        const fxCanvas = document.getElementById('fx-canvas');
+        const ctxFx = fxCanvas.getContext('2d');
+        let particles = [];
+
+        function resizeFxCanvas() {
+            fxCanvas.width = window.innerWidth;
+            fxCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeFxCanvas);
+
+        function triggerConfetti(x, y) {
+            const colors = ['#00F0FF', '#FF2E93', '#FFEA00', '#00FF66', '#9D00FF'];
+            for (let i = 0; i < 35; i++) {
+                particles.push({
+                    x: x || window.innerWidth / 2,
+                    y: y || window.innerHeight / 2,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10 - 2,
+                    size: Math.random() * 8 + 3,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    opacity: 1
+                });
+            }
+        }
+
+        function renderFx() {
+            ctxFx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+            particles.forEach((p, idx) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.opacity -= 0.015;
+                ctxFx.save();
+                ctxFx.globalAlpha = Math.max(0, p.opacity);
+                ctxFx.fillStyle = p.color;
+                ctxFx.beginPath();
+                ctxFx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctxFx.fill();
+                ctxFx.restore();
+                if (p.opacity <= 0) particles.splice(idx, 1);
+            });
+
+            if (gameState.currentMode === 'line_match' && gameState.modeData.lineMatch) {
+                const lm = gameState.modeData.lineMatch;
+                lm.connectedLines.forEach(line => {
+                    ctxFx.save();
+                    ctxFx.beginPath();
+                    ctxFx.moveTo(line.startPos.x, line.startPos.y);
+                    const midX = (line.startPos.x + line.endPos.x) / 2;
+                    ctxFx.bezierCurveTo(midX, line.startPos.y, midX, line.endPos.y, line.endPos.x, line.endPos.y);
+                    ctxFx.strokeStyle = line.color || '#00FF66';
+                    ctxFx.lineWidth = 6;
+                    ctxFx.shadowColor = line.color;
+                    ctxFx.shadowBlur = 10;
+                    ctxFx.stroke();
+                    ctxFx.restore();
+                });
+                if (lm.dragStartNode && lm.dragCurrentPos) {
+                    const startPos = getAnchorPos(lm.dragStartNode);
+                    ctxFx.save();
+                    ctxFx.beginPath();
+                    ctxFx.moveTo(startPos.x, startPos.y);
+                    const midX = (startPos.x + lm.dragCurrentPos.x) / 2;
+                    ctxFx.bezierCurveTo(midX, startPos.y, midX, lm.dragCurrentPos.y, lm.dragCurrentPos.x, lm.dragCurrentPos.y);
+                    ctxFx.strokeStyle = '#FF2E93';
+                    ctxFx.lineWidth = 5;
+                    ctxFx.setLineDash([8, 6]);
+                    ctxFx.shadowColor = '#FF2E93';
+                    ctxFx.shadowBlur = 12;
+                    ctxFx.stroke();
+                    ctxFx.restore();
+                }
+            }
+            requestAnimationFrame(renderFx);
+        }
+
+        function updateHUD() {
+            document.getElementById('score-val').textContent = gameState.score;
+            document.getElementById('level-val').textContent = gameState.level;
+            let heartsHtml = '';
+            for (let i = 0; i < 3; i++) {
+                heartsHtml += i < gameState.lives ? '❤️' : '🖤';
+            }
+            document.getElementById('lives-container').textContent = heartsHtml;
+        }
+
+        function setNinaSpeech(text, speak = true) {
+            document.getElementById('nina-speech').textContent = text;
+            if (speak) audio.speak(text);
+        }
+
+        function startTimer(seconds = TOTAL_GAME_SECONDS) {
+            clearInterval(gameState.timerInterval);
+            gameState.timerMax = seconds;
+            gameState.timerRemaining = seconds;
+            const fill = document.getElementById('timer-bar');
+            const text = document.getElementById('timer-text');
+            const bgGrid = document.querySelector('.cyber-grid');
+            bgGrid.classList.remove('grid-intense');
+            const renderTime = () => {
+                const m = Math.floor(gameState.timerRemaining / 60);
+                const s = gameState.timerRemaining % 60;
+                const pct = Math.max(0, (gameState.timerRemaining / gameState.timerMax) * 100);
+                fill.style.width = pct + '%';
+                text.textContent = `TIME: ${m}:${String(s).padStart(2, '0')}`;
+                text.classList.toggle('timer-hot', pct <= 20 && pct > 0);
+                bgGrid.classList.toggle('grid-intense', pct <= 20 && pct > 0);
+            };
+            renderTime();
+            gameState.timerInterval = setInterval(() => {
+                gameState.timerRemaining--;
+                renderTime();
+                if (gameState.timerRemaining <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    bgGrid.classList.remove('grid-intense');
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        const COUNTRY_FLAGS = {
+            'Ecuador': '🇪🇨', 'Colombia': '🇨🇴', 'Peru': '🇵🇪', 'Venezuela': '🇻🇪',
+            'Argentina': '🇦🇷', 'Chile': '🇨🇱', 'Bolivia': '🇧🇴', 'Paraguay': '🇵🇾',
+            'Uruguay': '🇺🇾', 'Mexico': '🇲🇽', 'Guatemala': '🇬🇹', 'Honduras': '🇭🇳',
+            'El Salvador': '🇸🇻', 'Nicaragua': '🇳🇮', 'Costa Rica': '🇨🇷', 'Panama': '🇵🇦',
+            'Cuba': '🇨🇺', 'Dominican Republic': '🇩🇴', 'Puerto Rico': '🇵🇷', 'Brazil': '🇧🇷',
+            'United States': '🇺🇸', 'Canada': '🇨🇦', 'Spain': '🇪🇸', 'Portugal': '🇵🇹',
+            'France': '🇫🇷', 'Italy': '🇮🇹', 'Germany': '🇩🇪', 'United Kingdom': '🇬🇧',
+            'Ireland': '🇮🇪', 'Netherlands': '🇳🇱', 'Belgium': '🇧🇪', 'Switzerland': '🇨🇭',
+            'Austria': '🇦🇹', 'Sweden': '🇸🇪', 'Norway': '🇳🇴', 'Denmark': '🇩🇰',
+            'Finland': '🇫🇮', 'Poland': '🇵🇱', 'Greece': '🇬🇷', 'Russia': '🇷🇺',
+            'China': '🇨🇳', 'Japan': '🇯🇵', 'South Korea': '🇰🇷', 'India': '🇮🇳',
+            'Philippines': '🇵🇭', 'Vietnam': '🇻🇳', 'Thailand': '🇹🇭', 'Indonesia': '🇮🇩',
+            'Australia': '🇦🇺', 'New Zealand': '🇳🇿', 'Egypt': '🇪🇬', 'Nigeria': '🇳🇬',
+            'South Africa': '🇿🇦', 'Morocco': '🇲🇦', 'Kenya': '🇰🇪', 'Turkey': '🇹🇷',
+            'Israel': '🇮🇱', 'Saudi Arabia': '🇸🇦', 'United Arab Emirates': '🇦🇪'
+        };
+
+        function populateCountryOptions() {
+            const datalist = document.getElementById('country-options');
+            datalist.innerHTML = Object.keys(COUNTRY_FLAGS).map(c => `<option value="${c}"></option>`).join('');
+        }
+
+        function getFlagForCountry(country) {
+            if (!country) return '🌍';
+            const match = Object.keys(COUNTRY_FLAGS).find(c => c.toLowerCase() === country.trim().toLowerCase());
+            return match ? COUNTRY_FLAGS[match] : '🌍';
+        }
+
+        const WORLD_KIDS_POOL = [
+            { name: 'Giuseppe', flag: '🇮🇹' },
+            { name: 'Sofia', flag: '🇪🇨' },
+            { name: 'Liam', flag: '🇺🇸' },
+            { name: 'Mei', flag: '🇨🇳' },
+            { name: 'Sakura', flag: '🇯🇵' },
+            { name: 'Noah', flag: '🇩🇪' },
+            { name: 'Chloe', flag: '🇫🇷' },
+            { name: 'Arjun', flag: '🇮🇳' },
+            { name: 'Isabela', flag: '🇧🇷' },
+            { name: 'Freya', flag: '🇸🇪' },
+            { name: 'Pablo', flag: '🇪🇸' },
+            { name: 'Amara', flag: '🇳🇬' }
+        ];
+
+        function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+        function generateRanking(playerScore, playerName, playerAge, playerCountry) {
+            const shuffled = [...WORLD_KIDS_POOL].sort(() => Math.random() - 0.5).slice(0, 5);
+            let aboveCount;
+            if (playerScore >= 1200) aboveCount = 0;
+            else if (playerScore >= 600) aboveCount = 1;
+            else if (playerScore >= 250) aboveCount = 2;
+            else aboveCount = 3;
+
+            const rivals = shuffled.map((kid, i) => ({
+                name: kid.name,
+                flag: kid.flag,
+                age: randInt(4, 8),
+                score: i < aboveCount
+                    ? playerScore + randInt(30, 400)
+                    : Math.max(20, playerScore - randInt(30, 400)),
+                isPlayer: false
+            }));
+
+            const player = {
+                name: playerName || 'Player',
+                flag: getFlagForCountry(playerCountry),
+                age: playerAge || '?',
+                score: playerScore,
+                isPlayer: true
+            };
+
+            const all = [...rivals, player].sort((a, b) => b.score - a.score);
+            return all;
+        }
+
+        function renderRanking(ranking) {
+            const list = document.getElementById('ranking-list');
+            list.innerHTML = ranking.map((kid, i) => `
+                <div class="ranking-row ${kid.isPlayer ? 'is-player' : ''}">
+                    <span>#${i + 1} ${kid.flag} ${kid.name} (${kid.age})</span>
+                    <span>${kid.score} pts</span>
+                </div>
+            `).join('');
+        }
+
+        function showFinalScreen() {
+            const score = gameState.score;
+            let emoji, message;
+            if (score >= 1200) {
+                emoji = '🌟'; message = "You're an English Master!";
+            } else if (score >= 600) {
+                emoji = '🎉'; message = 'Great Job! You did amazing!';
+            } else if (score >= 250) {
+                emoji = '👍'; message = 'Good Work! Keep it up!';
+            } else {
+                emoji = '💪'; message = 'Nice Try! Practice makes perfect!';
+            }
+            document.getElementById('finalscreen-emoji').textContent = emoji;
+            document.getElementById('finalscreen-message').textContent = message;
+            document.getElementById('finalscreen-score').textContent = score;
+            const ranking = generateRanking(score, gameState.playerName, gameState.playerAge, gameState.playerCountry);
+            renderRanking(ranking);
+            document.getElementById('modal-gameover').classList.add('active');
+        }
+
+        function handleTimeOut() {
+            audio.playError();
+            document.querySelector('.cyber-grid').classList.remove('grid-intense');
+            showFinalScreen();
+        }
+
+        function triggerStageVictory() {
+            audio.playSuccess(levelIntensity(gameState.level));
+            triggerConfetti();
+            gameState.level++;
+            gameState.roundProgress = {};
+            switchToRandomMode();
+            updateHUD();
+            setTimeout(loadCurrentGameMode, 700);
+        }
+
+        function handleWrongAnswer() {
+            audio.playError();
+            gameState.lives--;
+            resetStreak();
+            updateHUD();
+            if (gameState.lives <= 0) {
+                clearInterval(gameState.timerInterval);
+                document.querySelector('.cyber-grid').classList.remove('grid-intense');
+                showFinalScreen();
+            }
+        }
+
+        // Generic round handler for single-question modes (match_name, listen_tap, quiz, true_false, classify, speller)
+        function handleRoundCorrect(mode, animalId, points, praiseText) {
+            gameState.score += points;
+            if (animalId) gameState.unlockedAnimals.add(animalId);
+            registerStreak();
+            updateHUD();
+            audio.playSuccess(levelIntensity(gameState.level));
+            triggerConfetti();
+            setNinaSpeech(praiseText);
+
+            if (!gameState.roundProgress[mode]) gameState.roundProgress[mode] = 0;
+            gameState.roundProgress[mode]++;
+
+            const target = ROUND_TARGETS[mode] || 1;
+            if (gameState.roundProgress[mode] >= target) {
+                gameState.roundProgress[mode] = 0;
+                setTimeout(triggerStageVictory, 900);
+            } else {
+                setTimeout(loadCurrentGameMode, 1100);
+            }
+        }
+
+        function randomAnimal(excludeIds = []) {
+            const pool = ANIMALS_DB.filter(a => !excludeIds.includes(a.id));
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function pickDistinct(n, excludeIds = []) {
+            const pool = [...ANIMALS_DB].filter(a => !excludeIds.includes(a.id)).sort(() => Math.random() - 0.5);
+            return pool.slice(0, n);
+        }
+
+        // ===================== MODE 1: MATCH NAME (drag the animal image to its correct name slot) =====================
+        function renderMatchNameMode(stageEl) {
+            const target = randomAnimal();
+            const distractors = pickDistinct(2, [target.id]);
+            const slots = [target, ...distractors].sort(() => Math.random() - 0.5);
+
+            gameState.modeData.matchName = { targetId: target.id, resolved: false };
+
+            stageEl.innerHTML = `
+                <div class="text-center mb-3">
+                    <h2 class="neon-title text-xl sm:text-2xl mb-1">✏️ MATCH THE NAME</h2>
+                    <p class="text-xs text-cyan-200">Drag the animal onto its correct English name!</p>
+                </div>
+                <div class="flex flex-col items-center gap-6 my-auto">
+                    <img src="${target.img}" alt="${target.name}" class="animal-thumb-lg drag-handle" id="drag-animal-img" draggable="false">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-xl">
+                        ${slots.map(s => `
+                            <div class="drop-slot" data-id="${s.id}">
+                                <span class="font-bold text-lg text-yellow-300">${s.name}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            setNinaSpeech(`Drag the picture to the word ${target.name}!`);
+            audio.speak(`Find ${target.name}`);
+
+            const img = document.getElementById('drag-animal-img');
+            const dropSlots = document.querySelectorAll('.drop-slot');
+            let ghost = null;
+
+            const startDrag = (e) => {
+                if (gameState.modeData.matchName.resolved) return;
+                e.preventDefault();
+                const p = e.touches ? e.touches[0] : e;
+                ghost = document.createElement('img');
+                ghost.src = target.img;
+                ghost.className = 'drag-ghost';
+                ghost.style.left = (p.clientX - 45) + 'px';
+                ghost.style.top = (p.clientY - 45) + 'px';
+                document.body.appendChild(ghost);
+                img.style.opacity = '0.3';
+
+                const move = (ev) => {
+                    const mp = ev.touches ? ev.touches[0] : ev;
+                    ghost.style.left = (mp.clientX - 45) + 'px';
+                    ghost.style.top = (mp.clientY - 45) + 'px';
+                    dropSlots.forEach(slot => {
+                        const r = slot.getBoundingClientRect();
+                        const over = mp.clientX >= r.left && mp.clientX <= r.right && mp.clientY >= r.top && mp.clientY <= r.bottom;
+                        slot.classList.toggle('drag-over', over);
+                    });
+                };
+
+                const end = (ev) => {
+                    const mp = ev.changedTouches ? ev.changedTouches[0] : ev;
+                    let dropped = null;
+                    dropSlots.forEach(slot => {
+                        const r = slot.getBoundingClientRect();
+                        if (mp.clientX >= r.left && mp.clientX <= r.right && mp.clientY >= r.top && mp.clientY <= r.bottom) {
+                            dropped = slot;
+                        }
+                        slot.classList.remove('drag-over');
+                    });
+                    if (ghost) { ghost.remove(); ghost = null; }
+                    img.style.opacity = '1';
+
+                    if (dropped && !gameState.modeData.matchName.resolved) {
+                        gameState.modeData.matchName.resolved = true;
+                        if (dropped.dataset.id === target.id) {
+                            dropped.classList.add('correct');
+                            handleRoundCorrect('match_name', target.id, 100, `Yes! That's a ${target.name}! 🎉`);
+                        } else {
+                            dropped.classList.add('wrong');
+                            handleWrongAnswer();
+                            setNinaSpeech(`Oops! That's not ${target.name}. Try again!`);
+                            setTimeout(loadCurrentGameMode, 1200);
+                        }
+                    }
+
+                    window.removeEventListener('mousemove', move);
+                    window.removeEventListener('mouseup', end);
+                    window.removeEventListener('touchmove', move);
+                    window.removeEventListener('touchend', end);
+                };
+
+                window.addEventListener('mousemove', move);
+                window.addEventListener('mouseup', end);
+                window.addEventListener('touchmove', move, { passive: false });
+                window.addEventListener('touchend', end);
+            };
+
+            img.addEventListener('mousedown', startDrag);
+            img.addEventListener('touchstart', startDrag, { passive: false });
+        }
+
+        // ===================== MODE 2: LISTEN & TAP =====================
+        function renderListenTapMode(stageEl) {
+            const target = randomAnimal();
+            const choices = [target, ...pickDistinct(2, [target.id])].sort(() => Math.random() - 0.5);
+
+            stageEl.innerHTML = `
+                <div class="text-center mb-4">
+                    <h2 class="neon-title text-xl sm:text-2xl mb-1">🎧 LISTEN & TAP</h2>
+                    <p class="text-xs text-cyan-200">Tap the speaker, listen to Nina, then pick the right animal!</p>
+                </div>
+                <div class="flex flex-col items-center justify-center my-auto gap-6">
+                    <button class="btn-12d btn-yellow text-lg py-4 px-8 shadow-2xl animate-bounce" id="btn-speaker-quiz">
+                        🔊 LISTEN TO ANIMAL NAME
+                    </button>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-xl">
+                        ${choices.map(c => `
+                            <button class="glass-card p-3 flex flex-col items-center gap-2 hover:border-cyan-400 hover:scale-105 transition-all text-center quiz-choice-btn" data-id="${c.id}">
+                                <img src="${c.img}" class="animal-thumb" alt="${c.name}">
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            const speakTarget = () => {
+                audio.speak(`Find the ${target.name}`);
+                setNinaSpeech(`Which animal is the ${target.name}? 🎧`);
+            };
+            document.getElementById('btn-speaker-quiz').addEventListener('click', speakTarget);
+            speakTarget();
+
+            document.querySelectorAll('.quiz-choice-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (btn.dataset.id === target.id) {
+                        handleRoundCorrect('listen_tap', target.id, 150, `Awesome! You found the ${target.name}! 🎉`);
+                    } else {
+                        handleWrongAnswer();
+                        setNinaSpeech(`Oops! That's not the ${target.name}. Try again!`);
+                    }
+                });
+            });
+        }
+
+        // ===================== MODE 3: MEMORY MATCH =====================
+        function renderMemoryMode(stageEl) {
+            const pool = pickDistinct(3);
+            let cardsData = [];
+            pool.forEach(item => {
+                cardsData.push({ id: item.id, type: 'img', content: item.img, name: item.name });
+                cardsData.push({ id: item.id, type: 'text', content: item.name, name: item.name });
+            });
+            cardsData = cardsData.sort(() => Math.random() - 0.5);
+
+            gameState.modeData.memory = { flippedCards: [], matchedPairs: 0 };
+
+            stageEl.innerHTML = `
+                <div class="text-center mb-3">
+                    <h2 class="neon-title text-xl sm:text-2xl mb-1">🧠 MEMORY MATCH</h2>
+                    <p class="text-xs text-cyan-200">Flip cards to match pictures with English names!</p>
+                </div>
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 my-auto w-full max-w-2xl mx-auto">
+                    ${cardsData.map((c, idx) => `
+                        <div class="memory-card" data-id="${c.id}" data-idx="${idx}">
+                            <div class="memory-card-inner">
+                                <div class="memory-card-front">❓</div>
+                                <div class="memory-card-back text-center p-1">
+                                    ${c.type === 'img' ? `<img src="${c.content}" class="animal-thumb" alt="${c.name}">` : `<span class="font-bold text-sm text-yellow-300">${c.content}</span>`}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            setNinaSpeech("Flip and match pairs of animals with their English names!");
+
+            document.querySelectorAll('.memory-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const mem = gameState.modeData.memory;
+                    if (card.classList.contains('flipped') || mem.flippedCards.length >= 2) return;
+                    card.classList.add('flipped');
+                    mem.flippedCards.push(card);
+                    const id = card.dataset.id;
+                    const item = ANIMALS_DB.find(a => a.id === id);
+                    if (item) audio.speak(item.name);
+
+                    if (mem.flippedCards.length === 2) {
+                        const [c1, c2] = mem.flippedCards;
+                        if (c1.dataset.id === c2.dataset.id) {
+                            mem.matchedPairs++;
+                            gameState.score += 150;
+                            gameState.unlockedAnimals.add(id);
+                            registerStreak();
+                            updateHUD();
+                            audio.playSuccess(levelIntensity(gameState.level));
+                            mem.flippedCards = [];
+                            if (mem.matchedPairs >= 1) {
+                                setTimeout(triggerStageVictory, 800);
+                            }
+                        } else {
+                            setTimeout(() => {
+                                c1.classList.remove('flipped');
+                                c2.classList.remove('flipped');
+                                mem.flippedCards = [];
+                            }, 1000);
+                        }
+                    }
+                });
+            });
+        }
+
+        // ===================== MODE 4: LINE MATCH =====================
+        function renderLineMatchMode(stageEl) {
+            const pool = pickDistinct(4);
+            const targets = [...pool].sort(() => Math.random() - 0.5);
+
+            gameState.modeData.lineMatch = { items: pool, connectedLines: [], dragStartNode: null, dragCurrentPos: null };
+
+            stageEl.innerHTML = `
+                <div class="text-center mb-3">
+                    <h2 class="neon-title text-xl sm:text-2xl">🔗 LINE MATCH</h2>
+                    <p class="text-xs text-cyan-200">Connect each animal picture to its English name!</p>
+                </div>
+                <div class="flex justify-between items-center gap-4 my-auto relative z-10">
+                    <div class="flex flex-col gap-3 w-[46%] match-col-left" id="col-left">
+                        ${pool.map(item => `
+                            <div class="node-card-12d left-node" data-id="${item.id}" data-type="source">
+                                <img src="${item.img}" class="animal-thumb" alt="${item.name}">
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-xs text-cyan-300">${item.category}</span>
+                                </div>
+                                <div class="anchor-point"></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="flex flex-col gap-3 w-[46%] match-col-right" id="col-right">
+                        ${targets.map((item, idx) => `
+                            <div class="node-card-12d right-node" data-id="${item.id}_tgt_${idx}" data-realid="${item.id}" data-type="target">
+                                <div class="anchor-point"></div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-base sm:text-lg text-yellow-300">${item.name}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            bindLineEvents();
+            setNinaSpeech("Drag lines to connect animal pictures with their English names!");
+        }
+
+        function getAnchorPos(element) {
+            const dot = element.querySelector('.anchor-point');
+            if (!dot) return { x: 0, y: 0 };
+            const rect = dot.getBoundingClientRect();
+            return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        }
+
+        function bindLineEvents() {
+            const lm = gameState.modeData.lineMatch;
+            const cards = document.querySelectorAll('.node-card-12d');
+            cards.forEach(card => {
+                const startDrag = (e) => {
+                    if (card.classList.contains('matched')) return;
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    lm.dragStartNode = card;
+                    lm.dragCurrentPos = { x: clientX, y: clientY };
+                    card.classList.add('selected');
+                    const id = card.dataset.id.split('_')[0];
+                    const item = ANIMALS_DB.find(a => a.id === id);
+                    if (item) audio.speak(item.name);
+                };
+                card.addEventListener('mousedown', startDrag);
+                card.addEventListener('touchstart', startDrag, { passive: true });
+            });
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            if (gameState.modeData.lineMatch?.dragStartNode) {
+                gameState.modeData.lineMatch.dragCurrentPos = { x: e.clientX, y: e.clientY };
+            }
+        });
+        window.addEventListener('touchmove', (e) => {
+            if (gameState.modeData.lineMatch?.dragStartNode && e.touches.length > 0) {
+                gameState.modeData.lineMatch.dragCurrentPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+        }, { passive: true });
+
+        const handleLineRelease = (e) => {
+            const lm = gameState.modeData.lineMatch;
+            if (!lm || !lm.dragStartNode) return;
+            const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+            const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+            const dropTarget = document.elementFromPoint(clientX, clientY);
+            const targetCard = dropTarget ? dropTarget.closest('.node-card-12d') : null;
+            const startCard = lm.dragStartNode;
+            startCard.classList.remove('selected');
+
+            if (targetCard && targetCard !== startCard && !targetCard.classList.contains('matched')) {
+                const sType = startCard.dataset.type;
+                const tType = targetCard.dataset.type;
+                if (sType !== tType) {
+                    const sourceCard = sType === 'source' ? startCard : targetCard;
+                    const matchCard = sType === 'target' ? startCard : targetCard;
+                    const sourceId = sourceCard.dataset.id;
+                    const realMatchId = matchCard.dataset.realid;
+                    const animalData = ANIMALS_DB.find(a => a.id === sourceId);
+
+                    if (sourceId === realMatchId && animalData) {
+                        sourceCard.classList.add('matched');
+                        matchCard.classList.add('matched');
+                        lm.connectedLines.push({
+                            fromId: startCard.dataset.id,
+                            toId: targetCard.dataset.id,
+                            color: '#00FF66',
+                            startPos: getAnchorPos(startCard),
+                            endPos: getAnchorPos(targetCard)
+                        });
+                        gameState.score += 100;
+                        gameState.unlockedAnimals.add(animalData.id);
+                        registerStreak();
+                        updateHUD();
+                        audio.playSuccess(levelIntensity(gameState.level));
+                        setNinaSpeech(`Great! That's a ${animalData.name}!`);
+                        if (lm.connectedLines.length >= 1) {
+                            setTimeout(triggerStageVictory, 600);
+                        }
+                    } else {
+                        handleWrongAnswer();
+                        setNinaSpeech("Try connecting to the right animal name!");
+                    }
+                }
+            }
+            lm.dragStartNode = null;
+            lm.dragCurrentPos = null;
+        };
+        window.addEventListener('mouseup', handleLineRelease);
+        window.addEventListener('touchend', handleLineRelease);
+
+        // ===================== MODE 5: WORD SEARCH =====================
+        function renderWordSearchMode(stageEl) {
+            const GRID_SIZE = 8;
+            const candidates = ANIMALS_DB.filter(a => a.name.length <= GRID_SIZE);
+            const words = pickDistinctFrom(candidates, 4);
+
+            let grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(null));
+            const placements = [];
+
+            words.forEach(w => {
+                const letters = w.name.toUpperCase().split('');
+                let placed = false;
+                let attempts = 0;
+                while (!placed && attempts < 60) {
+                    attempts++;
+                    const horizontal = Math.random() < 0.5;
+                    const row = Math.floor(Math.random() * GRID_SIZE);
+                    const col = Math.floor(Math.random() * GRID_SIZE);
+                    if (horizontal && col + letters.length > GRID_SIZE) continue;
+                    if (!horizontal && row + letters.length > GRID_SIZE) continue;
+
+                    let ok = true;
+                    for (let i = 0; i < letters.length; i++) {
+                        const r = horizontal ? row : row + i;
+                        const c = horizontal ? col + i : col;
+                        if (grid[r][c] !== null && grid[r][c] !== letters[i]) { ok = false; break; }
+                    }
+                    if (!ok) continue;
+
+                    for (let i = 0; i < letters.length; i++) {
+                        const r = horizontal ? row : row + i;
+                        const c = horizontal ? col + i : col;
+                        grid[r][c] = letters[i];
+                    }
+                    placements.push({ id: w.id, name: w.name.toUpperCase(), row, col, horizontal, length: letters.length, found: false });
+                    placed = true;
+                }
+            });
+
+            const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            for (let r = 0; r < GRID_SIZE; r++) {
+                for (let c = 0; c < GRID_SIZE; c++) {
+                    if (grid[r][c] === null) grid[r][c] = ALPHA[Math.floor(Math.random() * ALPHA.length)];
+                }
+            }
+
+            gameState.modeData.wordSearch = { placements, foundCount: 0, selStart: null };
+
+            stageEl.innerHTML = `
+                <div class="text-center mb-2">
+                    <h2 class="neon-title text-lg sm:text-2xl mb-1">🔎 WORD SEARCH</h2>
+                    <p class="text-xs text-cyan-200">Tap the first letter, then the last letter of a hidden animal name!</p>
+                </div>
+                <div class="ws-grid mb-3" id="ws-grid-el" style="grid-template-columns: repeat(${GRID_SIZE}, 1fr);">
+                    ${grid.map((row, r) => row.map((ch, c) => `<div class="ws-cell" data-r="${r}" data-c="${c}">${ch}</div>`).join('')).join('')}
+                </div>
+                <div class="flex flex-wrap gap-2 justify-center" id="ws-targets">
+                    ${words.map(w => `
+                        <div class="target-chip" data-id="${w.id}">
+                            <img src="${w.img}" alt="${w.name}">
+                            <span>${w.name}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            setNinaSpeech("Find all four hidden animal names in the grid!");
+
+            const cells = document.querySelectorAll('.ws-cell');
+            cells.forEach(cell => {
+                cell.addEventListener('click', () => {
+                    const ws = gameState.modeData.wordSearch;
+                    const r = parseInt(cell.dataset.r), c = parseInt(cell.dataset.c);
+
+                    if (!ws.selStart) {
+                        ws.selStart = { r, c };
+                        cell.classList.add('selected');
+                        return;
+                    }
+
+                    const start = ws.selStart;
+                    const path = getLinePath(start.r, start.c, r, c);
+                    document.querySelectorAll('.ws-cell.selected').forEach(x => x.classList.remove('selected'));
+
+                    if (!path) {
+                        ws.selStart = { r, c };
+                        cell.classList.add('selected');
+                        return;
+                    }
+
+                    const match = ws.placements.find(p => !p.found && cellsMatchWord(p, path));
+                    if (match) {
+                        match.found = true;
+                        ws.foundCount++;
+                        path.forEach(([pr, pc]) => {
+                            document.querySelector(`.ws-cell[data-r="${pr}"][data-c="${pc}"]`).classList.add('found');
+                        });
+                        document.querySelector(`.target-chip[data-id="${match.id}"]`).classList.add('found');
+                        gameState.score += 120;
+                        gameState.unlockedAnimals.add(match.id);
+                        registerStreak();
+                        updateHUD();
+                        audio.playSuccess(levelIntensity(gameState.level));
+                        setNinaSpeech(`Found it! ${match.name}! 🌟`);
+                        if (ws.foundCount >= 1) {
+                            setTimeout(triggerStageVictory, 800);
+                        }
+                    } else {
+                        audio.playError();
+                    }
+                    ws.selStart = null;
+                });
+            });
+
+            function getLinePath(r1, c1, r2, c2) {
+                if (r1 === r2) {
+                    const path = [];
+                    const step = c2 >= c1 ? 1 : -1;
+                    for (let c = c1; c !== c2 + step; c += step) path.push([r1, c]);
+                    return path;
+                } else if (c1 === c2) {
+                    const path = [];
+                    const step = r2 >= r1 ? 1 : -1;
+                    for (let r = r1; r !== r2 + step; r += step) path.push([r, c1]);
+                    return path;
+                }
+                return null;
+            }
+
+            function cellsMatchWord(placement, path) {
+                if (path.length !== placement.length) return false;
+                const expectedCells = [];
+                for (let i = 0; i < placement.length; i++) {
+                    const r = placement.horizontal ? placement.row : placement.row + i;
+                    const c = placement.horizontal ? placement.col + i : placement.col;
+                    expectedCells.push([r, c]);
+                }
+                const rev = [...expectedCells].reverse();
+                const sameForward = expectedCells.every((cell, i) => cell[0] === path[i][0] && cell[1] === path[i][1]);
+                const sameReverse = rev.every((cell, i) => cell[0] === path[i][0] && cell[1] === path[i][1]);
+                return sameForward || sameReverse;
+            }
+        }
+
+        function pickDistinctFrom(list, n) {
+            return [...list].sort(() => Math.random() - 0.5).slice(0, n);
+        }
+
+        // ===================== MODE 6: CYBER CATCH =====================
+        function renderCatchMode(stageEl) {
+            const target = randomAnimal();
+
+            stageEl.innerHTML = `
+                <div class="text-center mb-2">
+                    <h2 class="neon-title text-xl sm:text-2xl">🎯 CYBER CATCH</h2>
+                    <p class="text-xs text-cyan-200">Tap only the target animal: <span class="text-yellow-300 font-bold text-base">${target.name.toUpperCase()}</span></p>
+                </div>
+                <div class="relative w-full h-[320px] rounded-2xl bg-black/40 border border-cyan-500/30 overflow-hidden flex items-center justify-center" id="catch-arena"></div>
+            `;
+
+            audio.speak(`Catch the ${target.name}`);
+            setNinaSpeech(`Quick! Tap all the ${target.name} bubbles! 🎯`);
+
+            const arena = document.getElementById('catch-arena');
+            let caughtCount = 0;
+
+            const spawnBubble = () => {
+                if (gameState.currentMode !== 'catch_game') return;
+                const isTarget = Math.random() < 0.55;
+                const animal = isTarget ? target : randomAnimal([target.id]);
+
+                const bubble = document.createElement('button');
+                bubble.className = 'absolute p-2 rounded-full bg-gradient-to-tr from-cyan-500/30 to-pink-500/30 border-2 border-cyan-400 shadow-lg transition-transform hover:scale-110 cursor-pointer';
+                bubble.innerHTML = `<img src="${animal.img}" class="animal-thumb" alt="${animal.name}">`;
+
+                const posX = Math.random() * (arena.clientWidth - 70);
+                const posY = Math.random() * (arena.clientHeight - 70);
+                bubble.style.left = `${posX}px`;
+                bubble.style.top = `${posY}px`;
+
+                bubble.addEventListener('click', () => {
+                    if (animal.id === target.id) {
+                        caughtCount++;
+                        gameState.score += 50;
+                        registerStreak();
+                        updateHUD();
+                        audio.playTone(880, 'triangle', 0.1, 0.2);
+                        triggerConfetti(posX + 30, posY + 30);
+                        bubble.remove();
+                        if (caughtCount >= 1) {
+                            gameState.unlockedAnimals.add(target.id);
+                            triggerStageVictory();
+                        }
+                    } else {
+                        handleWrongAnswer();
+                        bubble.remove();
+                    }
+                });
+
+                arena.appendChild(bubble);
+                setTimeout(() => { if (bubble.parentNode) bubble.remove(); }, 2200);
+            };
+
+            // Bubbles appear a bit faster each level, but never so fast that a 4-year-old can't react.
+            const spawnRate = Math.max(800 - (gameState.level - 1) * 35, 550);
+            const spawnInterval = setInterval(spawnBubble, spawnRate);
+            gameState.modeData.catchInterval = spawnInterval;
+        }
+
+        // ===================== MODE 7: SPELL WORD =====================
+        function renderSpellerMode(stageEl) {
+            const target = randomAnimal();
+            const letters = target.name.toUpperCase().split('');
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const extraCount = Math.min(3, 8 - letters.length);
+            let pool = [...letters];
+            for (let i = 0; i < extraCount; i++) pool.push(alphabet[Math.floor(Math.random() * alphabet.length)]);
+            pool = pool.sort(() => Math.random() - 0.5);
+
+            gameState.modeData.speller = { targetWord: target.name.toUpperCase(), currentBuilt: [] };
+
+            stageEl.innerHTML = `
+                <div class="text-center mb-3">
+                    <h2 class="neon-title text-xl sm:text-2xl mb-1">🔤 SPELL THE ANIMAL</h2>
+                    <p class="text-xs text-cyan-200">Tap the holographic letters in correct order!</p>
+                </div>
+                <div class="flex flex-col items-center justify-center my-auto gap-6">
+                    <img src="${target.img}" class="animal-thumb-lg" alt="${target.name}">
+                    <div class="flex gap-2 justify-center flex-wrap" id="letter-slots-container">
+                        ${letters.map(() => `<div class="letter-slot">_</div>`).join('')}
+                    </div>
+                    <div class="flex gap-2 justify-center flex-wrap max-w-md" id="letter-tiles-container">
+                        ${pool.map((char, idx) => `<button class="letter-tile" data-char="${char}" data-idx="${idx}">${char}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+
+            audio.speak(target.name);
+            setNinaSpeech(`Spell the word ${target.name}! 🔤`);
+
+            document.querySelectorAll('.letter-tile').forEach(tile => {
+                tile.addEventListener('click', () => {
+                    const char = tile.dataset.char;
+                    const sp = gameState.modeData.speller;
+                    if (sp.currentBuilt.length < sp.targetWord.length) {
+                        sp.currentBuilt.push(char);
+                        tile.style.visibility = 'hidden';
+                        const slots = document.querySelectorAll('.letter-slot');
+                        sp.currentBuilt.forEach((c, i) => {
+                            slots[i].textContent = c;
+                            slots[i].style.borderColor = '#00F0FF';
+                        });
+                        audio.playTone(440 + sp.currentBuilt.length * 50, 'sine', 0.1, 0.15);
+
+                        if (sp.currentBuilt.length === sp.targetWord.length) {
+                            const builtStr = sp.currentBuilt.join('');
+                            if (builtStr === sp.targetWord) {
+                                handleRoundCorrect('speller', target.id, 200, `Perfect spelling! ${target.name}! 🌟`);
+                            } else {
+                                handleWrongAnswer();
+                                setNinaSpeech("Spelling incorrect! Let's try again!");
+                                setTimeout(loadCurrentGameMode, 1200);
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        // ===================== MODE 8: TRUE OR FALSE =====================
+        function renderTrueFalseMode(stageEl) {
+            const target = randomAnimal();
+            const isTrue = Math.random() < 0.5;
+            const shownName = isTrue ? target.name : randomAnimal([target.id]).name;
+
+            gameState.modeData.trueFalse = { isTrue };
+
+            stageEl.innerHTML = `
+                <div class="text-center mb-3">
+                    <h2 class="neon-title text-xl sm:text-2xl mb-1">✅ TRUE OR FALSE</h2>
+                    <p class="text-xs text-cyan-200">Does the picture match the word?</p>
+                </div>
+                <div class="flex flex-col items-center justify-center my-auto gap-6">
+                    <img src="${target.img}" class="animal-thumb-xl" alt="animal">
+                    <div class="neon-title text-3xl sm:text-4xl">${shownName.toUpperCase()}</div>
+                    <div class="flex gap-6">
+                        <button class="btn-12d btn-green text-xl py-4 px-8" id="btn-true">✅ TRUE</button>
+                        <button class="btn-12d btn-pink text-xl py-4 px-8" id="btn-false">❌ FALSE</button>
+                    </div>
+                </div>
+            `;
+
+            setNinaSpeech(`Is this a ${shownName}?`);
+            audio.speak(`Is this a ${shownName}?`);
+
+            document.getElementById('btn-true').addEventListener('click', () => {
+                if (isTrue) {
+                    handleRoundCorrect('true_false', target.id, 100, `Correct! It's a ${target.name}! 🎉`);
+                } else {
+                    handleWrongAnswer();
+                    setNinaSpeech(`Not quite! That's actually a ${target.name}!`);
+                    setTimeout(loadCurrentGameMode, 1300);
+                }
+            });
+            document.getElementById('btn-false').addEventListener('click', () => {
+                if (!isTrue) {
+                    handleRoundCorrect('true_false', target.id, 100, `Correct! That's really a ${target.name}! 🎉`);
+                } else {
+                    handleWrongAnswer();
+                    setNinaSpeech(`Not quite! That really is a ${target.name}!`);
+                    setTimeout(loadCurrentGameMode, 1300);
+                }
+            });
+        }
+
+        // ===================== MODE 9: CLASSIFY =====================
+        function renderClassifyMode(stageEl) {
+            const target = randomAnimal();
+            const categories = [...new Set(ANIMALS_DB.map(a => a.category))];
+
+            stageEl.innerHTML = `
+                <div class="text-center mb-3">
+                    <h2 class="neon-title text-xl sm:text-2xl mb-1">🗂️ CLASSIFY THE ANIMAL</h2>
+                    <p class="text-xs text-cyan-200">Where does this animal belong?</p>
+                </div>
+                <div class="flex flex-col items-center justify-center my-auto gap-6">
+                    <img src="${target.img}" class="animal-thumb-xl" alt="${target.name}">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-xl">
+                        ${categories.map((cat, i) => `
+                            <button class="btn-12d ${['btn-cyan','btn-pink','btn-yellow','btn-purple','btn-green'][i % 5]} category-btn" data-cat="${cat}">
+                                ${cat}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            setNinaSpeech(`What group does the ${target.name} belong to?`);
+            audio.speak(`Where does the ${target.name} belong?`);
+
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (btn.dataset.cat === target.category) {
+                        handleRoundCorrect('classify', target.id, 100, `Yes! The ${target.name} belongs with ${target.category} animals! 🎉`);
+                    } else {
+                        handleWrongAnswer();
+                        setNinaSpeech(`Not quite! The ${target.name} is a ${target.category} animal!`);
+                        setTimeout(loadCurrentGameMode, 1300);
+                    }
+                });
+            });
+        }
+
+        // ===================== MODE 10: QUIZ TIME =====================
+        function renderQuizMode(stageEl) {
+            const target = randomAnimal();
+            const choices = [target, ...pickDistinct(3, [target.id])].sort(() => Math.random() - 0.5);
+
+            stageEl.innerHTML = `
+                <div class="text-center mb-3">
+                    <h2 class="neon-title text-xl sm:text-2xl mb-1">❓ QUIZ TIME</h2>
+                    <p class="text-xs text-cyan-200">Which one is the <span class="text-yellow-300 font-bold">${target.name}</span>?</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 my-auto w-full max-w-xl mx-auto">
+                    ${choices.map(c => `
+                        <button class="glass-card p-3 flex flex-col items-center gap-1 hover:border-cyan-400 hover:scale-105 transition-all quiz-choice-btn" data-id="${c.id}">
+                            <img src="${c.img}" class="animal-thumb-lg" alt="${c.name}">
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            setNinaSpeech(`Which one is the ${target.name}?`);
+            audio.speak(`Which one is the ${target.name}?`);
+
+            document.querySelectorAll('.quiz-choice-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (btn.dataset.id === target.id) {
+                        handleRoundCorrect('quiz', target.id, 120, `That's right! ${target.name}! 🎉`);
+                    } else {
+                        handleWrongAnswer();
+                        setNinaSpeech(`Not quite! Try again!`);
+                    }
+                });
+            });
+        }
+
+        function switchToRandomMode() {
+            const others = GAME_MODES.filter(m => m.id !== gameState.currentMode);
+            const next = others[Math.floor(Math.random() * others.length)];
+            gameState.currentMode = next.id;
+            document.querySelectorAll('#mode-nav button').forEach(b => {
+                b.classList.toggle('active-mode-btn', b.dataset.mode === next.id);
+            });
+        }
+
+        function loadCurrentGameMode() {
+            if (gameState.modeData.catchInterval) {
+                clearInterval(gameState.modeData.catchInterval);
+            }
+            const stage = document.getElementById('main-stage');
+
+            switch (gameState.currentMode) {
+                case 'match_name': renderMatchNameMode(stage); break;
+                case 'listen_tap': renderListenTapMode(stage); break;
+                case 'memory': renderMemoryMode(stage); break;
+                case 'line_match': renderLineMatchMode(stage); break;
+                case 'word_search': renderWordSearchMode(stage); break;
+                case 'catch_game': renderCatchMode(stage); break;
+                case 'speller': renderSpellerMode(stage); break;
+                case 'true_false': renderTrueFalseMode(stage); break;
+                case 'classify': renderClassifyMode(stage); break;
+                case 'quiz': renderQuizMode(stage); break;
+            }
+        }
+
+        function buildCodexGrid() {
+            const container = document.getElementById('codex-grid-container');
+            container.innerHTML = '';
+            ANIMALS_DB.forEach(item => {
+                const isUnlocked = gameState.unlockedAnimals.has(item.id);
+                const card = document.createElement('div');
+                card.className = `codex-card ${isUnlocked ? 'unlocked' : ''}`;
+                card.innerHTML = `
+                    <img src="${item.img}" class="codex-icon-img" alt="${item.name}">
+                    <span class="text-[10px] font-bold mt-1 ${isUnlocked ? 'text-white' : 'text-gray-400'}">${isUnlocked ? item.name : '???'}</span>
+                `;
+                card.addEventListener('click', () => {
+                    audio.speak(`${item.name}. ${item.category} animal!`);
+                });
+                container.appendChild(card);
+            });
+        }
+
+        function buildModeNav() {
+            const nav = document.getElementById('mode-nav');
+            nav.innerHTML = GAME_MODES.map((m, i) => `
+                <button class="btn-12d ${m.color} text-xs sm:text-sm ${i === 0 ? 'active-mode-btn' : ''}" data-mode="${m.id}">
+                    ${m.label}
+                </button>
+            `).join('');
+
+            nav.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    nav.querySelectorAll('button').forEach(b => b.classList.remove('active-mode-btn'));
+                    btn.classList.add('active-mode-btn');
+                    gameState.currentMode = btn.dataset.mode;
+                    gameState.roundProgress = {};
+                    loadCurrentGameMode();
+                });
+            });
+        }
+
+        document.getElementById('btn-codex').addEventListener('click', () => {
+            buildCodexGrid();
+            document.getElementById('modal-codex').classList.add('active');
+        });
+        document.getElementById('btn-close-codex').addEventListener('click', () => {
+            document.getElementById('modal-codex').classList.remove('active');
+        });
+        document.getElementById('btn-restart').addEventListener('click', () => {
+            document.getElementById('modal-gameover').classList.remove('active');
+            gameState.lives = 3;
+            gameState.level = 1;
+            gameState.roundProgress = {};
+            startTimer(TOTAL_GAME_SECONDS);
+            updateHUD();
+            loadCurrentGameMode();
+        });
+        document.getElementById('nina-avatar').addEventListener('click', () => {
+            audio.speak("Hi! I am Nina! Tap any animal or mode to learn 50 English animals with me!");
+            setNinaSpeech("Hi! I am Nina! I'm here to help you learn 50 animals in English! 🌟", false);
+        });
+        document.getElementById('logo-btn').addEventListener('click', () => {
+            buildCodexGrid();
+            document.getElementById('modal-codex').classList.add('active');
+        });
+
+        function beginGame() {
+            const nameInput = document.getElementById('input-player-name');
+            const ageInput = document.getElementById('input-player-age');
+            const countryInput = document.getElementById('input-player-country');
+            const name = nameInput.value.trim() || 'Player';
+            const age = ageInput.value.trim() || '?';
+            const country = countryInput.value.trim();
+            gameState.playerName = name;
+            gameState.playerAge = age;
+            gameState.playerCountry = country;
+            document.getElementById('modal-welcome').classList.remove('active');
+
+            resizeFxCanvas();
+            buildModeNav();
+            updateHUD();
+            startTimer(TOTAL_GAME_SECONDS);
+            loadCurrentGameMode();
+            renderFx();
+        }
+
+        document.getElementById('btn-start-game').addEventListener('click', beginGame);
+        document.getElementById('input-player-country').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') beginGame();
+        });
+
+        window.onload = () => {
+            resizeFxCanvas();
+            populateCountryOptions();
+            renderFx();
+        };
+    </script>
+</body>
+</html>
