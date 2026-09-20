@@ -1,0 +1,1506 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Nina's World - Animal Word Search</title>
+<!-- Fonts: Orbitron for titles/UI, Fredoka for children letters and animal names -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700;800&amp;family=Orbitron:wght@600;700;800;900&amp;family=Rajdhani:wght@600;700&amp;display=swap" rel="stylesheet">
+<style>
+        :root {
+            --bg-dark: #050816;
+            --panel-bg: rgba(13, 20, 48, 0.75);
+            --panel-border: rgba(34, 211, 238, 0.35);
+            --cyan: #22d3ee;
+            --cyan-glow: rgba(34, 211, 238, 0.5);
+            --pink: #ff2d95;
+            --pink-glow: rgba(255, 45, 149, 0.55);
+            --purple: #a855f7;
+            --yellow: #facc15;
+            --green: #39ff9d;
+            --green-glow: rgba(57, 255, 157, 0.65);
+            --text-primary: #ffffff;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            max-height: 100dvh;
+            overflow: hidden;
+            background-color: var(--bg-dark);
+            font-family: 'Fredoka', cursive, sans-serif;
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        /* Dark cyber neon background with subtle grid & ambient glows */
+        .cyber-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(34, 211, 238, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 20%, rgba(255, 45, 149, 0.13) 0%, transparent 45%),
+                radial-gradient(circle at 50% 85%, rgba(168, 85, 247, 0.10) 0%, transparent 50%),
+                linear-gradient(to right, rgba(34, 211, 238, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(34, 211, 238, 0.04) 1px, transparent 1px),
+                #050816;
+            background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px, 100% 100%;
+        }
+
+        /* Canvas ambient particle layer */
+        #fx-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 55;
+        }
+
+        /* Top Bar & Branding Line */
+        .game-app {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            margin: 0 auto;
+            padding: 8px 14px 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-section {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-shrink: 0;
+            padding-bottom: 4px;
+        }
+
+        .brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #a855f7 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(34, 211, 238, 0.6);
+            border: 1.5px solid rgba(255, 255, 255, 0.6);
+            flex-shrink: 0;
+        }
+
+        .brand-titles {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .main-brand-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #ffffff;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.7);
+            line-height: 1;
+        }
+
+        .tag-pill {
+            align-self: flex-start;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--cyan);
+            border: 1px solid var(--cyan);
+            border-radius: 12px;
+            padding: 2px 8px;
+            background: rgba(34, 211, 238, 0.12);
+            text-transform: uppercase;
+            box-shadow: 0 0 8px rgba(34, 211, 238, 0.3);
+        }
+
+        .hud-cluster {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .hud-pill {
+            background: var(--panel-bg);
+            border: 1.5px solid var(--cyan);
+            border-radius: 30px;
+            padding: 4px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+            font-weight: 700;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(34, 211, 238, 0.25);
+        }
+
+        .hud-pill.timer {
+            border-color: #38bdf8;
+            color: #e0f2fe;
+        }
+
+        .hud-pill.score {
+            border-color: var(--yellow);
+            color: var(--yellow);
+            box-shadow: 0 0 12px rgba(250, 204, 21, 0.3);
+        }
+
+        .btn-action-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            border: 2px solid var(--pink);
+            box-shadow: 0 0 12px rgba(255, 45, 149, 0.45);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #ffffff;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .btn-action-icon:active {
+            transform: scale(0.92);
+        }
+
+        
+        /* ============ MAIN LAYOUT (no scroll) ============ */
+        .game-board-area {
+            --gs: min(calc(100dvh - 90px), 640px);   /* side of the square grid, refined by JS (fitLayout) */
+            --board-gap: 22px;
+            flex: 1 1 0;
+            min-height: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--board-gap);
+            padding-top: 6px;
+        }
+
+        /* ---- Word search grid ---- */
+        .grid-panel {
+            width: var(--gs);
+            height: var(--gs);
+            flex: 0 0 auto;
+            background: var(--panel-bg);
+            border: 2px solid var(--panel-border);
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 0 25px rgba(34, 211, 238, 0.25), inset 0 0 16px rgba(10, 15, 35, 0.8);
+        }
+
+        .word-search-grid {
+            display: grid;
+            grid-template-columns: repeat(10, minmax(0, 1fr));
+            grid-template-rows: repeat(10, minmax(0, 1fr));
+            gap: 6px;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            position: relative;
+        }
+
+        .grid-cell {
+            min-width: 0;
+            background: rgba(18, 28, 64, 0.85);
+            border: 1.5px solid rgba(168, 85, 247, 0.35);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: var(--cell-font, 1.7rem);
+            line-height: 1;
+            font-weight: 800;
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            position: relative;
+        }
+
+        /* Hover (mouse only): neon glow AROUND the cell, no solid fill */
+        @media (hover: hover) {
+            .grid-cell:hover:not(.found):not(.selected) {
+                border-color: #22d3ee;
+                box-shadow: 0 0 16px rgba(34, 211, 238, 0.85), inset 0 0 10px rgba(34, 211, 238, 0.35);
+                transform: scale(1.05);
+                z-index: 4;
+            }
+        }
+
+        /* Dragging / selected: hot pink + cyan neon halo */
+        .grid-cell.selected {
+            background: linear-gradient(180deg, #25164c 0%, #170e33 100%) !important;
+            border-color: #ff2d95 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 22px rgba(255, 45, 149, 1), 0 0 35px rgba(34, 211, 238, 0.5), inset 0 0 12px rgba(255, 45, 149, 0.4) !important;
+            transform: scale(1.08);
+            z-index: 6;
+            text-shadow: 0 0 8px #ffffff;
+        }
+
+        /* Found words: neon green halo */
+        .grid-cell.found {
+            background: linear-gradient(180deg, rgba(14, 46, 32, 0.9) 0%, rgba(8, 30, 20, 0.95) 100%) !important;
+            border-color: #39ff9d !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 16px var(--green-glow), inset 0 0 10px rgba(57, 255, 157, 0.3) !important;
+            text-shadow: 0 0 8px #39ff9d;
+        }
+
+        /* ---- Target animals panel ---- */
+        .targets-panel {
+            width: clamp(290px, 28vw, 380px);
+            height: var(--gs);
+            flex: 0 0 auto;
+            background: var(--panel-bg);
+            border: 2px solid rgba(255, 45, 149, 0.35);
+            border-radius: 20px;
+            padding: 12px 14px;
+            box-shadow: 0 0 25px rgba(255, 45, 149, 0.2), inset 0 0 16px rgba(10, 15, 35, 0.8);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .target-header-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--cyan);
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--cyan-glow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(34, 211, 238, 0.2);
+            flex-shrink: 0;
+        }
+
+        .target-count-badge {
+            font-size: 0.85rem;
+            color: #ffffff;
+            background: rgba(34, 211, 238, 0.18);
+            border: 1px solid var(--cyan);
+            border-radius: 12px;
+            padding: 2px 8px;
+        }
+
+        .targets-card-grid {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: repeat(6, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .animal-target-chip {
+            height: 100%;
+            min-height: 0;
+            min-width: 0;
+            background: rgba(18, 28, 64, 0.9);
+            border: 1.5px solid rgba(168, 85, 247, 0.35);
+            border-radius: 14px;
+            padding: 4px 10px 4px 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+            transition: border-color 0.2s ease, background 0.2s ease;
+            position: relative;
+        }
+
+        @media (hover: hover) {
+            .animal-target-chip:hover { border-color: var(--cyan); }
+        }
+
+        .animal-target-chip.found {
+            background: linear-gradient(90deg, rgba(21, 128, 61, 0.85) 0%, rgba(13, 35, 25, 0.9) 100%);
+            border-color: var(--green);
+            box-shadow: 0 0 14px rgba(57, 255, 157, 0.4);
+        }
+
+        .target-media-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            height: 100%;
+            flex: 1;
+        }
+
+        .target-img-box {
+            height: 100%;
+            max-height: 88px;
+            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.15) 0%, rgba(13, 20, 48, 0.8) 80%);
+            border: 1px solid rgba(34, 211, 238, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            padding: 2px;
+        }
+
+        .target-img-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .target-word-title {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .animal-target-chip.found .target-word-title {
+            color: #86efac;
+            text-decoration: line-through;
+        }
+
+        .target-status-cluster {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .check-badge {
+            display: none;
+            color: var(--green);
+            font-size: 1.15rem;
+            font-weight: 900;
+        }
+
+        .animal-target-chip.found .check-badge { display: inline-block; }
+
+        .btn-sound-target {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+            border: 1.5px solid #ffffff;
+            color: #ffffff;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
+            transition: transform 0.12s ease;
+        }
+
+        .btn-sound-target:active { transform: scale(0.9); }
+
+        /* ---- Nina: lives INSIDE the panel so it never covers the buttons ---- */
+        .nina-mascot-box {
+            flex: 0 0 auto;
+            height: clamp(78px, 13.5dvh, 112px);
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(255, 45, 149, 0.25);
+        }
+
+        .nina-avatar-img {
+            height: 100%;
+            width: auto;
+            aspect-ratio: 212 / 423;
+            object-fit: contain;
+            object-view-box: inset(9.6% 29.6% 5.8% 28.0%);
+            flex-shrink: 0;
+            cursor: pointer;
+            filter: drop-shadow(0 3px 8px rgba(34, 211, 238, 0.3));
+            transition: transform 0.2s ease;
+        }
+
+        .nina-avatar-img:hover { transform: scale(1.06); }
+
+        .speech-bubble-cyber {
+            flex: 1;
+            min-width: 0;
+            align-self: center;
+            background: rgba(13, 20, 48, 0.92);
+            color: #e2e8f0;
+            border: 1.5px solid var(--cyan);
+            border-radius: 14px;
+            padding: 6px 12px;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: clamp(0.78rem, 1.3vw, 0.9rem);
+            font-weight: 600;
+            line-height: 1.25;
+            box-shadow: 0 0 14px rgba(34, 211, 238, 0.35);
+            text-align: left;
+            position: relative;
+        }
+
+        .speech-bubble-cyber::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            margin-top: -7px;
+            border-width: 7px 8px 7px 0;
+            border-style: solid;
+            border-color: transparent var(--cyan) transparent transparent;
+            width: 0;
+            height: 0;
+        }
+
+        /* Very short screens (phone landscape): drop the Nina strip to keep everything visible */
+        .game-board-area.compact .nina-mascot-box { display: none; }
+
+/* Modals Overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 7, 20, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            padding: 14px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-cyber-card {
+            background: linear-gradient(180deg, #0d1430 0%, #050816 100%);
+            border: 2px solid var(--cyan);
+            border-radius: 24px;
+            padding: 24px 20px;
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 0 45px rgba(34, 211, 238, 0.35);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-height: 90dvh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .modal-title.win {
+            color: var(--yellow);
+            text-shadow: 0 0 16px rgba(250, 204, 21, 0.6);
+        }
+
+        .modal-title.lose {
+            color: #f87171;
+            text-shadow: 0 0 16px rgba(248, 113, 113, 0.6);
+        }
+
+        .btn-neon-primary {
+            background: linear-gradient(90deg, #ff2d95 0%, #d946ef 100%);
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            padding: 10px 30px;
+            border: 1.5px solid #ffffff;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--pink-glow);
+            text-transform: uppercase;
+            margin-top: 14px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .btn-neon-primary:active {
+            transform: scale(0.95);
+        }
+
+        /* 50 Animals Album Grid */
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+            gap: 8px;
+            width: 100%;
+            margin-top: 12px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 4px;
+        }
+
+        .album-sticker {
+            background: rgba(18, 28, 64, 0.6);
+            border: 1.5px dashed rgba(255, 255, 255, 0.25);
+            border-radius: 12px;
+            padding: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+            cursor: pointer;
+        }
+
+        .album-sticker.unlocked {
+            background: rgba(13, 20, 48, 0.95);
+            border-style: solid;
+            border-color: var(--cyan);
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.35);
+        }
+
+        .album-sticker img {
+            width: 100%;
+            height: 72%;
+            object-fit: contain;
+            filter: grayscale(1) opacity(0.25);
+        }
+
+        .album-sticker.unlocked img {
+            filter: grayscale(0) opacity(1);
+        }
+
+        .album-sticker-name {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .album-sticker.unlocked .album-sticker-name {
+            color: var(--cyan);
+        }
+
+        
+        /* ============ PORTRAIT / PHONE ============ */
+        @media (max-width: 760px), (orientation: portrait) {
+            .game-app { padding: 6px 8px 8px; }
+
+            .game-board-area {
+                --board-gap: 10px;
+                flex-direction: column;
+                padding-top: 4px;
+            }
+
+            .grid-panel { padding: 6px; border-radius: 16px; }
+            .word-search-grid { gap: 4px; }
+            .grid-cell { border-radius: 7px; border-width: 1px; }
+
+            .targets-panel {
+                width: var(--gs);
+                height: auto;
+                padding: 8px 10px;
+                border-radius: 16px;
+                gap: 6px;
+            }
+
+            .target-header-title { font-size: 0.85rem; }
+
+            .targets-card-grid {
+                flex: none;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                grid-template-rows: repeat(2, 84px);
+                gap: 6px;
+            }
+
+            .animal-target-chip {
+                flex-direction: column;
+                justify-content: center;
+                padding: 4px 4px 3px;
+                border-radius: 12px;
+                gap: 0;
+            }
+
+            .target-media-info {
+                flex: none;
+                width: 100%;
+                height: auto;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .target-img-box {
+                height: 52px;
+                width: 52px;
+                max-height: none;
+                border-radius: 10px;
+            }
+
+            .target-word-title {
+                font-size: 0.95rem;
+                letter-spacing: 0.3px;
+                max-width: 100%;
+                text-align: center;
+            }
+
+            .target-status-cluster {
+                position: absolute;
+                top: 3px;
+                left: 4px;
+                right: 4px;
+                justify-content: space-between;
+                pointer-events: none;
+            }
+
+            .check-badge { font-size: 0.95rem; }
+            .btn-sound-target {
+                width: 26px;
+                height: 26px;
+                font-size: 0.7rem;
+                pointer-events: auto;
+                margin-left: auto;
+            }
+
+            .nina-mascot-box { height: 62px; gap: 8px; padding-top: 4px; }
+            .speech-bubble-cyber { font-size: 0.78rem; padding: 4px 9px; }
+
+            /* short phones: smaller chips, no Nina strip */
+            .game-board-area.compact .targets-card-grid { grid-template-rows: repeat(2, 68px); }
+            .game-board-area.compact .target-img-box { height: 40px; width: 40px; }
+            .game-board-area.compact .target-word-title { font-size: 0.85rem; }
+        }
+
+        /* Narrow phones: compact header so the timer/score/album never get cut off */
+        @media (max-width: 480px) {
+            .brand-cluster { gap: 6px; min-width: 0; }
+            .logo-badge { width: 32px; height: 32px; font-size: 0.9rem; }
+            .main-brand-title { font-size: 0.95rem; letter-spacing: 1px; }
+            .tag-pill { font-size: 0.55rem; padding: 1px 6px; }
+            .hud-cluster { gap: 5px; }
+            .hud-pill { padding: 3px 8px; gap: 4px; font-size: 0.78rem; }
+            .btn-action-icon { width: 32px; height: 32px; font-size: 0.95rem; }
+        }
+</style>
+</head>
+<body>
+<!-- Cyber Background Layer -->
+<div class="cyber-bg"></div>
+<canvas id="fx-canvas"></canvas>
+<div class="game-app">
+<!-- Top Navigation Header -->
+<header class="header-section">
+<div class="brand-cluster">
+<div class="logo-badge">NW</div>
+<div class="brand-titles">
+<h1 class="main-brand-title">NINA'S WORLD</h1>
+<span class="tag-pill">WORD SEARCH</span>
+</div>
+</div>
+<div class="hud-cluster">
+<div class="hud-pill timer">
+<span class="">⏱️</span>
+<span id="timer-text" class="">00:00</span>
+</div>
+<div class="hud-pill score">
+<span class="">⭐</span>
+<span id="score-text" class="">0</span>
+</div>
+<button class="btn-action-icon" id="btn-album" title="50 Animals Album">📖</button>
+</div>
+</header>
+<!-- Main Game Stage: Grid on Left/Top, Targets on Right/Bottom -->
+<main class="game-board-area" id="board-area">
+<!-- 10x10 Word Search Grid -->
+<div class="grid-panel">
+<div class="word-search-grid" id="word-grid"></div>
+</div>
+<!-- Target Animals Panel (6 items per round) -->
+<div class="targets-panel" id="targets-panel">
+<div class="target-header-title">
+<span class="">🔎 FIND THE ANIMALS</span>
+<span class="target-count-badge"><span id="found-count" class="">0</span> / <span id="total-targets" class="">6</span></span>
+</div>
+<div class="targets-card-grid" id="target-words-list"></div>
+<div class="nina-mascot-box">
+<img alt="Nina Mascot" class="nina-avatar-img" id="nina-avatar" onerror="this.style.objectViewBox='none'; this.src='https://placehold.co/120x160/1e1b4b/22d3ee?text=Nina';" src="images/nina_new.png"/>
+<div class="speech-bubble-cyber" id="nina-bubble">Find 6 hidden animals in the grid! 🐾</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Victory Modal -->
+<div class="modal-overlay" id="modal-win">
+<div class="modal-cyber-card">
+<h2 class="modal-title win">Amazing Search! 🎉</h2>
+<p style="font-size: 1rem; color: #cbd5e1; margin-bottom: 12px;" class="">You found all the animals in this round!</p>
+<div style="background: rgba(18, 28, 64, 0.9); border: 1.5px solid var(--cyan); padding: 10px 18px; border-radius: 16px; width: 100%; margin-bottom: 12px; font-size: 1.1rem; color: #ffffff;" class="">
+                Animals Unlocked: <strong id="modal-unlocked-count" style="color: var(--green);">0 / 50</strong>
+</div>
+<button class="btn-neon-primary" id="btn-next-round">Next Round 🚀</button>
+</div>
+</div>
+<!-- Time's Up Modal -->
+<div class="modal-overlay" id="modal-lose">
+<div class="modal-cyber-card">
+<h2 class="modal-title lose">Time's Up! ⏱️</h2>
+<p style="font-size: 1rem; color: #cbd5e1; margin-bottom: 14px;" class="">Keep practicing, you're doing great!</p>
+<button class="btn-neon-primary" id="btn-retry">Try Again 🔄</button>
+</div>
+</div>
+<!-- 50 Animals Sticker Album Modal -->
+<div class="modal-overlay" id="modal-album">
+<div class="modal-cyber-card" style="max-width: 540px;">
+<h2 class="modal-title win" style="font-size: 1.5rem;">50 Animals Collection 📖</h2>
+<p style="font-size: 0.85rem; color: #cbd5e1;" class="">Tap unlocked stickers to listen in English!</p>
+<div class="album-grid" id="album-container"></div>
+<button class="btn-neon-primary" id="btn-close-album">Close ✖️</button>
+</div>
+</div>
+<script>
+        const MASTER_50_ANIMALS = [
+            // FARM / PETS (10)
+            { id: 'cat', name: 'CAT', biome: 'farm', img: 'images/1%20CAT.png', crop: 'inset(6.4% 23.6% 2.0% 31.1%)' },
+            { id: 'dog', name: 'DOG', biome: 'farm', img: 'images/2%20DOG.png', crop: 'inset(6.4% 28.6% 3.4% 27.9%)' },
+            { id: 'cow', name: 'COW', biome: 'farm', img: 'images/3%20COW.png', crop: 'inset(6.9% 22.8% 0.7% 27.6%)' },
+            { id: 'pig', name: 'PIG', biome: 'farm', img: 'images/4%20PIG.png', crop: 'inset(4.5% 28.6% 3.4% 28.5%)' },
+            { id: 'horse', name: 'HORSE', biome: 'farm', img: 'images/5%20HORSE.png', crop: 'inset(1.0% 21.2% 0.0% 22.4%)' },
+            { id: 'sheep', name: 'SHEEP', biome: 'farm', img: 'images/6%20SHEEP.png', crop: 'inset(4.8% 23.6% 0.4% 27.9%)' },
+            { id: 'rabbit', name: 'RABBIT', biome: 'farm', img: 'images/7%20RABBIT.png', crop: 'inset(3.7% 30.2% 2.0% 32.7%)' },
+            { id: 'duck', name: 'DUCK', biome: 'farm', img: 'images/8%20DUCK.png', crop: 'inset(2.9% 30.7% 1.8% 33.5%)' },
+            { id: 'chicken', name: 'CHICKEN', biome: 'farm', img: 'images/9%20CHICKEN.png', crop: 'inset(1.8% 31.0% 1.0% 30.4%)' },
+            { id: 'rooster', name: 'ROOSTER', biome: 'farm', img: 'images/10%20ROOSTER.png', crop: 'inset(2.6% 29.9% 0.0% 27.3%)' },
+
+            // JUNGLE / SAFARI (10)
+            { id: 'goat', name: 'GOAT', biome: 'jungle', img: 'images/11%20GOAT.png', crop: 'inset(6.9% 24.9% 0.4% 30.8%)' },
+            { id: 'lion', name: 'LION', biome: 'jungle', img: 'images/12%20LION.png', crop: 'inset(5.6% 28.8% 6.1% 32.5%)' },
+            { id: 'elephant', name: 'ELEPHANT', biome: 'jungle', img: 'images/13%20ELEPHANT.png', crop: 'inset(5.8% 28.9% 5.3% 26.8%)' },
+            { id: 'tiger', name: 'TIGER', biome: 'jungle', img: 'images/14%20TIGER.png', crop: 'inset(0.4% 30.4% 1.8% 26.8%)' },
+            { id: 'giraffe', name: 'GIRAFFE', biome: 'jungle', img: 'images/15%20GIRAFFE.png', crop: 'inset(1.0% 32.5% 0.0% 27.4%)' },
+            { id: 'zebra', name: 'ZEBRA', biome: 'jungle', img: 'images/16%20%20ZEBRA.png', crop: 'inset(1.8% 24.8% 0.4% 31.4%)' },
+            { id: 'monkey', name: 'MONKEY', biome: 'jungle', img: 'images/17%20MONKEY.png', crop: 'inset(5.8% 33.6% 4.5% 33.5%)' },
+            { id: 'hippo', name: 'HIPPO', biome: 'jungle', img: 'images/25%20HIPPO.png', crop: 'inset(5.6% 27.1% 3.4% 28.6%)' },
+            { id: 'camel', name: 'CAMEL', biome: 'jungle', img: 'images/48%20CAMEL.png', crop: 'inset(2.9% 25.8% 0.0% 26.7%)' },
+            { id: 'rhino', name: 'RHINO', biome: 'jungle', img: 'images/49%20RHINO.png', crop: 'inset(7.5% 25.5% 3.9% 25.5%)' },
+
+            // FOREST & WILD (10)
+            { id: 'bear', name: 'BEAR', biome: 'forest', img: 'images/18%20BEAR.png', crop: 'inset(3.9% 29.9% 3.4% 29.8%)' },
+            { id: 'wolf', name: 'WOLF', biome: 'forest', img: 'images/19%20WOLF.png', crop: 'inset(1.5% 23.0% 0.0% 30.5%)' },
+            { id: 'fox', name: 'FOX', biome: 'forest', img: 'images/20%20FOX.png', crop: 'inset(1.5% 31.7% 1.5% 24.3%)' },
+            { id: 'deer', name: 'DEER', biome: 'forest', img: 'images/21%20DEER.png', crop: 'inset(7.5% 29.3% 3.4% 27.4%)' },
+            { id: 'panda', name: 'PANDA', biome: 'forest', img: 'images/22%20PANDA.png', crop: 'inset(5.6% 30.4% 2.3% 29.8%)' },
+            { id: 'kangaroo', name: 'KANGAROO', biome: 'forest', img: 'images/23%20KANGAROO.png', crop: 'inset(0.0% 33.0% 0.0% 25.7%)' },
+            { id: 'koala', name: 'KOALA', biome: 'forest', img: 'images/24%20KOALA.png', crop: 'inset(2.6% 22.4% 0.0% 26.7%)' },
+            { id: 'owl', name: 'OWL', biome: 'forest', img: 'images/27%20OWL.png', crop: 'inset(6.9% 30.2% 7.2% 30.2%)' },
+            { id: 'hedgehog', name: 'HEDGEHOG', biome: 'forest', img: 'images/46%20HEDGEHOG.png', crop: 'inset(3.7% 19.9% 4.2% 20.3%)' },
+            { id: 'squirrel', name: 'SQUIRREL', biome: 'forest', img: 'images/50%20SQUIRREL.png', crop: 'inset(3.4% 20.0% 1.8% 14.7%)' },
+
+            // OCEAN & SEA (10)
+            { id: 'fish', name: 'FISH', biome: 'ocean', img: 'images/34%20FISH.png', crop: 'inset(5.6% 14.9% 9.1% 16.9%)' },
+            { id: 'dolphin', name: 'DOLPHIN', biome: 'ocean', img: 'images/35%20DOLPHIN.png', crop: 'inset(5.6% 27.0% 1.5% 23.7%)' },
+            { id: 'whale', name: 'WHALE', biome: 'ocean', img: 'images/36%20WHALE.png', crop: 'inset(10.4% 7.8% 5.6% 2.9%)' },
+            { id: 'shark', name: 'SHARK', biome: 'ocean', img: 'images/37%20SHARK.png', crop: 'inset(6.9% 10.0% 8.0% 11.3%)' },
+            { id: 'octopus', name: 'OCTOPUS', biome: 'ocean', img: 'images/38%20OCTOPUS.png', crop: 'inset(2.6% 3.9% 5.3% 6.7%)' },
+            { id: 'crab', name: 'CRAB', biome: 'ocean', img: 'images/39%20CRAB.png', crop: 'inset(17.8% 8.4% 7.3% 7.0%)' },
+            { id: 'starfish', name: 'STARFISH', biome: 'ocean', img: 'images/40%20STARFISH.png', crop: 'inset(3.3% 19.6% 2.8% 19.6%)' },
+            { id: 'seal', name: 'SEAL', biome: 'ocean', img: 'images/41%20SEAL.png', crop: 'inset(8.8% 5.6% 8.6% 9.6%)' },
+            { id: 'turtle', name: 'TURTLE', biome: 'ocean', img: 'images/42%20TURTLE.png', crop: 'inset(15.1% 21.1% 6.1% 19.9%)' },
+            { id: 'penguin', name: 'PENGUIN', biome: 'ocean', img: 'images/28%20PENGUIN.png', crop: 'inset(3.7% 27.6% 0.1% 27.9%)' },
+
+            // SMALL & BUGS & BIRDS (10)
+            { id: 'bird', name: 'BIRD', biome: 'small', img: 'images/26%20BIRD.png', crop: 'inset(5.6% 31.9% 5.8% 24.3%)' },
+            { id: 'butterfly', name: 'BUTTERFLY', biome: 'small', img: 'images/29%20BUTTERFLAY.png', crop: 'inset(2.9% 19.2% 1.5% 18.4%)' },
+            { id: 'bee', name: 'BEE', biome: 'small', img: 'images/30%20BEE.png', crop: 'inset(5.3% 25.1% 0.7% 30.2%)' },
+            { id: 'ladybug', name: 'LADYBUG', biome: 'small', img: 'images/31%20LADYBUG.png', crop: 'inset(1.5% 21.4% 5.3% 22.8%)' },
+            { id: 'bat', name: 'BAT', biome: 'small', img: 'images/32%20BAT.png', crop: 'inset(3.1% 31.1% 4.8% 28.6%)' },
+            { id: 'snail', name: 'SNAIL', biome: 'small', img: 'images/33%20SNAIL.png', crop: 'inset(4.8% 26.8% 3.1% 23.3%)' },
+            { id: 'frog', name: 'FROG', biome: 'small', img: 'images/43%20FROG.png', crop: 'inset(11.5% 15.0% 12.9% 6.3%)' },
+            { id: 'snake', name: 'SNAKE', biome: 'small', img: 'images/44%20SNAKE.png', crop: 'inset(13.2% 10.6% 9.5% 11.1%)' },
+            { id: 'mouse', name: 'MOUSE', biome: 'small', img: 'images/45%20MOUSE.png', crop: 'inset(9.6% 23.4% 8.0% 20.3%)' },
+            { id: 'donkey', name: 'DONKEY', biome: 'small', img: 'images/47%20DONKEY.png', crop: 'inset(0.7% 31.6% 0.4% 27.7%)' }
+        ];
+
+        class AudioEngine {
+            constructor() {
+                this.ctx = null;
+                this.synth = window.speechSynthesis;
+                this.preferredVoice = null;
+                this.initVoice();
+            }
+
+            pickVoice() {
+                const voices = this.synth.getVoices() || [];
+                const en = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'));
+                const friendly = /zira|aria|jenny|samantha|natural|female|hazel|susan/i;
+                this.preferredVoice =
+                    en.find(v => v.localService && v.lang.toLowerCase() === 'en-us' && friendly.test(v.name))
+                    || en.find(v => v.localService && v.lang.toLowerCase() === 'en-us')
+                    || en.find(v => v.localService)
+                    || en.find(v => v.lang.toLowerCase() === 'en-us')
+                    || en[0]
+                    || null;
+            }
+
+            initVoice() {
+                if (!this.synth) return;
+                this.pickVoice();
+                if (this.synth.onvoiceschanged !== undefined) {
+                    this.synth.onvoiceschanged = () => this.pickVoice();
+                }
+            }
+
+            initCtx() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) this.ctx = new AudioContext();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+            }
+
+            playTone(freq, type = 'sine', duration = 0.2, gainVal = 0.1) {
+                this.initCtx();
+                if (!this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e){}
+            }
+
+            speakWord(text) {
+                if (!this.synth) return;
+                // Chrome a veces ignora speak() si se llama justo despues de cancel(): esperamos un instante
+                this.synth.cancel();
+                clearTimeout(this.speakTimer);
+                this.speakTimer = setTimeout(() => {
+                    if (!this.preferredVoice) this.pickVoice();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    utterance.pitch = 1.15;
+                    utterance.volume = 1;
+                    if (this.preferredVoice) utterance.voice = this.preferredVoice;
+                    // Guardamos la referencia para que el navegador no la borre antes de terminar de hablar
+                    this.currentUtterance = utterance;
+                    utterance.onend = utterance.onerror = () => {
+                        if (this.currentUtterance === utterance) this.currentUtterance = null;
+                    };
+                    this.synth.resume();
+                    this.synth.speak(utterance);
+                }, 80);
+            }
+
+            playSuccess() {
+                this.playTone(523.25, 'triangle', 0.12, 0.15);
+                setTimeout(() => this.playTone(659.25, 'triangle', 0.12, 0.15), 90);
+                setTimeout(() => this.playTone(783.99, 'triangle', 0.25, 0.2), 180);
+            }
+
+            playPop() {
+                this.playTone(400, 'sine', 0.08, 0.1);
+            }
+        }
+
+        const soundSystem = new AudioEngine();
+
+        let state = {
+            currentBiome: 'all',
+            score: 0,
+            unlockedAnimals: new Set(),
+            gridSize: 10,
+            gridData: [],
+            targetWords: [],
+            isSelecting: false,
+            selectedCells: [],
+            timerSeconds: 120,
+            timerInterval: null
+        };
+
+        const wordGridEl = document.getElementById('word-grid');
+        const targetWordsListEl = document.getElementById('target-words-list');
+        const foundCountEl = document.getElementById('found-count');
+        const totalTargetsEl = document.getElementById('total-targets');
+        const scoreTextEl = document.getElementById('score-text');
+        const timerTextEl = document.getElementById('timer-text');
+        const ninaBubbleEl = document.getElementById('nina-bubble');
+        const modalWinEl = document.getElementById('modal-win');
+        const modalLoseEl = document.getElementById('modal-lose');
+        const modalAlbumEl = document.getElementById('modal-album');
+        const albumContainerEl = document.getElementById('album-container');
+
+        function getFilteredAnimals() {
+            if (state.currentBiome === 'all') return MASTER_50_ANIMALS;
+            return MASTER_50_ANIMALS.filter(a => a.biome === state.currentBiome);
+        }
+
+        function startNewRound() {
+            clearInterval(state.timerInterval);
+            state.timerSeconds = 120;
+            updateTimerDisplay();
+            startTimer();
+
+            const available = getFilteredAnimals();
+            const shuffled = [...available].sort(() => 0.5 - Math.random());
+            const targetsCount = Math.min(6, shuffled.length);
+            const selectedAnimals = shuffled.slice(0, targetsCount);
+
+            state.gridSize = 10;
+            let success = false;
+            let attempts = 0;
+
+            while (!success && attempts < 50) {
+                attempts++;
+                const result = tryBuildGrid(selectedAnimals, state.gridSize);
+                if (result) {
+                    state.gridData = result.grid;
+                    state.targetWords = result.placedTargets;
+                    success = true;
+                }
+            }
+
+            renderGrid();
+            renderTargetWordsList();
+            setNinaSpeech(`Find ${targetsCount} hidden animals in the grid! 🐾`);
+        }
+
+        function tryBuildGrid(animals, size) {
+            const grid = Array(size).fill(null).map(() => Array(size).fill(''));
+            const placedTargets = [];
+
+            const directions = [
+                [0, 1],   // Right
+                [1, 0],   // Down
+                [1, 1],   // Down-Right
+                [-1, 1],  // Up-Right
+                [0, -1],  // Left
+                [-1, 0]   // Up
+            ];
+
+            for (let animal of animals) {
+                const word = animal.name;
+                let wordPlaced = false;
+                let wordAttempts = 0;
+
+                while (!wordPlaced && wordAttempts < 80) {
+                    wordAttempts++;
+                    const dir = directions[Math.floor(Math.random() * directions.length)];
+                    const dRow = dir[0];
+                    const dCol = dir[1];
+
+                    const startRow = Math.floor(Math.random() * size);
+                    const startCol = Math.floor(Math.random() * size);
+
+                    const endRow = startRow + dRow * (word.length - 1);
+                    const endCol = startCol + dCol * (word.length - 1);
+
+                    if (endRow >= 0 && endRow < size && endCol >= 0 && endCol < size) {
+                        let canPlace = true;
+                        const coords = [];
+
+                        for (let i = 0; i < word.length; i++) {
+                            const r = startRow + dRow * i;
+                            const c = startCol + dCol * i;
+                            if (grid[r][c] !== '' && grid[r][c] !== word[i]) {
+                                canPlace = false;
+                                break;
+                            }
+                            coords.push({ r, c });
+                        }
+
+                        if (canPlace) {
+                            for (let i = 0; i < word.length; i++) {
+                                const { r, c } = coords[i];
+                                grid[r][c] = word[i];
+                            }
+                            placedTargets.push({
+                                animal: animal,
+                                found: false,
+                                coords: coords
+                            });
+                            wordPlaced = true;
+                        }
+                    }
+                }
+
+                if (!wordPlaced) return null;
+            }
+
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    if (grid[r][c] === '') {
+                        grid[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
+                    }
+                }
+            }
+
+            return { grid, placedTargets };
+        }
+
+        function renderGrid() {
+            wordGridEl.innerHTML = '';
+
+            for (let r = 0; r < state.gridSize; r++) {
+                for (let c = 0; c < state.gridSize; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.dataset.r = r;
+                    cell.dataset.c = c;
+                    cell.textContent = state.gridData[r][c];
+
+                    const isFound = state.targetWords.some(t => t.found && t.coords.some(coord => coord.r === r && coord.c === c));
+                    if (isFound) {
+                        cell.classList.add('found');
+                    }
+
+                    wordGridEl.appendChild(cell);
+                }
+            }
+        }
+
+        function renderTargetWordsList() {
+            targetWordsListEl.innerHTML = '';
+            let foundCount = 0;
+
+            state.targetWords.forEach(target => {
+                if (target.found) foundCount++;
+
+                const chip = document.createElement('div');
+                chip.className = `animal-target-chip ${target.found ? 'found' : ''}`;
+
+                const fallbackImg = `https://placehold.co/100x100/1e1b4b/22d3ee?text=${target.animal.name}`;
+
+                chip.innerHTML = `
+                    <div class="target-media-info">
+                        <div class="target-img-box">
+                            <img src="${target.animal.img}" alt="${target.animal.name}" class="target-img-thumb" style="object-view-box: ${target.animal.crop};" onerror="this.style.objectViewBox='none'; this.src='${fallbackImg}'">
+                        </div>
+                        <span class="target-word-title">${target.animal.name}</span>
+                    </div>
+                    <div class="target-status-cluster">
+                        <span class="check-badge">✓</span>
+                        <button class="btn-sound-target" title="Listen animal name">🔊</button>
+                    </div>
+                `;
+
+                chip.querySelector('.btn-sound-target').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    soundSystem.speakWord(target.animal.name);
+                });
+
+                targetWordsListEl.appendChild(chip);
+            });
+
+            foundCountEl.textContent = foundCount;
+            totalTargetsEl.textContent = state.targetWords.length;
+            fitTitles();
+        }
+
+        function attachGridInteractions() {
+            let startCell = null;
+
+            const getCellFromPoint = (x, y) => {
+                const el = document.elementFromPoint(x, y);
+                if (el && el.classList.contains('grid-cell')) {
+                    return {
+                        r: parseInt(el.dataset.r),
+                        c: parseInt(el.dataset.c),
+                        el: el
+                    };
+                }
+                return null;
+            };
+
+            const startSelection = (r, c) => {
+                state.isSelecting = true;
+                startCell = { r, c };
+                updateSelectionPath(r, c);
+                soundSystem.playPop();
+            };
+
+            const updateSelectionPath = (currR, currC) => {
+                if (!state.isSelecting || !startCell) return;
+
+                const dr = currR - startCell.r;
+                const dc = currC - startCell.c;
+
+                const steps = Math.max(Math.abs(dr), Math.abs(dc));
+                if (steps === 0) {
+                    highlightCells([{ r: startCell.r, c: startCell.c }]);
+                    return;
+                }
+
+                const stepR = Math.round(dr / steps);
+                const stepC = Math.round(dc / steps);
+
+                if (stepR === 0 || stepC === 0 || Math.abs(stepR) === Math.abs(stepC)) {
+                    const path = [];
+                    for (let i = 0; i <= steps; i++) {
+                        path.push({
+                            r: startCell.r + stepR * i,
+                            c: startCell.c + stepC * i
+                        });
+                    }
+                    highlightCells(path);
+                }
+            };
+
+            let lastPathKey = '';
+            const highlightCells = (path) => {
+                const key = path.length + ':' + path[0].r + ',' + path[0].c + '>' + path[path.length - 1].r + ',' + path[path.length - 1].c;
+                if (key === lastPathKey && state.selectedCells.length) return;
+                lastPathKey = key;
+                state.selectedCells = path;
+                document.querySelectorAll('.grid-cell').forEach(cell => {
+                    if (!cell.classList.contains('found')) {
+                        cell.classList.remove('selected');
+                    }
+                });
+
+                path.forEach(coord => {
+                    const el = document.querySelector(`.grid-cell[data-r="${coord.r}"][data-c="${coord.c}"]`);
+                    if (el && !el.classList.contains('found')) {
+                        el.classList.add('selected');
+                    }
+                });
+            };
+
+            const endSelection = () => {
+                if (!state.isSelecting) return;
+                state.isSelecting = false;
+                lastPathKey = '';
+
+                let selectedWord = state.selectedCells.map(coord => state.gridData[coord.r][coord.c]).join('');
+                let reverseWord = selectedWord.split('').reverse().join('');
+
+                let matchedTarget = state.targetWords.find(t => 
+                    !t.found && (t.animal.name === selectedWord || t.animal.name === reverseWord)
+                );
+
+                if (matchedTarget) {
+                    matchedTarget.found = true;
+                    state.score += 150;
+                    state.unlockedAnimals.add(matchedTarget.animal.id);
+                    updateHUD();
+
+                    soundSystem.playSuccess();
+                    soundSystem.speakWord(matchedTarget.animal.name);
+
+                    setNinaSpeech(`Super! You found the ${matchedTarget.animal.name}! 🌟`);
+                    triggerConfettiAtGrid();
+
+                    renderGrid();
+                    renderTargetWordsList();
+
+                    if (state.targetWords.every(t => t.found)) {
+                        setTimeout(handleRoundVictory, 1100);
+                    }
+                } else {
+                    document.querySelectorAll('.grid-cell.selected').forEach(c => c.classList.remove('selected'));
+                }
+
+                state.selectedCells = [];
+                startCell = null;
+            };
+
+            wordGridEl.addEventListener('mousedown', (e) => {
+                const cell = getCellFromPoint(e.clientX, e.clientY);
+                if (cell) startSelection(cell.r, cell.c);
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (state.isSelecting) {
+                    const cell = getCellFromPoint(e.clientX, e.clientY);
+                    if (cell) updateSelectionPath(cell.r, cell.c);
+                }
+            });
+
+            window.addEventListener('mouseup', endSelection);
+
+            wordGridEl.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                const cell = getCellFromPoint(touch.clientX, touch.clientY);
+                if (cell) startSelection(cell.r, cell.c);
+            }, { passive: true });
+
+            window.addEventListener('touchmove', (e) => {
+                if (state.isSelecting) {
+                    const touch = e.touches[0];
+                    const cell = getCellFromPoint(touch.clientX, touch.clientY);
+                    if (cell) updateSelectionPath(cell.r, cell.c);
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchend', endSelection);
+            window.addEventListener('touchcancel', endSelection);
+        }
+
+        function startTimer() {
+            state.timerInterval = setInterval(() => {
+                state.timerSeconds--;
+                updateTimerDisplay();
+
+                if (state.timerSeconds <= 0) {
+                    clearInterval(state.timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(state.timerSeconds / 60).toString().padStart(2, '0');
+            const secs = (state.timerSeconds % 60).toString().padStart(2, '0');
+            timerTextEl.textContent = `${mins}:${secs}`;
+        }
+
+        function updateHUD() {
+            scoreTextEl.textContent = state.score;
+        }
+
+        function setNinaSpeech(text) {
+            ninaBubbleEl.textContent = text;
+        }
+
+        function handleRoundVictory() {
+            clearInterval(state.timerInterval);
+            document.getElementById('modal-unlocked-count').textContent = `${state.unlockedAnimals.size} / 50`;
+            modalWinEl.classList.add('active');
+        }
+
+        function handleTimeOut() {
+            modalLoseEl.classList.add('active');
+        }
+
+        function resetGame() {
+            modalWinEl.classList.remove('active');
+            modalLoseEl.classList.remove('active');
+            startNewRound();
+        }
+
+        function buildAlbumGrid() {
+            albumContainerEl.innerHTML = '';
+            MASTER_50_ANIMALS.forEach(animal => {
+                const isUnlocked = state.unlockedAnimals.has(animal.id);
+                const sticker = document.createElement('div');
+                sticker.className = `album-sticker ${isUnlocked ? 'unlocked' : ''}`;
+                
+                const fallbackImg = `https://placehold.co/100x100/1e1b4b/22d3ee?text=${animal.name}`;
+
+                sticker.innerHTML = `
+                    <img src="${animal.img}" alt="${animal.name}" style="object-view-box: ${animal.crop};" onerror="this.style.objectViewBox='none'; this.src='${fallbackImg}'">
+                    <span class="album-sticker-name">${isUnlocked ? animal.name : '???'}</span>
+                `;
+
+                if (isUnlocked) {
+                    sticker.addEventListener('click', () => {
+                        soundSystem.speakWord(animal.name);
+                    });
+                }
+
+                albumContainerEl.appendChild(sticker);
+            });
+        }
+
+        const canvas = document.getElementById('fx-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createParticle(x, y) {
+            const colors = ['#22d3ee', '#ff2d95', '#a855f7', '#facc15', '#39ff9d'];
+            return {
+                x: x || Math.random() * canvas.width,
+                y: y || Math.random() * canvas.height,
+                size: Math.random() * 5 + 3,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                vx: (Math.random() - 0.5) * 6,
+                vy: (Math.random() - 0.5) * 6 - 2,
+                opacity: 1
+            };
+        }
+
+        let confettiRunning = false;
+
+        function triggerConfettiAtGrid() {
+            const rect = wordGridEl.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            for (let i = 0; i < 30; i++) {
+                particles.push(createParticle(cx, cy));
+            }
+            if (!confettiRunning) {
+                confettiRunning = true;
+                requestAnimationFrame(renderParticles);
+            }
+        }
+
+        function renderParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = particles.filter(p => p.opacity > 0);
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.opacity -= 0.015;
+
+                ctx.globalAlpha = Math.max(0, p.opacity);
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+            if (particles.length) {
+                requestAnimationFrame(renderParticles);
+            } else {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                confettiRunning = false;
+            }
+        }
+
+        document.getElementById('nina-avatar').addEventListener('click', () => {
+            soundSystem.speakWord("Hello! I am Nina! Let's find all 50 animals in English!");
+        });
+
+        document.getElementById('btn-album').addEventListener('click', () => {
+            buildAlbumGrid();
+            modalAlbumEl.classList.add('active');
+        });
+
+        document.getElementById('btn-close-album').addEventListener('click', () => {
+            modalAlbumEl.classList.remove('active');
+        });
+
+        document.getElementById('btn-next-round').addEventListener('click', resetGame);
+        document.getElementById('btn-retry').addEventListener('click', resetGame);
+
+        /* ---------- Layout fitting: biggest square grid that fits, panel right next to it ---------- */
+        const boardEl = document.getElementById('board-area');
+        const targetsPanelEl = document.getElementById('targets-panel');
+        const portraitMQ = window.matchMedia('(max-width: 760px), (orientation: portrait)');
+
+        function fitTitles() {
+            document.querySelectorAll('.target-word-title').forEach(el => {
+                el.style.fontSize = '';
+                let size = parseFloat(getComputedStyle(el).fontSize);
+                let guard = 14;
+                while (el.scrollWidth > el.clientWidth + 1 && size > 9 && guard-- > 0) {
+                    size -= 1;
+                    el.style.fontSize = size + 'px';
+                }
+            });
+        }
+
+        function fitLayout() {
+            const cs = getComputedStyle(boardEl);
+            const portrait = portraitMQ.matches;
+            const gap = parseFloat(portrait ? cs.rowGap : cs.columnGap) || 0;
+            const boardW = boardEl.clientWidth;
+            const boardH = boardEl.clientHeight;
+
+            boardEl.classList.toggle('compact', boardH < (portrait ? 600 : 420));
+
+            let gs;
+            if (portrait) {
+                boardEl.style.setProperty('--gs', boardW + 'px');
+                gs = Math.min(boardW, boardH - targetsPanelEl.offsetHeight - gap);
+            } else {
+                gs = Math.min(boardH, boardW - targetsPanelEl.offsetWidth - gap);
+            }
+            gs = Math.max(200, Math.floor(gs));
+            boardEl.style.setProperty('--gs', gs + 'px');
+
+            // letter size follows the real cell size (big and clear for kids)
+            const gcs = getComputedStyle(wordGridEl);
+            const cellGap = parseFloat(gcs.columnGap) || 0;
+            const cell = (wordGridEl.clientWidth - cellGap * (state.gridSize - 1)) / state.gridSize;
+            if (cell > 0) boardEl.style.setProperty('--cell-font', (cell * 0.62).toFixed(1) + 'px');
+
+            fitTitles();
+        }
+
+        window.addEventListener('resize', fitLayout);
+        window.addEventListener('orientationchange', () => setTimeout(fitLayout, 120));
+        if (window.ResizeObserver) new ResizeObserver(fitLayout).observe(boardEl);
+        if (portraitMQ.addEventListener) portraitMQ.addEventListener('change', fitLayout);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitLayout);
+
+        window.onload = () => {
+            attachGridInteractions();
+            updateHUD();
+            startNewRound();
+            fitLayout();
+        };
+    </script>
+
+
+</body></html>
