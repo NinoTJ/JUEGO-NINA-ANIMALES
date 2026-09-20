@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Nina's World - Drag the Name</title>
+  <!-- Google Fonts: Orbitron for futuristic headers, Fredoka for friendly kid-readable UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070a1e;
+      --bg-darker: #040612;
+      --neon-cyan: #22d3ee;
+      --neon-pink: #ff2d95;
+      --neon-purple: #a855f7;
+      --neon-yellow: #facc15;
+      --neon-green: #4ade80;
+      --glass-bg: rgba(13, 20, 48, 0.72);
+      --glass-border: rgba(34, 211, 238, 0.28);
+      --font-orbitron: 'Orbitron', -apple-system, sans-serif;
+      --font-fredoka: 'Fredoka', cursive, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-darker);
+      background-image: 
+        radial-gradient(circle at 50% 10%, rgba(34, 211, 238, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(255, 45, 149, 0.1) 0%, transparent 45%),
+        linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      font-family: var(--font-fredoka);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient animated neon dust glow */
+    .cyber-glow-orb {
+      position: fixed;
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: pulseGlow 8s infinite alternate ease-in-out;
+    }
+    .orb-left {
+      top: -100px;
+      left: -100px;
+      background: radial-gradient(circle, var(--neon-cyan), transparent 70%);
+    }
+    .orb-right {
+      bottom: -100px;
+      right: -100px;
+      background: radial-gradient(circle, var(--neon-pink), transparent 70%);
+    }
+
+    @keyframes pulseGlow {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.25; }
+      100% { transform: scale(1.15) translate(20px, 20px); opacity: 0.45; }
+    }
+
+    /* Top Navigation bar matching Nina's World website header */
+    .site-header {
+      width: 100%;
+      max-width: 1200px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      z-index: 20;
+      position: relative;
+    }
+
+    .brand-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nw-badge {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #0ea5e9, #ff2d95);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-orbitron);
+      font-weight: 900;
+      font-size: 16px;
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(14, 165, 233, 0.5), inset 0 0 8px rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      flex-shrink: 0;
+    }
+
+    .brand-title-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-family: var(--font-orbitron);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(34, 211, 238, 0.6), 0 0 20px rgba(34, 211, 238, 0.3);
+    }
+    .brand-title span {
+      color: var(--neon-cyan);
+    }
+
+    .game-pill-badge {
+      align-self: flex-start;
+      margin-top: 2px;
+      font-family: var(--font-orbitron);
+      font-size: 9px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: rgba(34, 211, 238, 0.12);
+      border: 1px solid rgba(34, 211, 238, 0.45);
+      color: var(--neon-cyan);
+      box-shadow: 0 0 8px rgba(34, 211, 238, 0.2);
+    }
+
+    /* Game HUD Stats (Lives, Score, Timer) */
+    .hud-stats-container {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 8px 18px;
+      border-radius: 40px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(34, 211, 238, 0.15);
+    }
+
+    .lives-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .heart-icon {
+      font-size: 20px;
+      display: inline-block;
+      filter: drop-shadow(0 0 6px rgba(255, 45, 149, 0.7));
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .heart-icon.lost {
+      opacity: 0.22;
+      filter: grayscale(1);
+      transform: scale(0.75);
+      animation: heartBreak 0.4s ease-out;
+    }
+
+    @keyframes heartBreak {
+      0% { transform: scale(1.4) rotate(0deg); }
+      30% { transform: scale(1.2) rotate(-15deg); }
+      60% { transform: scale(0.9) rotate(15deg); }
+      100% { transform: scale(0.75) rotate(0deg); }
+    }
+
+    .hud-divider {
+      width: 1px;
+      height: 22px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .score-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-orbitron);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--neon-yellow);
+      text-shadow: 0 0 8px rgba(250, 204, 21, 0.5);
+    }
+    .score-badge .score-label {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 1px;
+    }
+
+    /* Timer line */
+    .timer-track-wrap {
+      width: 100%;
+      max-width: 900px;
+      padding: 0 20px;
+      margin-bottom: 8px;
+      z-index: 10;
+    }
+    .timer-container {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+      border: 1px solid rgba(34, 211, 238, 0.2);
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+    .timer-bar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+      box-shadow: 0 0 12px var(--neon-cyan);
+      border-radius: 9999px;
+      transition: width 1s linear, background 0.3s;
+    }
+    .timer-bar.warning {
+      background: linear-gradient(90deg, #f97316, #ef4444);
+      box-shadow: 0 0 14px #ef4444;
+    }
+
+    /* Main game board wrapper */
+    .game-main {
+      width: 100%;
+      max-width: 1360px;
+      padding: 10px 20px 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+      flex: 1;
+    }
+
+    .instruction-bar {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .instruction-title {
+      font-family: var(--font-orbitron);
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(34, 211, 238, 0.5);
+    }
+    .instruction-title span {
+      color: var(--neon-cyan);
+      text-shadow: 0 0 16px rgba(34, 211, 238, 0.8);
+    }
+    .instruction-sub {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.75);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Animal Cards Stage Grid */
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      width: 100%;
+      max-width: 1280px;
+      margin-bottom: 30px;
+    }
+
+    .animal-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(34, 211, 238, 0.1);
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .animal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent);
+      pointer-events: none;
+      border-radius: 24px 24px 0 0;
+    }
+
+    .animal-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 24px rgba(34, 211, 238, 0.22);
+      border-color: rgba(34, 211, 238, 0.5);
+    }
+
+    .animal-card.shake {
+      animation: cardShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      border-color: var(--neon-pink) !important;
+      box-shadow: 0 0 30px rgba(255, 45, 149, 0.5) !important;
+    }
+
+    @keyframes cardShake {
+      10%, 90% { transform: translate3d(-3px, 0, 0); }
+      20%, 80% { transform: translate3d(5px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+      40%, 60% { transform: translate3d(6px, 0, 0); }
+    }
+
+    .animal-card.correct {
+      border-color: var(--neon-green) !important;
+      box-shadow: 0 0 30px rgba(74, 222, 128, 0.5), inset 0 0 15px rgba(74, 222, 128, 0.2) !important;
+      animation: correctPulse 0.6s ease-out;
+    }
+
+    @keyframes correctPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+
+    .animal-img-wrap {
+      width: 100%;
+      height: clamp(200px, 35vh, 340px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      background: radial-gradient(circle, rgba(34, 211, 238, 0.12) 0%, rgba(5, 9, 30, 0.6) 80%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .animal-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
+      transition: transform 0.3s;
+      pointer-events: none;
+    }
+
+    .animal-card:hover .animal-img {
+      transform: scale(1.06);
+    }
+
+    /* Drop Zone inside animal card */
+    .drop-zone {
+      width: 100%;
+      min-height: 58px;
+      border: 2px dashed rgba(34, 211, 238, 0.45);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 16, 40, 0.5);
+      transition: all 0.25s ease;
+      position: relative;
+      padding: 6px;
+    }
+
+    .drop-zone-placeholder {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(34, 211, 238, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+    }
+
+    .drop-zone.drag-over {
+      border-color: var(--neon-cyan);
+      border-style: solid;
+      background: rgba(34, 211, 238, 0.18);
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.6), inset 0 0 10px rgba(34, 211, 238, 0.3);
+      transform: scale(1.03);
+    }
+
+    .drop-zone.matched {
+      border-style: solid;
+      border-color: var(--neon-green);
+      background: rgba(74, 222, 128, 0.15);
+      box-shadow: 0 0 16px rgba(74, 222, 128, 0.35);
+    }
+
+    /* Word Bank & Draggable Word Pills */
+    .word-bank-section {
+      width: 100%;
+      max-width: 860px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .word-bank-title {
+      font-family: var(--font-orbitron);
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .word-bank-title::before, .word-bank-title::after {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: rgba(34, 211, 238, 0.3);
+    }
+
+    .word-bank {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      min-height: 64px;
+      width: 100%;
+    }
+
+    .word-pill {
+      font-family: var(--font-fredoka);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 12px 28px;
+      border-radius: 9999px;
+      cursor: grab;
+      touch-action: none;
+      transition: transform 0.15s ease, box-shadow 0.2s, opacity 0.2s;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 10;
+      user-select: none;
+    }
+
+    /* Neon variations for word pills */
+    .word-pill.color-0 {
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
+      color: #ffffff;
+      border: 1.5px solid rgba(34, 211, 238, 0.8);
+      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+    }
+    .word-pill.color-1 {
+      background: linear-gradient(135deg, #ec4899, #a855f7);
+      color: #ffffff;
+      border: 1.5px solid rgba(255, 45, 149, 0.8);
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+    }
+    .word-pill.color-2 {
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: #ffffff;
+      border: 1.5px solid rgba(250, 204, 21, 0.8);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+    }
+
+    .word-pill:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 10px 25px rgba(34, 211, 238, 0.5);
+    }
+
+    .word-pill.dragging {
+      cursor: grabbing;
+      opacity: 0.95;
+      transform: scale(1.14) rotate(-3deg);
+      box-shadow: 0 16px 35px rgba(0, 0, 0, 0.6), 0 0 25px var(--neon-cyan);
+      z-index: 9999 !important;
+      position: fixed;
+      pointer-events: none;
+    }
+
+    .word-pill.placed {
+      cursor: default;
+      box-shadow: 0 0 15px rgba(74, 222, 128, 0.5);
+      border-color: var(--neon-green);
+      background: linear-gradient(135deg, #10b981, #059669);
+      animation: snapIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes snapIn {
+      0% { transform: scale(0.85); }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    /* Mascot Nina Floating Component (Bottom Right) */
+    .nina-mascot-container {
+      position: fixed;
+      bottom: 16px;
+      right: 24px;
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      z-index: 40;
+      pointer-events: none; /* Never blocks dragging */
+    }
+
+    .nina-halo {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      width: 170px;
+      height: 170px;
+      background: radial-gradient(circle, rgba(255, 45, 149, 0.35) 0%, rgba(34, 211, 238, 0.2) 50%, transparent 70%);
+      filter: blur(20px);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: mascotHalo 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes mascotHalo {
+      0% { transform: scale(0.9); opacity: 0.4; }
+      100% { transform: scale(1.2); opacity: 0.75; }
+    }
+
+    .nina-img {
+      width: auto;
+      height: 180px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.6));
+      animation: mascotFloat 3.5s ease-in-out infinite alternate;
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes mascotFloat {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-10px) rotate(1.5deg); }
+    }
+
+    /* Speech Bubble next to Nina */
+    .speech-bubble {
+      background: rgba(13, 20, 48, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid var(--neon-cyan);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(34, 211, 238, 0.4);
+      padding: 10px 16px;
+      border-radius: 18px 18px 4px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      max-width: 170px;
+      margin-bottom: 50px;
+      position: relative;
+      z-index: 3;
+      animation: bubblePop 0.3s ease-out;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      right: 14px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-top: 8px solid var(--neon-cyan);
+      border-right: 2px solid transparent;
+    }
+
+    @keyframes bubblePop {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Toast Message Banner */
+    .toast-msg {
+      position: fixed;
+      top: 85px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      padding: 10px 24px;
+      border-radius: 9999px;
+      background: rgba(13, 20, 48, 0.9);
+      border: 1.5px solid var(--neon-cyan);
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+      font-family: var(--font-orbitron);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #ffffff;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 100;
+    }
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast-msg.correct {
+      border-color: var(--neon-green);
+      box-shadow: 0 0 24px rgba(74, 222, 128, 0.6);
+      color: var(--neon-green);
+    }
+    .toast-msg.wrong {
+      border-color: var(--neon-pink);
+      box-shadow: 0 0 24px rgba(255, 45, 149, 0.6);
+      color: var(--neon-pink);
+    }
+
+    /* Modals: Victory and Game Over */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 6, 18, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      padding: 20px;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: linear-gradient(180deg, rgba(20, 30, 70, 0.95), rgba(9, 14, 38, 0.98));
+      border: 2px solid var(--neon-cyan);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(34, 211, 238, 0.4);
+      border-radius: 28px;
+      max-width: 480px;
+      width: 100%;
+      padding: 36px 30px;
+      text-align: center;
+      transform: scale(0.85);
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+
+    .modal-backdrop.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-card.gameover-theme {
+      border-color: var(--neon-pink);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 45, 149, 0.4);
+    }
+
+    .modal-badge-icon {
+      font-size: 56px;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.6));
+      animation: floatBadge 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatBadge {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-8px); }
+    }
+
+    .modal-title {
+      font-family: var(--font-orbitron);
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      color: #ffffff;
+      text-shadow: 0 0 16px rgba(34, 211, 238, 0.8);
+    }
+
+    .modal-card.gameover-theme .modal-title {
+      text-shadow: 0 0 16px rgba(255, 45, 149, 0.8);
+    }
+
+    .modal-desc {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 24px;
+    }
+
+    .stats-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-box .stat-val {
+      font-family: var(--font-orbitron);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--neon-cyan);
+    }
+    .stat-box .stat-lbl {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* Neon Action Buttons */
+    .neon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px 28px;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-orbitron);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: #ffffff;
+      background: linear-gradient(90deg, #ec4899, #a855f7);
+      box-shadow: 0 6px 25px rgba(236, 72, 153, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+      transition: all 0.25s ease;
+      text-transform: uppercase;
+    }
+
+    .neon-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(236, 72, 153, 0.75), inset 0 0 14px rgba(255, 255, 255, 0.5);
+    }
+    .neon-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .stage-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+      .animal-img-wrap {
+        height: 200px;
+      }
+      .instruction-title {
+        font-size: 22px;
+      }
+      .nina-img {
+        height: 140px;
+      }
+      .nina-mascot-container {
+        bottom: 12px;
+        right: 12px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .site-header {
+        padding: 10px 14px;
+      }
+      .brand-title {
+        font-size: 16px;
+      }
+      .brand-title-wrap .game-pill-badge {
+        display: none;
+      }
+      .hud-stats-container {
+        padding: 6px 12px;
+        gap: 10px;
+      }
+      .heart-icon {
+        font-size: 17px;
+      }
+      .score-badge {
+        font-size: 12px;
+      }
+      .instruction-title {
+        font-size: 19px;
+      }
+      .instruction-sub {
+        font-size: 13px;
+      }
+      .stage-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        max-width: 360px;
+      }
+      .animal-card {
+        flex-direction: row;
+        padding: 12px 14px;
+        gap: 12px;
+      }
+      .animal-img-wrap {
+        width: 150px;
+        height: 112px;
+        flex-shrink: 0;
+      }
+      .drop-zone {
+        min-height: 52px;
+      }
+      .word-pill {
+        font-size: 17px;
+        padding: 10px 22px;
+      }
+      .nina-img {
+        height: 95px;
+      }
+      .nina-halo {
+        width: 100px;
+        height: 100px;
+      }
+      .speech-bubble {
+        max-width: 130px;
+        font-size: 12px;
+        padding: 6px 10px;
+        margin-bottom: 25px;
+      }
+      .game-main {
+        padding-bottom: 110px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient background glow orbs -->
+  <div class="cyber-glow-orb orb-left"></div>
+  <div class="cyber-glow-orb orb-right"></div>
+
+  <!-- Header matching Nina's World cyber aesthetic -->
+  <header class="site-header">
+    <div class="brand-area">
+      <div class="nw-badge">NW</div>
+      <div class="brand-title-wrap">
+        <div class="brand-title">NINA'S <span>WORLD</span></div>
+        <div class="game-pill-badge">Drag the Name</div>
+      </div>
+    </div>
+
+    <!-- HUD Stats: Lives, Score -->
+    <div class="hud-stats-container">
+      <div id="lives-box" class="lives-box">
+        <span id="heart-1" class="heart-icon">❤️</span>
+        <span id="heart-2" class="heart-icon">❤️</span>
+        <span id="heart-3" class="heart-icon">❤️</span>
+      </div>
+      <div class="hud-divider"></div>
+      <div class="score-badge">
+        <span class="score-label">SCORE:</span>
+        <span id="score-text">0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Timer Bar -->
+  <div class="timer-track-wrap">
+    <div class="timer-container">
+      <div id="timer-bar" class="timer-bar"></div>
+    </div>
+  </div>
+
+  <!-- Main Game Stage -->
+  <main class="game-main">
+    <div class="instruction-bar">
+      <h1 class="instruction-title">Match the <span>Animal</span> Names</h1>
+      <p class="instruction-sub">Drag each neon word pill into the matching animal's box!</p>
+    </div>
+
+    <!-- Animal Cards Grid -->
+    <div id="stage-grid" class="stage-grid">
+      <!-- Injected via JavaScript with 3 randomized animals -->
+    </div>
+
+    <!-- Draggable Word Bank -->
+    <section class="word-bank-section">
+      <div class="word-bank-title">Word Bank</div>
+      <div id="word-bank" class="word-bank">
+        <!-- Injected via JavaScript with shuffled words -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Mascot Nina (Bottom-Right Corner with pointer-events: none) -->
+  <div class="nina-mascot-container">
+    <div id="speech-bubble" class="speech-bubble">
+      <span>✨</span> <span id="speech-text">Let's play!</span>
+    </div>
+    <div class="nina-halo"></div>
+    <img 
+      id="nina-mascot-img" 
+      class="nina-img" 
+      src="images/nina_new.png"
+      alt="Nina Mascot" 
+    />
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-msg" class="toast-msg"></div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Victory Modal -->
+  <div id="victory-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-badge-icon">🏆</div>
+      <h2 class="modal-title">SUPER JOB!</h2>
+      <p class="modal-desc">You matched all the animals like a true English master!</p>
+      
+      <div class="stats-summary-grid">
+        <div class="stat-box">
+          <span id="final-score" class="stat-val">0</span>
+          <span class="stat-lbl">Score</span>
+        </div>
+        <div class="stat-box">
+          <span id="final-time" class="stat-val">0s</span>
+          <span class="stat-lbl">Time</span>
+        </div>
+        <div class="stat-box">
+          <span id="final-lives" class="stat-val">3</span>
+          <span class="stat-lbl">Lives</span>
+        </div>
+      </div>
+
+      <button id="btn-next-round" class="neon-btn">
+        <span>Play Next Round</span> ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div id="gameover-modal" class="modal-backdrop">
+    <div class="modal-card gameover-theme">
+      <div class="modal-badge-icon">⏰</div>
+      <h2 class="modal-title">TIME'S UP!</h2>
+      <p class="modal-desc">Don't worry! Nina believes in you. Let's try once more!</p>
+
+      <div class="stats-summary-grid" style="grid-template-columns: 1fr;">
+        <div class="stat-box">
+          <span id="gameover-score" class="stat-val">0</span>
+          <span class="stat-lbl">Total Score</span>
+        </div>
+      </div>
+
+      <button id="btn-restart" class="neon-btn">
+        <span>Try Again</span> ↺
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       AUDIO SYNTHESIZER (Web Audio API - Kid-friendly SFX)
+       ========================================================= */
+    const AudioEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+      playPop() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(620, this.ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.08);
+        } catch (e) {}
+      },
+      playSuccess() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+          notes.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.07);
+            gain.gain.setValueAtTime(0.28, this.ctx.currentTime + idx * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.07 + 0.22);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(this.ctx.currentTime + idx * 0.07);
+            osc.stop(this.ctx.currentTime + idx * 0.07 + 0.24);
+          });
+        } catch (e) {}
+      },
+      playError() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+          osc.frequency.linearRampToValueAtTime(130, this.ctx.currentTime + 0.25);
+          gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.25);
+        } catch (e) {}
+      },
+      playVictory() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const melody = [
+            { f: 523.25, d: 0.12 },
+            { f: 659.25, d: 0.12 },
+            { f: 783.99, d: 0.12 },
+            { f: 1046.50, d: 0.35 }
+          ];
+          let time = this.ctx.currentTime;
+          melody.forEach(note => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(note.f, time);
+            gain.gain.setValueAtTime(0.35, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + note.d);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(time);
+            osc.stop(time + note.d);
+            time += note.d * 0.95;
+          });
+        } catch (e) {}
+      }
+    };
+
+    /* =========================================================
+       ANIMAL DATA REPOSITORY
+       ========================================================= */
+    const ANIMAL_DATA = [
+      { id: 'cat', name: 'Cat', img: 'images/1 CAT.png', crop: 'inset(6.4% 23.6% 2.0% 31.1%)', emoji: '🐱' },
+      { id: 'dog', name: 'Dog', img: 'images/2 DOG.png', crop: 'inset(6.4% 28.6% 3.4% 27.9%)', emoji: '🐶' },
+      { id: 'cow', name: 'Cow', img: 'images/3 COW.png', crop: 'inset(6.9% 22.8% 0.7% 27.6%)', emoji: '🐄' },
+      { id: 'pig', name: 'Pig', img: 'images/4 PIG.png', crop: 'inset(4.5% 28.6% 3.4% 28.5%)', emoji: '🐖' },
+      { id: 'horse', name: 'Horse', img: 'images/5 HORSE.png', crop: 'inset(1.0% 21.2% 0.0% 22.4%)', emoji: '🐴' },
+      { id: 'sheep', name: 'Sheep', img: 'images/6 SHEEP.png', crop: 'inset(4.8% 23.6% 0.4% 27.9%)', emoji: '🐑' },
+      { id: 'rabbit', name: 'Rabbit', img: 'images/7 RABBIT.png', crop: 'inset(3.7% 30.2% 2.0% 32.7%)', emoji: '🐰' },
+      { id: 'duck', name: 'Duck', img: 'images/8 DUCK.png', crop: 'inset(2.9% 30.7% 1.8% 33.5%)', emoji: '🦆' },
+      { id: 'chicken', name: 'Chicken', img: 'images/9 CHICKEN.png', crop: 'inset(1.8% 31.0% 1.0% 30.4%)', emoji: '🐔' },
+      { id: 'rooster', name: 'Rooster', img: 'images/10 ROOSTER.png', crop: 'inset(2.6% 29.9% 0.0% 27.3%)', emoji: '🐓' },
+      { id: 'goat', name: 'Goat', img: 'images/11 GOAT.png', crop: 'inset(6.9% 24.9% 0.4% 30.8%)', emoji: '🐐' },
+      { id: 'lion', name: 'Lion', img: 'images/12 LION.png', crop: 'inset(5.6% 28.8% 6.1% 32.5%)', emoji: '🦁' },
+      { id: 'elephant', name: 'Elephant', img: 'images/13 ELEPHANT.png', crop: 'inset(5.8% 28.9% 5.3% 26.8%)', emoji: '🐘' },
+      { id: 'tiger', name: 'Tiger', img: 'images/14 TIGER.png', crop: 'inset(0.4% 30.4% 1.8% 26.8%)', emoji: '🐅' },
+      { id: 'giraffe', name: 'Giraffe', img: 'images/15 GIRAFFE.png', crop: 'inset(1.0% 32.5% 0.0% 27.4%)', emoji: '🦒' },
+      { id: 'zebra', name: 'Zebra', img: 'images/16  ZEBRA.png', crop: 'inset(1.8% 24.8% 0.4% 31.4%)', emoji: '🦓' },
+      { id: 'monkey', name: 'Monkey', img: 'images/17 MONKEY.png', crop: 'inset(5.8% 33.6% 4.5% 33.5%)', emoji: '🐒' },
+      { id: 'bear', name: 'Bear', img: 'images/18 BEAR.png', crop: 'inset(3.9% 29.9% 3.4% 29.8%)', emoji: '🐻' },
+      { id: 'wolf', name: 'Wolf', img: 'images/19 WOLF.png', crop: 'inset(1.5% 23.0% 0.0% 30.5%)', emoji: '🐺' },
+      { id: 'fox', name: 'Fox', img: 'images/20 FOX.png', crop: 'inset(1.5% 31.7% 1.5% 24.3%)', emoji: '🦊' },
+      { id: 'deer', name: 'Deer', img: 'images/21 DEER.png', crop: 'inset(7.5% 29.3% 3.4% 27.4%)', emoji: '🦌' },
+      { id: 'panda', name: 'Panda', img: 'images/22 PANDA.png', crop: 'inset(5.6% 30.4% 2.3% 29.8%)', emoji: '🐼' },
+      { id: 'kangaroo', name: 'Kangaroo', img: 'images/23 KANGAROO.png', crop: 'inset(0.0% 33.0% 0.0% 25.7%)', emoji: '🦘' },
+      { id: 'koala', name: 'Koala', img: 'images/24 KOALA.png', crop: 'inset(2.6% 22.4% 0.0% 26.7%)', emoji: '🐨' },
+      { id: 'hippo', name: 'Hippo', img: 'images/25 HIPPO.png', crop: 'inset(5.6% 27.1% 3.4% 28.6%)', emoji: '🦛' },
+      { id: 'bird', name: 'Bird', img: 'images/26 BIRD.png', crop: 'inset(5.6% 31.9% 5.8% 24.3%)', emoji: '🐦' },
+      { id: 'owl', name: 'Owl', img: 'images/27 OWL.png', crop: 'inset(6.9% 30.2% 7.2% 30.2%)', emoji: '🦉' },
+      { id: 'penguin', name: 'Penguin', img: 'images/28 PENGUIN.png', crop: 'inset(3.7% 27.6% 0.1% 27.9%)', emoji: '🐧' },
+      { id: 'butterfly', name: 'Butterfly', img: 'images/29 BUTTERFLAY.png', crop: 'inset(2.9% 19.2% 1.5% 18.4%)', emoji: '🦋' },
+      { id: 'bee', name: 'Bee', img: 'images/30 BEE.png', crop: 'inset(5.3% 25.1% 0.7% 30.2%)', emoji: '🐝' },
+      { id: 'ladybug', name: 'Ladybug', img: 'images/31 LADYBUG.png', crop: 'inset(1.5% 21.4% 5.3% 22.8%)', emoji: '🐞' },
+      { id: 'bat', name: 'Bat', img: 'images/32 BAT.png', crop: 'inset(3.1% 31.1% 4.8% 28.6%)', emoji: '🦇' },
+      { id: 'snail', name: 'Snail', img: 'images/33 SNAIL.png', crop: 'inset(4.8% 26.8% 3.1% 23.3%)', emoji: '🐌' },
+      { id: 'fish', name: 'Fish', img: 'images/34 FISH.png', crop: 'inset(5.6% 14.9% 9.1% 16.9%)', emoji: '🐟' },
+      { id: 'dolphin', name: 'Dolphin', img: 'images/35 DOLPHIN.png', crop: 'inset(5.6% 27.0% 1.5% 23.7%)', emoji: '🐬' },
+      { id: 'whale', name: 'Whale', img: 'images/36 WHALE.png', crop: 'inset(10.4% 7.8% 5.6% 2.9%)', emoji: '🐳' },
+      { id: 'shark', name: 'Shark', img: 'images/37 SHARK.png', crop: 'inset(6.9% 10.0% 8.0% 11.3%)', emoji: '🦈' },
+      { id: 'octopus', name: 'Octopus', img: 'images/38 OCTOPUS.png', crop: 'inset(2.6% 3.9% 5.3% 6.7%)', emoji: '🐙' },
+      { id: 'crab', name: 'Crab', img: 'images/39 CRAB.png', crop: 'inset(17.8% 8.4% 7.3% 7.0%)', emoji: '🦀' },
+      { id: 'starfish', name: 'Starfish', img: 'images/40 STARFISH.png', crop: 'inset(3.3% 19.6% 2.8% 19.6%)', emoji: '⭐' },
+      { id: 'seal', name: 'Seal', img: 'images/41 SEAL.png', crop: 'inset(8.8% 5.6% 8.6% 9.6%)', emoji: '🦭' },
+      { id: 'turtle', name: 'Turtle', img: 'images/42 TURTLE.png', crop: 'inset(15.1% 21.1% 6.1% 19.9%)', emoji: '🐢' },
+      { id: 'frog', name: 'Frog', img: 'images/43 FROG.png', crop: 'inset(11.5% 15.0% 12.9% 6.3%)', emoji: '🐸' },
+      { id: 'snake', name: 'Snake', img: 'images/44 SNAKE.png', crop: 'inset(13.2% 10.6% 9.5% 11.1%)', emoji: '🐍' },
+      { id: 'mouse', name: 'Mouse', img: 'images/45 MOUSE.png', crop: 'inset(9.6% 23.4% 8.0% 20.3%)', emoji: '🐭' },
+      { id: 'hedgehog', name: 'Hedgehog', img: 'images/46 HEDGEHOG.png', crop: 'inset(3.7% 19.9% 4.2% 20.3%)', emoji: '🦔' },
+      { id: 'donkey', name: 'Donkey', img: 'images/47 DONKEY.png', crop: 'inset(0.7% 31.6% 0.4% 27.7%)', emoji: '🐴' },
+      { id: 'camel', name: 'Camel', img: 'images/48 CAMEL.png', crop: 'inset(2.9% 25.8% 0.0% 26.7%)', emoji: '🐪' },
+      { id: 'rhino', name: 'Rhino', img: 'images/49 RHINO.png', crop: 'inset(7.5% 25.5% 3.9% 25.5%)', emoji: '🦏' },
+      { id: 'squirrel', name: 'Squirrel', img: 'images/50 SQUIRREL.png', crop: 'inset(3.4% 20.0% 1.8% 14.7%)', emoji: '🐿️' }
+    ];
+
+    /* =========================================================
+       GAME STATE
+       ========================================================= */
+    const GAME_CONFIG = {
+      totalTime: 60,
+      pointsPerMatch: 100,
+      timeBonusMultiplier: 2
+    };
+
+    let state = {
+      score: 0,
+      lives: 3,
+      timeLeft: GAME_CONFIG.totalTime,
+      currentAnimals: [],
+      matchedCount: 0,
+      timerId: null,
+      roundStartTime: 0,
+      isGameOver: false
+    };
+
+    // DOM Elements
+    const stageGrid = document.getElementById('stage-grid');
+    const wordBank = document.getElementById('word-bank');
+    const scoreText = document.getElementById('score-text');
+    const timerBar = document.getElementById('timer-bar');
+    const toastMsg = document.getElementById('toast-msg');
+    const speechText = document.getElementById('speech-text');
+    const victoryModal = document.getElementById('victory-modal');
+    const gameoverModal = document.getElementById('gameover-modal');
+    const finalScore = document.getElementById('final-score');
+    const finalTime = document.getElementById('final-time');
+    const finalLives = document.getElementById('final-lives');
+    const gameoverScore = document.getElementById('gameover-score');
+    const btnNextRound = document.getElementById('btn-next-round');
+    const btnRestart = document.getElementById('btn-restart');
+
+    /* Mascot Speech Update Helper */
+    function setNinaSpeech(text) {
+      if (!speechText) return;
+      speechText.textContent = text;
+      const bubble = document.getElementById('speech-bubble');
+      if (bubble) {
+        bubble.style.animation = 'none';
+        void bubble.offsetWidth;
+        bubble.style.animation = 'bubblePop 0.3s ease-out';
+      }
+    }
+
+    /* Toast notification */
+    let toastTimeout;
+    function showToast(message, type = '') {
+      clearTimeout(toastTimeout);
+      toastMsg.textContent = message;
+      toastMsg.className = 'toast-msg show ' + type;
+      toastTimeout = setTimeout(() => {
+        toastMsg.className = 'toast-msg';
+      }, 1800);
+    }
+
+    /* Shuffle utility */
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    /* Deck: deals 3 animals per round, no repeats until all 50 have been used */
+    let deck = [];
+    function dealThree() {
+      let hand = deck.splice(0, 3);
+      if (hand.length < 3) {
+        // Deck finished (or first round): reshuffle all 50 and complete the hand
+        deck = shuffleArray(ANIMAL_DATA.filter(a => !hand.includes(a)));
+        hand = hand.concat(deck.splice(0, 3 - hand.length));
+      }
+      return hand;
+    }
+
+    /* =========================================================
+       GAME INITIALIZATION & ROUND SETUP
+       ========================================================= */
+    function startNewRound() {
+      // Clear modals
+      victoryModal.classList.remove('active');
+      gameoverModal.classList.remove('active');
+
+      // Deal the next 3 animals from the shuffled deck of 50 (no repeats until all have appeared)
+      state.currentAnimals = dealThree();
+      state.matchedCount = 0;
+      state.roundStartTime = Date.now();
+      state.isGameOver = false;
+
+      // Update Nina Mascot speech
+      setNinaSpeech("Let's play!");
+
+      // Render Animal Cards
+      stageGrid.innerHTML = '';
+      state.currentAnimals.forEach((animal, index) => {
+        const card = document.createElement('div');
+        card.className = 'animal-card';
+        card.id = `card-${animal.id}`;
+        card.dataset.animalId = animal.id;
+
+        card.innerHTML = `
+          <div class="animal-img-wrap">
+            <img 
+              class="animal-img" 
+              src="${animal.img}" 
+              alt="${animal.name}"
+              style="object-view-box: ${animal.crop};"
+              onerror="this.onerror=null; this.parentElement.innerHTML='<span style=\\'font-size:72px;\\'>${animal.emoji}</span>';"
+            />
+          </div>
+          <div class="drop-zone" id="drop-${animal.id}" data-target-id="${animal.id}">
+            <div class="drop-zone-placeholder">
+              <span>✦</span> Drop name here
+            </div>
+          </div>
+        `;
+        stageGrid.appendChild(card);
+      });
+
+      // Render Word Bank with shuffled words and vibrant styling
+      wordBank.innerHTML = '';
+      const shuffledWords = shuffleArray(state.currentAnimals);
+      shuffledWords.forEach((animal, idx) => {
+        const pill = document.createElement('div');
+        pill.className = `word-pill color-${idx % 3}`;
+        pill.id = `pill-${animal.id}`;
+        pill.dataset.animalId = animal.id;
+        pill.textContent = animal.name;
+        pill.setAttribute('role', 'button');
+        pill.setAttribute('tabindex', '0');
+
+        setupDragEvents(pill);
+        wordBank.appendChild(pill);
+      });
+
+      // Reset and start timer
+      clearInterval(state.timerId);
+      state.timeLeft = GAME_CONFIG.totalTime;
+      updateTimerDisplay();
+      state.timerId = setInterval(tickTimer, 1000);
+    }
+
+    function restartFullGame() {
+      deck = []; // new shuffled deck of 50
+      state.score = 0;
+      state.lives = 3;
+      scoreText.textContent = state.score;
+      updateLivesDisplay();
+      startNewRound();
+    }
+
+    /* Timer Tick */
+    function tickTimer() {
+      if (state.isGameOver) return;
+      state.timeLeft--;
+      updateTimerDisplay();
+
+      if (state.timeLeft <= 0) {
+        clearInterval(state.timerId);
+        triggerGameOver();
+      }
+    }
+
+    function updateTimerDisplay() {
+      const percentage = Math.max(0, (state.timeLeft / GAME_CONFIG.totalTime) * 100);
+      timerBar.style.width = percentage + '%';
+      if (percentage <= 25) {
+        timerBar.classList.add('warning');
+      } else {
+        timerBar.classList.remove('warning');
+      }
+    }
+
+    function updateLivesDisplay() {
+      for (let i = 1; i <= 3; i++) {
+        const heartEl = document.getElementById(`heart-${i}`);
+        if (heartEl) {
+          if (i <= state.lives) {
+            heartEl.classList.remove('lost');
+          } else {
+            heartEl.classList.add('lost');
+          }
+        }
+      }
+    }
+
+    /* =========================================================
+       POINTER-BASED DRAG AND DROP (TOUCH + MOUSE UNIFIED)
+       ========================================================= */
+    let activeDrag = null;
+
+    function setupDragEvents(pill) {
+      pill.addEventListener('pointerdown', onPointerDown);
+    }
+
+    function onPointerDown(e) {
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      const pill = e.currentTarget;
+      if (pill.classList.contains('placed')) return;
+
+      AudioEngine.playPop();
+
+      const rect = pill.getBoundingClientRect();
+      const shiftX = e.clientX - rect.left;
+      const shiftY = e.clientY - rect.top;
+
+      // Create a ghost placeholder in word bank to hold layout
+      const placeholder = document.createElement('div');
+      placeholder.style.width = rect.width + 'px';
+      placeholder.style.height = rect.height + 'px';
+      placeholder.style.opacity = '0';
+      placeholder.className = 'pill-layout-spacer';
+      pill.parentNode.insertBefore(placeholder, pill);
+
+      // Switch pill to fixed positioning
+      pill.classList.add('dragging');
+      pill.style.width = rect.width + 'px';
+      pill.style.left = (e.clientX - shiftX) + 'px';
+      pill.style.top = (e.clientY - shiftY) + 'px';
+      document.body.appendChild(pill);
+
+      activeDrag = {
+        pill,
+        placeholder,
+        shiftX,
+        shiftY,
+        startX: rect.left,
+        startY: rect.top,
+        currentDropZone: null
+      };
+
+      pill.setPointerCapture(e.pointerId);
+      pill.addEventListener('pointermove', onPointerMove);
+      pill.addEventListener('pointerup', onPointerUp);
+      pill.addEventListener('pointercancel', onPointerCancel);
+    }
+
+    function onPointerMove(e) {
+      if (!activeDrag) return;
+      const { pill, shiftX, shiftY } = activeDrag;
+
+      pill.style.left = (e.clientX - shiftX) + 'px';
+      pill.style.top = (e.clientY - shiftY) + 'px';
+
+      // Hit test drop zones
+      pill.style.display = 'none';
+      const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
+      pill.style.display = 'inline-flex';
+
+      const dropZone = elemBelow ? elemBelow.closest('.drop-zone') : null;
+
+      // Update hover state
+      if (activeDrag.currentDropZone && activeDrag.currentDropZone !== dropZone) {
+        activeDrag.currentDropZone.classList.remove('drag-over');
+      }
+
+      if (dropZone && !dropZone.classList.contains('matched')) {
+        dropZone.classList.add('drag-over');
+        activeDrag.currentDropZone = dropZone;
+      } else {
+        activeDrag.currentDropZone = null;
+      }
+    }
+
+    function onPointerUp(e) {
+      if (!activeDrag) return;
+      const { pill, placeholder, currentDropZone } = activeDrag;
+
+      pill.removeEventListener('pointermove', onPointerMove);
+      pill.removeEventListener('pointerup', onPointerUp);
+      pill.removeEventListener('pointercancel', onPointerCancel);
+
+      if (currentDropZone) {
+        currentDropZone.classList.remove('drag-over');
+        const targetId = currentDropZone.dataset.targetId;
+        const pillId = pill.dataset.animalId;
+
+        if (targetId === pillId) {
+          // Correct match
+          handleCorrectMatch(pill, currentDropZone, placeholder);
+        } else {
+          // Wrong match
+          handleWrongMatch(pill, currentDropZone, placeholder);
+        }
+      } else {
+        // Dropped outside any zone: return smoothly
+        returnPillToBank(pill, placeholder);
+      }
+
+      activeDrag = null;
+    }
+
+    function onPointerCancel(e) {
+      if (!activeDrag) return;
+      returnPillToBank(activeDrag.pill, activeDrag.placeholder);
+      activeDrag = null;
+    }
+
+    function returnPillToBank(pill, placeholder) {
+      pill.classList.remove('dragging');
+      pill.style.position = '';
+      pill.style.left = '';
+      pill.style.top = '';
+      pill.style.width = '';
+      pill.style.transform = '';
+      if (placeholder && placeholder.parentNode) {
+        placeholder.parentNode.replaceChild(pill, placeholder);
+      } else {
+        wordBank.appendChild(pill);
+      }
+    }
+
+    /* =========================================================
+       MATCH LOGIC & ANIMATIONS
+       ========================================================= */
+    function handleCorrectMatch(pill, dropZone, placeholder) {
+      AudioEngine.playSuccess();
+      setNinaSpeech("Great job!");
+      showToast("Correct! +100 Points", "correct");
+
+      // Update score
+      state.score += GAME_CONFIG.pointsPerMatch;
+      scoreText.textContent = state.score;
+
+      // Setup drop zone
+      dropZone.classList.add('matched');
+      dropZone.innerHTML = '';
+      
+      pill.classList.remove('dragging');
+      pill.classList.add('placed');
+      pill.style.position = '';
+      pill.style.left = '';
+      pill.style.top = '';
+      pill.style.width = '100%';
+      pill.style.transform = '';
+      dropZone.appendChild(pill);
+
+      if (placeholder && placeholder.parentNode) {
+        placeholder.parentNode.removeChild(placeholder);
+      }
+
+      // Card highlight
+      const card = dropZone.closest('.animal-card');
+      if (card) {
+        card.classList.add('correct');
+      }
+
+      // Spark mini confetti from card
+      const rect = dropZone.getBoundingClientRect();
+      spawnMiniConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
+
+      state.matchedCount++;
+      if (state.matchedCount >= state.currentAnimals.length) {
+        clearInterval(state.timerId);
+        setTimeout(triggerVictory, 600);
+      }
+    }
+
+    function handleWrongMatch(pill, dropZone, placeholder) {
+      AudioEngine.playError();
+      setNinaSpeech("Try again!");
+      showToast("Not quite! Try again", "wrong");
+
+      state.lives--;
+      updateLivesDisplay();
+
+      const card = dropZone.closest('.animal-card');
+      if (card) {
+        card.classList.add('shake');
+        setTimeout(() => card.classList.remove('shake'), 500);
+      }
+
+      returnPillToBank(pill, placeholder);
+
+      if (state.lives <= 0) {
+        clearInterval(state.timerId);
+        setTimeout(triggerGameOver, 600);
+      }
+    }
+
+    /* =========================================================
+       VICTORY & GAME OVER SCREENS
+       ========================================================= */
+    function triggerVictory() {
+      state.isGameOver = true;
+      AudioEngine.playVictory();
+      setNinaSpeech("You won! Amazing!");
+
+      const elapsedSeconds = Math.floor((Date.now() - state.roundStartTime) / 1000);
+      finalScore.textContent = state.score;
+      finalTime.textContent = elapsedSeconds + 's';
+      finalLives.textContent = state.lives;
+
+      victoryModal.classList.add('active');
+      startCelebrationConfetti();
+    }
+
+    function triggerGameOver() {
+      state.isGameOver = true;
+      AudioEngine.playError();
+      setNinaSpeech("Good effort! Play again!");
+
+      gameoverScore.textContent = state.score;
+      gameoverModal.classList.add('active');
+    }
+
+    /* Button listeners */
+    btnNextRound.addEventListener('click', () => {
+      AudioEngine.playPop();
+      startNewRound();
+    });
+
+    btnRestart.addEventListener('click', () => {
+      AudioEngine.playPop();
+      restartFullGame();
+    });
+
+    /* =========================================================
+       CONFETTI SYSTEM (FIXED LOOP: backward iteration)
+       Matching cyber neon palette
+       ========================================================= */
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let confettiParticles = [];
+    let confettiAnimId = null;
+
+    const NEON_COLORS = ['#22d3ee', '#ff2d95', '#facc15', '#a855f7', '#4ade80', '#38bdf8'];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function spawnMiniConfetti(x, y) {
+      for (let i = 0; i < 28; i++) {
+        confettiParticles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 0.5) * 12 - 3,
+          size: Math.random() * 7 + 4,
+          color: NEON_COLORS[Math.floor(Math.random() * NEON_COLORS.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 14,
+          life: 1,
+          decay: Math.random() * 0.02 + 0.015
+        });
+      }
+      if (!confettiAnimId) {
+        animateConfetti();
+      }
+    }
+
+    function startCelebrationConfetti() {
+      for (let i = 0; i < 90; i++) {
+        confettiParticles.push({
+          x: Math.random() * canvas.width,
+          y: -20,
+          vx: (Math.random() - 0.5) * 6,
+          vy: Math.random() * 4 + 3,
+          size: Math.random() * 9 + 5,
+          color: NEON_COLORS[Math.floor(Math.random() * NEON_COLORS.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10,
+          life: 1,
+          decay: Math.random() * 0.005 + 0.005
+        });
+      }
+      if (!confettiAnimId) {
+        animateConfetti();
+      }
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Backward iteration avoids skipping particles when spliced
+      for (let i = confettiParticles.length - 1; i >= 0; i--) {
+        const p = confettiParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.22; // gravity
+        p.rotation += p.rotSpeed;
+        p.life -= p.decay;
+
+        if (p.life <= 0 || p.y > canvas.height + 40) {
+          confettiParticles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        ctx.restore();
+      }
+
+      if (confettiParticles.length > 0) {
+        confettiAnimId = requestAnimationFrame(animateConfetti);
+      } else {
+        confettiAnimId = null;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    // Start game on load
+    window.addEventListener('DOMContentLoaded', () => {
+      startNewRound();
+    });
+  </script>
+</body>
+</html>
