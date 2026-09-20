@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Nina's World - Listen &amp; Choose (50 Animals)</title>
+<!-- Google Fonts: Orbitron for titles/HUD & Fredoka for friendly body text -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;family=Orbitron:wght@500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            /* Cyber-Neon Color Palette */
+            --bg-dark: #070a1e;
+            --bg-darker: #040612;
+            --neon-cyan: #22d3ee;
+            --neon-pink: #ff2d95;
+            --neon-purple: #a855f7;
+            --neon-yellow: #facc15;
+            --neon-green: #4ade80;
+            --neon-red: #ef4444;
+
+            /* Glassmorphism & Borders */
+            --glass-bg: rgba(13, 20, 48, 0.72);
+            --glass-card: rgba(15, 23, 58, 0.78);
+            --glass-border: rgba(34, 211, 238, 0.35);
+            --glass-border-bright: rgba(34, 211, 238, 0.75);
+            --glow-cyan: 0 0 20px rgba(34, 211, 238, 0.45);
+            --glow-pink: 0 0 20px rgba(255, 45, 149, 0.45);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 15%, rgba(34, 211, 238, 0.18) 0%, transparent 40%),
+                radial-gradient(circle at 90% 85%, rgba(255, 45, 149, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.12) 0%, transparent 60%),
+                linear-gradient(to right, rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-x: hidden;
+            position: relative;
+            color: #E2E8F0;
+        }
+
+        /* Ambient floating neon particles */
+        #fx-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Container Layout */
+        .game-wrapper {
+            width: 100%;
+            max-width: 1200px;
+            padding: 18px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        /* Top Cyber Header & HUD */
+        .top-nav {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        /* Gradient "NW" Badge as in Drag the Name */
+        .nw-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #a855f7 0%, #ff2d95 60%, #22d3ee 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.25rem;
+            color: #FFFFFF;
+            box-shadow: 0 0 16px rgba(168, 85, 247, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            flex-shrink: 0;
+        }
+
+        .title-block {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .logo-12d {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.4rem, 3.2vw, 2.1rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #FFFFFF;
+            text-shadow: 0 0 12px rgba(34, 211, 238, 0.75), 0 0 24px rgba(34, 211, 238, 0.35);
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .logo-12d span.highlight {
+            color: var(--neon-cyan);
+        }
+
+        .mode-tag {
+            align-self: flex-start;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--neon-cyan);
+            border: 1.5px solid var(--neon-cyan);
+            border-radius: 20px;
+            padding: 2px 10px;
+            background: rgba(34, 211, 238, 0.1);
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.25);
+            text-transform: uppercase;
+        }
+
+        .hud-pills {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .pill-badge {
+            background: var(--glass-bg);
+            border: 1.5px solid var(--glass-border);
+            color: #FFFFFF;
+            border-radius: 30px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .pill-badge.score-pill {
+            border-color: rgba(250, 204, 21, 0.4);
+        }
+
+        .score-label {
+            font-size: 0.75rem;
+            color: #94A3B8;
+            letter-spacing: 1.5px;
+        }
+
+        #score-text {
+            color: var(--neon-yellow);
+            text-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
+            min-width: 24px;
+            text-align: right;
+        }
+
+        .heart-icon {
+            font-size: 1.35rem;
+            filter: drop-shadow(0 0 8px rgba(255, 45, 149, 0.7));
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s;
+            display: inline-block;
+        }
+
+        .heart-icon.lost {
+            filter: grayscale(1) opacity(0.2);
+            transform: scale(0.75);
+        }
+
+        .btn-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(34, 211, 238, 0.25) 100%);
+            border: 1.5px solid var(--neon-cyan);
+            box-shadow: 0 0 16px rgba(34, 211, 238, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #FFF;
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon:hover {
+            transform: translateY(-2px) scale(1.06);
+            box-shadow: 0 0 24px rgba(34, 211, 238, 0.6);
+            border-color: #FFFFFF;
+        }
+
+        .btn-icon:active {
+            transform: translateY(2px) scale(0.96);
+        }
+
+        /* Neon Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            max-width: 780px;
+            height: 8px;
+            background: rgba(15, 23, 58, 0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(34, 211, 238, 0.25);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 20px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #22d3ee 0%, #a855f7 50%, #ff2d95 100%);
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(34, 211, 238, 0.8);
+            transition: width 0.4s ease;
+        }
+
+        /* Biome Selector / Level Bar */
+        .biome-bar {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding: 4px 8px;
+            scrollbar-width: none;
+        }
+        .biome-bar::-webkit-scrollbar { display: none; }
+
+        .biome-chip {
+            background: rgba(13, 20, 48, 0.65);
+            color: #94A3B8;
+            border: 1.5px solid rgba(34, 211, 238, 0.28);
+            border-radius: 24px;
+            padding: 8px 18px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .biome-chip:hover {
+            color: #FFFFFF;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 14px rgba(34, 211, 238, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .biome-chip.active {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.28) 0%, rgba(168, 85, 247, 0.38) 100%);
+            color: #FFFFFF;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.5), inset 0 0 12px rgba(34, 211, 238, 0.25);
+            transform: scale(1.04);
+        }
+
+        /* Central Prompt & Big Listen Speaker */
+        .audio-target-card {
+            width: 100%;
+            max-width: 680px;
+            background: var(--glass-bg);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 24px 20px;
+            margin-bottom: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: visible;
+        }
+
+        .speaker-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .sound-wave-ring {
+            position: absolute;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-cyan);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .sound-wave-ring.playing {
+            animation: waveExpandNeon 1.3s ease-out infinite;
+        }
+
+        @keyframes waveExpandNeon {
+            0% { transform: scale(0.9); opacity: 0.95; box-shadow: 0 0 10px var(--neon-cyan); }
+            100% { transform: scale(2.4); opacity: 0; box-shadow: 0 0 25px var(--neon-pink); }
+        }
+
+        .speaker-btn-3d {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 45%, #a855f7 100%);
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 
+                0 0 25px rgba(34, 211, 238, 0.6),
+                0 0 50px rgba(168, 85, 247, 0.35),
+                inset 0 2px 4px rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.3rem;
+            color: #FFFFFF;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 2;
+            animation: pulseGlow 2.8s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 25px rgba(34, 211, 238, 0.55), 0 0 45px rgba(168, 85, 247, 0.3);
+            }
+            50% {
+                transform: scale(1.06);
+                box-shadow: 0 0 35px rgba(34, 211, 238, 0.85), 0 0 65px rgba(255, 45, 149, 0.5);
+            }
+        }
+
+        .speaker-btn-3d:active {
+            transform: scale(0.94);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.8);
+        }
+
+        .speaker-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            margin-top: 1px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+        }
+
+        .prompt-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1rem, 2.4vw, 1.25rem);
+            font-weight: 700;
+            color: #F8FAFC;
+            text-align: center;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+            line-height: 1.4;
+        }
+
+        /* 4 Large Animal Cards Grid: 1 row on Desktop (4 cols), 2x2 on Mobile */
+        .cards-stage {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+            max-width: 1140px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 860px) {
+            .cards-stage {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+        }
+
+        .animal-card-12d {
+            background: var(--glass-card);
+            border: 2px solid rgba(34, 211, 238, 0.35);
+            border-radius: 24px;
+            aspect-ratio: 1 / 1.15;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.08);
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease, border-color 0.25s ease;
+            overflow: hidden;
+        }
+
+        .animal-card-12d::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 22px;
+            background: radial-gradient(circle at 50% 30%, rgba(34, 211, 238, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .animal-card-12d:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 12px 35px rgba(34, 211, 238, 0.35), inset 0 0 15px rgba(34, 211, 238, 0.15);
+        }
+
+        .animal-card-12d:active {
+            transform: translateY(2px) scale(0.98);
+        }
+
+        /* Success & Error Neon Feedback */
+        .animal-card-12d.correct {
+            border-color: var(--neon-green) !important;
+            background: rgba(74, 222, 128, 0.18) !important;
+            box-shadow: 0 0 35px rgba(74, 222, 128, 0.7), inset 0 0 20px rgba(74, 222, 128, 0.4) !important;
+            animation: celebratePop 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .animal-card-12d.wrong {
+            border-color: var(--neon-red) !important;
+            background: rgba(239, 68, 68, 0.18) !important;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.7), inset 0 0 15px rgba(239, 68, 68, 0.3) !important;
+            animation: shakeNeon 0.45s ease forwards;
+        }
+
+        @keyframes celebratePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08) rotate(2deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+
+        @keyframes shakeNeon {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        /* Large Animal PNG Rendering */
+        .card-img-3d {
+            width: 100%;
+            height: 82%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.6));
+            transition: transform 0.25s ease;
+            z-index: 2;
+        }
+
+        .animal-card-12d:hover .card-img-3d {
+            transform: scale(1.07);
+        }
+
+        .card-name-revealed {
+            margin-top: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.25s ease;
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.7);
+            z-index: 2;
+        }
+
+        .animal-card-12d.show-name .card-name-revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Nina Mascot Cyber Corner */
+        .nina-mascot-box {
+            position: fixed;
+            bottom: 14px;
+            right: 18px;
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            pointer-events: none;
+        }
+
+        .speech-bubble-12d {
+            background: rgba(13, 20, 48, 0.88);
+            color: #FFFFFF;
+            padding: 10px 16px;
+            border-radius: 18px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 14px rgba(34, 211, 238, 0.35);
+            margin-bottom: 8px;
+            position: relative;
+            max-width: 220px;
+            text-align: center;
+            border: 1.5px solid var(--neon-cyan);
+            animation: bubbleFloat 3s infinite ease-in-out;
+        }
+
+        .speech-bubble-12d::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 28px;
+            border-width: 8px 8px 0;
+            border-style: solid;
+            border-color: var(--neon-cyan) transparent;
+            display: block;
+            width: 0;
+        }
+
+        @keyframes bubbleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .nina-avatar-img {
+            width: clamp(120px, 18vw, 180px);
+            height: auto;
+            filter: drop-shadow(0 10px 25px rgba(34, 211, 238, 0.35));
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 0.25s ease;
+        }
+
+        .nina-avatar-img:hover {
+            transform: scale(1.06);
+        }
+
+        /* Fullscreen Overlay Modals (Dark Glass + Neon) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(4, 6, 18, 0.82);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card-12d {
+            background: rgba(13, 20, 48, 0.94);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 28px;
+            padding: 35px 28px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.35), 0 25px 50px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-card-12d {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-card-12d h2 {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1.5px;
+        }
+
+        .btn-3d-primary {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #a855f7 100%);
+            color: #FFFFFF;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            padding: 14px 36px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.5), 0 6px 15px rgba(0, 0, 0, 0.4);
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            outline: none;
+            margin-top: 18px;
+        }
+
+        .btn-3d-primary:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.8), 0 8px 20px rgba(0, 0, 0, 0.5);
+            border-color: #FFFFFF;
+        }
+
+        .btn-3d-primary:active {
+            transform: translateY(2px) scale(0.97);
+        }
+
+        /* 50 Animals Sticker Album Modal */
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+            gap: 12px;
+            width: 100%;
+            margin-top: 18px;
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--neon-cyan) rgba(15, 23, 58, 0.5);
+        }
+
+        .album-sticker {
+            background: rgba(15, 23, 58, 0.6);
+            border: 1.5px dashed rgba(34, 211, 238, 0.3);
+            border-radius: 16px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            aspect-ratio: 1;
+        }
+
+        .album-sticker.unlocked {
+            background: rgba(15, 23, 58, 0.9);
+            border-style: solid;
+            border-color: var(--neon-yellow);
+            box-shadow: 0 0 12px rgba(250, 204, 21, 0.3);
+        }
+
+        .album-sticker:hover.unlocked {
+            transform: scale(1.06);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 16px rgba(34, 211, 238, 0.5);
+        }
+
+        .album-sticker img {
+            width: 80%;
+            height: 70%;
+            object-fit: contain;
+            filter: grayscale(1) opacity(0.25);
+        }
+
+        .album-sticker.unlocked img {
+            filter: grayscale(0) opacity(1) drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+        }
+
+        .album-sticker-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.62rem;
+            color: #64748B;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 3px;
+            letter-spacing: 0.5px;
+        }
+
+        .album-sticker.unlocked .album-sticker-name {
+            color: var(--neon-cyan);
+        }
+    
+        /* Celular: Nina más pequeña para no tapar las tarjetas */
+        @media (max-width: 860px) {
+            .game-wrapper { padding-bottom: 190px; }
+            .nina-mascot-box { bottom: 8px; right: 10px; }
+            .nina-avatar-img { width: 82px; }
+            .speech-bubble-12d {
+                font-size: 0.72rem;
+                padding: 6px 10px;
+                max-width: 150px;
+                margin-bottom: 6px;
+            }
+            .speech-bubble-12d::after { right: 20px; }
+        }
+    </style>
+</head>
+<body>
+<canvas id="fx-canvas"></canvas>
+<div class="game-wrapper">
+<!-- Top HUD Navigation (Cyber Neon NW Brand) -->
+<header class="top-nav">
+<div class="logo-area">
+<div class="nw-badge">NW</div>
+<div class="title-block">
+<h1 class="logo-12d" id="logo-title">
+                        NINA'S <span class="highlight">WORLD</span>
+</h1>
+<span class="mode-tag">LISTEN &amp; CHOOSE</span>
+</div>
+</div>
+<div class="hud-pills">
+<!-- Lives Pill -->
+<div class="pill-badge">
+<div id="lives-container" style="display: flex; gap: 6px; align-items: center;">
+<span class="heart-icon">❤️</span>
+<span class="heart-icon">❤️</span>
+<span class="heart-icon">❤️</span>
+</div>
+</div>
+<!-- Score Pill -->
+<div class="pill-badge score-pill">
+<span class="score-label">SCORE:</span>
+<span id="score-text">0</span>
+</div>
+<!-- Album Button -->
+<button class="btn-icon" id="btn-album" title="50 Animals Sticker Album">📖</button>
+</div>
+</header>
+<!-- Progress/Streak Bar -->
+<div class="progress-bar-container">
+<div class="progress-fill" id="progress-bar"></div>
+</div>
+<!-- Biomes selector bar -->
+<nav class="biome-bar">
+<div class="biome-chip active" data-biome="all">🌍 All 50</div>
+<div class="biome-chip" data-biome="jungle">🌴 Jungle</div>
+<div class="biome-chip" data-biome="farm">🚜 Farm</div>
+<div class="biome-chip" data-biome="ocean">🌊 Ocean</div>
+<div class="biome-chip" data-biome="forest">🌲 Forest</div>
+<div class="biome-chip" data-biome="safari">🦁 Safari</div>
+</nav>
+<!-- Sound Prompt Target Speaker Card -->
+<div class="audio-target-card">
+<div class="speaker-container">
+<div class="sound-wave-ring" id="wave-ring"></div>
+<button aria-label="Listen Animal Sound" class="speaker-btn-3d" id="btn-play-sound">
+                    🔊
+                    <span class="speaker-label">LISTEN</span>
+</button>
+</div>
+<div class="prompt-text" id="prompt-instruction">Tap the speaker to hear the animal name in English!</div>
+</div>
+<!-- Cards Display Stage: 4 Large Animal Cards (Row on Desktop, 2x2 on Mobile) -->
+<main class="cards-stage" id="cards-grid">
+<!-- Dynamically populated cyber-glass cards -->
+</main>
+</div>
+<!-- Mascot Nina Floating Box -->
+<div class="nina-mascot-box">
+<div class="speech-bubble-12d" id="nina-bubble">Listen to the name and pick the correct animal! 🎧</div>
+<img alt="Nina Mascot" class="nina-avatar-img" id="nina-avatar" onerror="this.src='https://placehold.co/150x200/0ea5e9/ffffff?text=Nina';" src="images/nina_new.png"/>
+</div>
+<!-- Win / Level Complete Modal -->
+<div class="modal-overlay" id="modal-win">
+<div class="modal-card-12d">
+<h2 style="font-size: 2.2rem; color: var(--neon-yellow); text-shadow: 0 0 16px rgba(250, 204, 21, 0.6); margin-bottom: 8px;">Super Star! 🎉</h2>
+<p style="font-size: 1.1rem; color: #CBD5E1; margin-bottom: 20px;">You are learning English so fast!</p>
+<div style="background: rgba(15, 23, 58, 0.7); border: 1.5px solid rgba(74, 222, 128, 0.4); padding: 16px 26px; border-radius: 20px; width: 100%; margin-bottom: 20px; font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: #FFF; box-shadow: inset 0 0 12px rgba(74, 222, 128, 0.2);">
+                Animals Mastered: <strong id="modal-unlocked-count" style="color: var(--neon-green);">0 / 50</strong>
+</div>
+<button class="btn-3d-primary" id="btn-next-level">Keep Playing 🚀</button>
+</div>
+</div>
+<!-- Game Over Modal -->
+<div class="modal-overlay" id="modal-lose">
+<div class="modal-card-12d">
+<h2 style="font-size: 2.2rem; color: var(--neon-red); text-shadow: 0 0 16px rgba(239, 68, 68, 0.6); margin-bottom: 8px;">Try Again! 💪</h2>
+<p style="font-size: 1.1rem; color: #CBD5E1; margin-bottom: 20px;">Don't worry, practice makes perfect!</p>
+<button class="btn-3d-primary" id="btn-retry">Try Again 🔄</button>
+</div>
+</div>
+<!-- 50 Animals Sticker Album Modal -->
+<div class="modal-overlay" id="modal-album">
+<div class="modal-card-12d" style="max-width: 640px;">
+<h2 style="font-size: 1.8rem; color: var(--neon-yellow); text-shadow: 0 0 14px rgba(250, 204, 21, 0.5);">50 Animals Collection 📖</h2>
+<p style="font-size: 0.95rem; color: #94A3B8; margin-top: 4px;">Tap unlocked animals to re-listen!</p>
+<div class="album-grid" id="album-container">
+<!-- 50 stickers loaded dynamically -->
+</div>
+<button class="btn-3d-primary" id="btn-close-album">Close ✖️</button>
+</div>
+</div>
+<script>
+        /* ============================================================
+           1. MASTER 50 ANIMALS DATABASE WITH BIOMES & IMAGE PATHS
+           ============================================================ */
+        const MASTER_ANIMALS = [
+            // FARM (12)
+            { id: 'cat', name: 'Cat', biome: 'farm', img: 'images/1%20CAT.png', crop: 'inset(6.4% 23.6% 2.0% 31.1%)' },
+            { id: 'dog', name: 'Dog', biome: 'farm', img: 'images/2%20DOG.png', crop: 'inset(6.4% 28.6% 3.4% 27.9%)' },
+            { id: 'cow', name: 'Cow', biome: 'farm', img: 'images/3%20COW.png', crop: 'inset(6.9% 22.8% 0.7% 27.6%)' },
+            { id: 'pig', name: 'Pig', biome: 'farm', img: 'images/4%20PIG.png', crop: 'inset(4.5% 28.6% 3.4% 28.5%)' },
+            { id: 'horse', name: 'Horse', biome: 'farm', img: 'images/5%20HORSE.png', crop: 'inset(1.0% 21.2% 0.0% 22.4%)' },
+            { id: 'sheep', name: 'Sheep', biome: 'farm', img: 'images/6%20SHEEP.png', crop: 'inset(4.8% 23.6% 0.4% 27.9%)' },
+            { id: 'rabbit', name: 'Rabbit', biome: 'farm', img: 'images/7%20RABBIT.png', crop: 'inset(3.7% 30.2% 2.0% 32.7%)' },
+            { id: 'duck', name: 'Duck', biome: 'farm', img: 'images/8%20DUCK.png', crop: 'inset(2.9% 30.7% 1.8% 33.5%)' },
+            { id: 'chicken', name: 'Chicken', biome: 'farm', img: 'images/9%20CHICKEN.png', crop: 'inset(1.8% 31.0% 1.0% 30.4%)' },
+            { id: 'rooster', name: 'Rooster', biome: 'farm', img: 'images/10%20ROOSTER.png', crop: 'inset(2.6% 29.9% 0.0% 27.3%)' },
+            { id: 'goat', name: 'Goat', biome: 'farm', img: 'images/11%20GOAT.png', crop: 'inset(6.9% 24.9% 0.4% 30.8%)' },
+            { id: 'donkey', name: 'Donkey', biome: 'farm', img: 'images/47%20DONKEY.png', crop: 'inset(0.7% 31.6% 0.4% 27.7%)' },
+
+            // JUNGLE (10)
+            { id: 'lion', name: 'Lion', biome: 'jungle', img: 'images/12%20LION.png', crop: 'inset(5.6% 28.8% 6.1% 32.5%)' },
+            { id: 'elephant', name: 'Elephant', biome: 'jungle', img: 'images/13%20ELEPHANT.png', crop: 'inset(5.8% 28.9% 5.3% 26.8%)' },
+            { id: 'tiger', name: 'Tiger', biome: 'jungle', img: 'images/14%20TIGER.png', crop: 'inset(0.4% 30.4% 1.8% 26.8%)' },
+            { id: 'giraffe', name: 'Giraffe', biome: 'jungle', img: 'images/15%20GIRAFFE.png', crop: 'inset(1.0% 32.5% 0.0% 27.4%)' },
+            { id: 'zebra', name: 'Zebra', biome: 'jungle', img: 'images/16%20%20ZEBRA.png', crop: 'inset(1.8% 24.8% 0.4% 31.4%)' },
+            { id: 'monkey', name: 'Monkey', biome: 'jungle', img: 'images/17%20MONKEY.png', crop: 'inset(5.8% 33.6% 4.5% 33.5%)' },
+            { id: 'hippo', name: 'Hippo', biome: 'jungle', img: 'images/25%20HIPPO.png', crop: 'inset(5.6% 27.1% 3.4% 28.6%)' },
+            { id: 'rhino', name: 'Rhino', biome: 'jungle', img: 'images/49%20RHINO.png', crop: 'inset(7.5% 25.5% 3.9% 25.5%)' },
+            { id: 'camel', name: 'Camel', biome: 'jungle', img: 'images/48%20CAMEL.png', crop: 'inset(2.9% 25.8% 0.0% 26.7%)' },
+            { id: 'kangaroo', name: 'Kangaroo', biome: 'jungle', img: 'images/23%20KANGAROO.png', crop: 'inset(0.0% 33.0% 0.0% 25.7%)' },
+
+            // FOREST (10)
+            { id: 'bear', name: 'Bear', biome: 'forest', img: 'images/18%20BEAR.png', crop: 'inset(3.9% 29.9% 3.4% 29.8%)' },
+            { id: 'wolf', name: 'Wolf', biome: 'forest', img: 'images/19%20WOLF.png', crop: 'inset(1.5% 23.0% 0.0% 30.5%)' },
+            { id: 'fox', name: 'Fox', biome: 'forest', img: 'images/20%20FOX.png', crop: 'inset(1.5% 31.7% 1.5% 24.3%)' },
+            { id: 'deer', name: 'Deer', biome: 'forest', img: 'images/21%20DEER.png', crop: 'inset(7.5% 29.3% 3.4% 27.4%)' },
+            { id: 'owl', name: 'Owl', biome: 'forest', img: 'images/27%20OWL.png', crop: 'inset(6.9% 30.2% 7.2% 30.2%)' },
+            { id: 'bat', name: 'Bat', biome: 'forest', img: 'images/32%20BAT.png', crop: 'inset(3.1% 31.1% 4.8% 28.6%)' },
+            { id: 'snail', name: 'Snail', biome: 'forest', img: 'images/33%20SNAIL.png', crop: 'inset(4.8% 26.8% 3.1% 23.3%)' },
+            { id: 'frog', name: 'Frog', biome: 'forest', img: 'images/43%20FROG.png', crop: 'inset(11.5% 15.0% 12.9% 6.3%)' },
+            { id: 'snake', name: 'Snake', biome: 'forest', img: 'images/44%20SNAKE.png', crop: 'inset(13.2% 10.6% 9.5% 11.1%)' },
+            { id: 'mouse', name: 'Mouse', biome: 'forest', img: 'images/45%20MOUSE.png', crop: 'inset(9.6% 23.4% 8.0% 20.3%)' },
+
+            // OCEAN (9)
+            { id: 'fish', name: 'Fish', biome: 'ocean', img: 'images/34%20FISH.png', crop: 'inset(5.6% 14.9% 9.1% 16.9%)' },
+            { id: 'dolphin', name: 'Dolphin', biome: 'ocean', img: 'images/35%20DOLPHIN.png', crop: 'inset(5.6% 27.0% 1.5% 23.7%)' },
+            { id: 'whale', name: 'Whale', biome: 'ocean', img: 'images/36%20WHALE.png', crop: 'inset(10.4% 7.8% 5.6% 2.9%)' },
+            { id: 'shark', name: 'Shark', biome: 'ocean', img: 'images/37%20SHARK.png', crop: 'inset(6.9% 10.0% 8.0% 11.3%)' },
+            { id: 'octopus', name: 'Octopus', biome: 'ocean', img: 'images/38%20OCTOPUS.png', crop: 'inset(2.6% 3.9% 5.3% 6.7%)' },
+            { id: 'crab', name: 'Crab', biome: 'ocean', img: 'images/39%20CRAB.png', crop: 'inset(17.8% 8.4% 7.3% 7.0%)' },
+            { id: 'starfish', name: 'Starfish', biome: 'ocean', img: 'images/40%20STARFISH.png', crop: 'inset(3.3% 19.6% 2.8% 19.6%)' },
+            { id: 'seal', name: 'Seal', biome: 'ocean', img: 'images/41%20SEAL.png', crop: 'inset(8.8% 5.6% 8.6% 9.6%)' },
+            { id: 'turtle', name: 'Turtle', biome: 'ocean', img: 'images/42%20TURTLE.png', crop: 'inset(15.1% 21.1% 6.1% 19.9%)' },
+
+            // SAFARI / OTHERS (9)
+            { id: 'panda', name: 'Panda', biome: 'safari', img: 'images/22%20PANDA.png', crop: 'inset(5.6% 30.4% 2.3% 29.8%)' },
+            { id: 'koala', name: 'Koala', biome: 'safari', img: 'images/24%20KOALA.png', crop: 'inset(2.6% 22.4% 0.0% 26.7%)' },
+            { id: 'hedgehog', name: 'Hedgehog', biome: 'safari', img: 'images/46%20HEDGEHOG.png', crop: 'inset(3.7% 19.9% 4.2% 20.3%)' },
+            { id: 'squirrel', name: 'Squirrel', biome: 'safari', img: 'images/50%20SQUIRREL.png', crop: 'inset(3.4% 20.0% 1.8% 14.7%)' },
+            { id: 'bird', name: 'Bird', biome: 'safari', img: 'images/26%20BIRD.png', crop: 'inset(5.6% 31.9% 5.8% 24.3%)' },
+            { id: 'penguin', name: 'Penguin', biome: 'safari', img: 'images/28%20PENGUIN.png', crop: 'inset(3.7% 27.6% 0.1% 27.9%)' },
+            { id: 'butterfly', name: 'Butterfly', biome: 'safari', img: 'images/29%20BUTTERFLAY.png', crop: 'inset(2.9% 19.2% 1.5% 18.4%)' },
+            { id: 'bee', name: 'Bee', biome: 'safari', img: 'images/30%20BEE.png', crop: 'inset(5.3% 25.1% 0.7% 30.2%)' },
+            { id: 'ladybug', name: 'Ladybug', biome: 'safari', img: 'images/31%20LADYBUG.png', crop: 'inset(1.5% 21.4% 5.3% 22.8%)' }
+        ];
+
+        /* ============================================================
+           2. AUDIO SYNTHESIS & ENHANCED SPEECH ENGINE
+           ============================================================ */
+        class AudioEngine {
+            constructor() {
+                this.ctx = null;
+                this.synth = window.speechSynthesis;
+                this.preferredVoice = null;
+                this.initVoice();
+            }
+
+            pickVoice() {
+                const voices = this.synth.getVoices() || [];
+                const en = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'));
+                const friendly = /zira|aria|jenny|samantha|natural|female|hazel|susan/i;
+                this.preferredVoice =
+                    en.find(v => v.localService && v.lang.toLowerCase() === 'en-us' && friendly.test(v.name))
+                    || en.find(v => v.localService && v.lang.toLowerCase() === 'en-us')
+                    || en.find(v => v.localService)
+                    || en.find(v => v.lang.toLowerCase() === 'en-us')
+                    || en[0]
+                    || null;
+            }
+
+            initVoice() {
+                if (!this.synth) return;
+                this.pickVoice();
+                if (this.synth.onvoiceschanged !== undefined) {
+                    this.synth.onvoiceschanged = () => this.pickVoice();
+                }
+            }
+
+            initCtx() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+            }
+
+            playTone(freq, type = 'sine', duration = 0.2, gainVal = 0.1) {
+                this.initCtx();
+                if (!this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e){}
+            }
+
+            speakWord(text) {
+                if (!this.synth) return;
+
+                const waveRing = document.getElementById('wave-ring');
+                if (waveRing) {
+                    waveRing.classList.add('playing');
+                    setTimeout(() => waveRing.classList.remove('playing'), 1300);
+                }
+
+                // Chrome a veces ignora speak() si se llama justo después de cancel(): esperamos un instante
+                this.synth.cancel();
+                clearTimeout(this.speakTimer);
+                this.speakTimer = setTimeout(() => {
+                    if (!this.preferredVoice) this.pickVoice();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85;
+                    utterance.pitch = 1.15;
+                    utterance.volume = 1;
+                    if (this.preferredVoice) utterance.voice = this.preferredVoice;
+                    // Guardamos la referencia para que el navegador no la borre antes de terminar de hablar
+                    this.currentUtterance = utterance;
+                    utterance.onend = utterance.onerror = () => {
+                        if (this.currentUtterance === utterance) this.currentUtterance = null;
+                    };
+                    this.synth.resume();
+                    this.synth.speak(utterance);
+                }, 80);
+            }
+
+            playSuccess() {
+                this.playTone(523.25, 'triangle', 0.12, 0.15);
+                setTimeout(() => this.playTone(659.25, 'triangle', 0.12, 0.15), 100);
+                setTimeout(() => this.playTone(783.99, 'triangle', 0.25, 0.2), 200);
+            }
+
+            playError() {
+                this.playTone(200, 'sawtooth', 0.2, 0.15);
+                setTimeout(() => this.playTone(150, 'sawtooth', 0.25, 0.15), 150);
+            }
+        }
+
+        const soundSystem = new AudioEngine();
+
+        /* ============================================================
+           3. GAME STATE MANAGEMENT
+           ============================================================ */
+        let state = {
+            currentBiome: 'all',
+            score: 0,
+            lives: 3,
+            maxLives: 3,
+            currentAnimal: null,
+            optionsCount: 4,
+            unlockedAnimals: new Set(),
+            isLocked: false
+        };
+
+        // DOM elements
+        const cardsGrid = document.getElementById('cards-grid');
+        const scoreText = document.getElementById('score-text');
+        const livesContainer = document.getElementById('lives-container');
+        const promptInstruction = document.getElementById('prompt-instruction');
+        const btnPlaySound = document.getElementById('btn-play-sound');
+        const ninaBubble = document.getElementById('nina-bubble');
+        const progressBar = document.getElementById('progress-bar');
+        const modalWin = document.getElementById('modal-win');
+        const modalLose = document.getElementById('modal-lose');
+        const modalAlbum = document.getElementById('modal-album');
+        const albumContainer = document.getElementById('album-container');
+
+        /* ============================================================
+           4. GAME LOGIC & ROUND INITIALIZATION
+           ============================================================ */
+        function getFilteredAnimals() {
+            if (state.currentBiome === 'all') return MASTER_ANIMALS;
+            return MASTER_ANIMALS.filter(a => a.biome === state.currentBiome);
+        }
+
+        function startNewRound() {
+            state.isLocked = false;
+            cardsGrid.innerHTML = '';
+
+            const available = getFilteredAnimals();
+            if (available.length < state.optionsCount) return;
+
+            // Pick 1 target animal randomly
+            const targetIndex = Math.floor(Math.random() * available.length);
+            state.currentAnimal = available[targetIndex];
+
+            // Pick distractor choices
+            let choices = [state.currentAnimal];
+            while (choices.length < state.optionsCount) {
+                const randomChoice = available[Math.floor(Math.random() * available.length)];
+                if (!choices.some(c => c.id === randomChoice.id)) {
+                    choices.push(randomChoice);
+                }
+            }
+
+            // Shuffle choices
+            choices.sort(() => 0.5 - Math.random());
+
+            // Build card elements (Big cyber-glass cards)
+            choices.forEach(animal => {
+                const card = document.createElement('div');
+                card.className = 'animal-card-12d';
+                card.dataset.id = animal.id;
+
+                const fallbackImg = `https://placehold.co/220x220/0ea5e9/ffffff?text=${animal.name}`;
+
+                card.innerHTML = `
+                    <img src="${animal.img}" alt="${animal.name}" class="card-img-3d" style="object-view-box: ${animal.crop};" onerror="this.style.objectViewBox='none'; this.src='${fallbackImg}'">
+                    <div class="card-name-revealed">${animal.name}</div>
+                `;
+
+                card.addEventListener('click', () => handleCardSelect(card, animal));
+                cardsGrid.appendChild(card);
+            });
+
+            // Update UI & Play Audio
+            promptInstruction.textContent = `Listen carefully and choose the matching animal!`;
+            setNinaSpeech(`Who is this? Tap the speaker to listen! 🎧`);
+
+            // Auto-play name audio
+            setTimeout(() => {
+                soundSystem.speakWord(state.currentAnimal.name);
+            }, 400);
+        }
+
+        function handleCardSelect(cardEl, selectedAnimal) {
+            if (state.isLocked) return;
+
+            if (selectedAnimal.id === state.currentAnimal.id) {
+                // CORRECT ANSWER
+                state.isLocked = true;
+                soundSystem.playSuccess();
+                cardEl.classList.add('correct', 'show-name');
+
+                state.score += 100;
+                state.unlockedAnimals.add(selectedAnimal.id);
+                updateHUD();
+
+                triggerConfettiAtElement(cardEl);
+                setNinaSpeech(`Awesome! That's a ${selectedAnimal.name}! 🌟`);
+
+                // Reveal all card names momentarily
+                document.querySelectorAll('.animal-card-12d').forEach(c => c.classList.add('show-name'));
+
+                setTimeout(() => {
+                    if (state.unlockedAnimals.size >= 50) {
+                        handleGameVictory();
+                    } else {
+                        startNewRound();
+                    }
+                }, 1300);
+
+            } else {
+                // WRONG ANSWER
+                soundSystem.playError();
+                cardEl.classList.add('wrong');
+                state.lives--;
+                updateHUD();
+
+                setNinaSpeech(`Oops! Try again! 💪`);
+
+                if (state.lives <= 0) {
+                    setTimeout(handleGameOver, 800);
+                } else {
+                    setTimeout(() => {
+                        cardEl.classList.remove('wrong');
+                    }, 800);
+                }
+            }
+        }
+
+        function updateHUD() {
+            scoreText.textContent = state.score;
+
+            // Render Lives
+            const hearts = livesContainer.querySelectorAll('.heart-icon');
+            hearts.forEach((h, idx) => {
+                if (idx >= state.lives) {
+                    h.classList.add('lost');
+                } else {
+                    h.classList.remove('lost');
+                }
+            });
+
+            // Render Progress Bar (out of 50 animals)
+            const progressPct = Math.min(100, (state.unlockedAnimals.size / 50) * 100);
+            progressBar.style.width = `${progressPct}%`;
+        }
+
+        function setNinaSpeech(text) {
+            ninaBubble.textContent = text;
+        }
+
+        function handleGameVictory() {
+            document.getElementById('modal-unlocked-count').textContent = `${state.unlockedAnimals.size} / 50`;
+            modalWin.classList.add('active');
+        }
+
+        function handleGameOver() {
+            modalLose.classList.add('active');
+        }
+
+        function resetGame() {
+            state.score = 0;
+            state.lives = state.maxLives;
+            modalWin.classList.remove('active');
+            modalLose.classList.remove('active');
+            updateHUD();
+            startNewRound();
+        }
+
+        /* ============================================================
+           5. 50 ANIMALS STICKER ALBUM MODAL
+           ============================================================ */
+        function buildAlbumGrid() {
+            albumContainer.innerHTML = '';
+            MASTER_ANIMALS.forEach(animal => {
+                const isUnlocked = state.unlockedAnimals.has(animal.id);
+                const sticker = document.createElement('div');
+                sticker.className = `album-sticker ${isUnlocked ? 'unlocked' : ''}`;
+                
+                const fallbackImg = `https://placehold.co/100x100/0ea5e9/ffffff?text=${animal.name}`;
+
+                sticker.innerHTML = `
+                    <img src="${animal.img}" alt="${animal.name}" style="object-view-box: ${animal.crop};" onerror="this.style.objectViewBox='none'; this.src='${fallbackImg}'">
+                    <span class="album-sticker-name">${isUnlocked ? animal.name : '???'}</span>
+                `;
+
+                if (isUnlocked) {
+                    sticker.addEventListener('click', () => {
+                        soundSystem.speakWord(animal.name);
+                    });
+                }
+
+                albumContainer.appendChild(sticker);
+            });
+        }
+
+        /* ============================================================
+           6. CANVAS PARTICLES & CONFETTI ENGINE (Cyber Neon)
+           ============================================================ */
+        const canvas = document.getElementById('fx-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createParticle(x, y) {
+            const colors = ['#22d3ee', '#ff2d95', '#a855f7', '#facc15', '#4ade80'];
+            return {
+                x: x || Math.random() * canvas.width,
+                y: y || Math.random() * canvas.height,
+                size: Math.random() * 5 + 2,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                vx: (Math.random() - 0.5) * 6,
+                vy: (Math.random() - 0.5) * 6 - 2,
+                opacity: 1
+            };
+        }
+
+        function triggerConfettiAtElement(el) {
+            const rect = el.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            for (let i = 0; i < 30; i++) {
+                particles.push(createParticle(cx, cy));
+            }
+            startParticles();
+        }
+
+        let particlesRunning = false;
+        function renderParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = particles.filter(p => p.opacity > 0);
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.opacity -= 0.02;
+
+                ctx.globalAlpha = Math.max(0, p.opacity);
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+            if (particles.length > 0) {
+                requestAnimationFrame(renderParticles);
+            } else {
+                particlesRunning = false;
+            }
+        }
+        function startParticles() {
+            if (!particlesRunning) {
+                particlesRunning = true;
+                requestAnimationFrame(renderParticles);
+            }
+        }
+
+        /* ============================================================
+           7. EVENT LISTENERS
+           ============================================================ */
+        btnPlaySound.addEventListener('click', () => {
+            if (state.currentAnimal) {
+                soundSystem.speakWord(state.currentAnimal.name);
+            }
+        });
+
+        document.getElementById('nina-avatar').addEventListener('click', () => {
+            soundSystem.speakWord("Hello! I am Nina! Let's learn English together!");
+        });
+
+        // Biome Selector Listener
+        document.querySelectorAll('.biome-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.biome-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                state.currentBiome = chip.dataset.biome;
+                startNewRound();
+            });
+        });
+
+        // Album Controls
+        document.getElementById('btn-album').addEventListener('click', () => {
+            buildAlbumGrid();
+            modalAlbum.classList.add('active');
+        });
+
+        document.getElementById('btn-close-album').addEventListener('click', () => {
+            modalAlbum.classList.remove('active');
+        });
+
+        // Modal Action Buttons
+        document.getElementById('btn-next-level').addEventListener('click', resetGame);
+        document.getElementById('btn-retry').addEventListener('click', resetGame);
+
+
+        // Precarga suave de las imágenes (una por una, sin frenar el juego)
+        function preloadAnimalImages() {
+            let i = 0;
+            function next() {
+                if (i >= MASTER_ANIMALS.length) return;
+                const im = new Image();
+                im.decoding = 'async';
+                im.src = MASTER_ANIMALS[i++].img;
+                setTimeout(next, 250);
+            }
+            setTimeout(next, 1500);
+        }
+
+        // Initialize game on load
+        window.onload = () => {
+            updateHUD();
+            startNewRound();
+            preloadAnimalImages();
+        };
+    </script>
+</body>
+</html>
