@@ -1,0 +1,1890 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Nina's World - Animal Tournament</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800&amp;family=Orbitron:wght@700;800;900&amp;display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #050816;
+    --cyan: #00f0ff;
+    --pink: #ff2a85;
+    --purple: #b545ff;
+    --yellow: #ffd166;
+    --green: #06d6a0;
+    --text: #f8fafc;
+    --glow-cyan: 0 0 22px rgba(0, 240, 255, 0.65), 0 0 45px rgba(0, 240, 255, 0.3);
+    --glow-pink: 0 0 22px rgba(255, 42, 133, 0.65), 0 0 45px rgba(255, 42, 133, 0.3);
+    --glow-yellow: 0 0 22px rgba(255, 209, 102, 0.65), 0 0 45px rgba(255, 209, 102, 0.3);
+    --glow-green: 0 0 22px rgba(6, 214, 160, 0.65), 0 0 45px rgba(6, 214, 160, 0.3);
+    --glow-purple: 0 0 22px rgba(181, 69, 255, 0.65), 0 0 45px rgba(181, 69, 255, 0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    width: 100vw; height: 100dvh; overflow: hidden;
+    background: radial-gradient(circle at 50% 10%, #151d3b 0%, #070c1e 50%, #02040a 100%);
+    color: var(--text); font-family: 'Fredoka', cursive, sans-serif;
+    user-select: none; -webkit-user-select: none;
+    letter-spacing: 0.08em; line-height: 1.4;
+  }
+
+  /* Starry Canvas + Cosmic Watermark Animals */
+  #starCanvas, #confettiCanvas {
+    position: fixed; inset: 0; pointer-events: none;
+  }
+  #starCanvas { z-index: 1; opacity: 0.9; }
+  #confettiCanvas { z-index: 99999; }
+
+  /* Background Grid & Ambient Watermark Animals */
+  .bg-decor {
+    position: fixed; inset: 0; pointer-events: none; z-index: 2; overflow: hidden;
+  }
+  .bg-grid {
+    position: absolute; inset: 0;
+    background-image: 
+      linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+    background-size: 52px 52px;
+    mask-image: radial-gradient(circle at 50% 50%, black 40%, transparent 80%);
+  }
+  .watermark-animal {
+    position: absolute; opacity: 0.05; filter: drop-shadow(0 0 15px var(--cyan)) brightness(1.6);
+    pointer-events: none; animation: floatConstellation 22s ease-in-out infinite alternate;
+  }
+  @keyframes floatConstellation {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-18px) rotate(3deg); }
+    100% { transform: translateY(12px) rotate(-3deg); }
+  }
+
+  h1, h2, h3, .orbitron {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.12em;
+  }
+
+  #app {
+    width: 100%; height: 100dvh; display: flex; flex-direction: column;
+    position: relative; z-index: 10; overflow: hidden;
+  }
+
+  /* 3D Glossy Action Buttons */
+  .btn {
+    min-height: 54px; min-width: 56px; padding: 10px 24px;
+    border-radius: 999px; border: 3px solid var(--cyan);
+    background: linear-gradient(180deg, #1f3b72 0%, #0d1a38 100%);
+    color: #fff; font-family: 'Fredoka', cursive; font-size: clamp(1rem, 2.6vmin, 1.35rem);
+    font-weight: 700; cursor: pointer; display: inline-flex; align-items: center;
+    justify-content: center; gap: 10px; letter-spacing: 0.08em;
+    box-shadow: 0 7px 0 #050b18, 0 10px 20px rgba(0,0,0,0.5), var(--glow-cyan);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    touch-action: manipulation;
+  }
+  .btn:active {
+    transform: translateY(5px);
+    box-shadow: 0 2px 0 #050b18, var(--glow-cyan);
+  }
+  .btn-pink {
+    border-color: #ff529f;
+    background: linear-gradient(180deg, #ff388e 0%, #ad0d52 100%);
+    box-shadow: 0 7px 0 #5b062b, 0 10px 20px rgba(0,0,0,0.5), var(--glow-pink);
+  }
+  .btn-pink:active { transform: translateY(5px); box-shadow: 0 2px 0 #5b062b, var(--glow-pink); }
+  .btn-green {
+    border-color: #38efbd;
+    background: linear-gradient(180deg, #10f0b4 0%, #058f6b 100%);
+    color: #032b20;
+    box-shadow: 0 7px 0 #013727, 0 10px 20px rgba(0,0,0,0.5), var(--glow-green);
+  }
+  .btn-green:active { transform: translateY(5px); box-shadow: 0 2px 0 #013727, var(--glow-green); }
+  .btn-yellow {
+    border-color: #ffe082;
+    background: linear-gradient(180deg, #ffd166 0%, #b8860b 100%);
+    color: #382500;
+    box-shadow: 0 7px 0 #593e00, 0 10px 20px rgba(0,0,0,0.5), var(--glow-yellow);
+  }
+  .btn-yellow:active { transform: translateY(5px); box-shadow: 0 2px 0 #593e00, var(--glow-yellow); }
+  .btn-purple {
+    border-color: #d175ff;
+    background: linear-gradient(180deg, #bf55ff 0%, #6f16a6 100%);
+    box-shadow: 0 7px 0 #3b075e, 0 10px 20px rgba(0,0,0,0.5), var(--glow-purple);
+  }
+  .btn-purple:active { transform: translateY(5px); box-shadow: 0 2px 0 #3b075e, var(--glow-purple); }
+
+  /* 3D Emblem Badge Styles */
+  .badge-3d {
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%; position: relative;
+    background: radial-gradient(circle at 35% 30%, #ffe992 0%, #e6a100 65%, #945800 100%);
+    box-shadow: inset 0 2px 5px rgba(255,255,255,0.7), inset 0 -3px 6px rgba(0,0,0,0.5), 0 6px 14px rgba(0,0,0,0.6), var(--glow-yellow);
+    border: 2px solid #fff2a8;
+  }
+  .trophy-3d {
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.5));
+  }
+
+  /* Nina Top Stage Header */
+  .nina-stage {
+    display: flex; align-items: center; gap: 14px; padding: 10px 18px;
+    background: rgba(10, 16, 38, 0.92);
+    border-bottom: 3px solid rgba(0, 240, 255, 0.4);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.7);
+    flex-shrink: 0; min-height: 76px; z-index: 60;
+    backdrop-filter: blur(12px);
+  }
+  .nina-avatar-wrap {
+    width: 66px; height: 66px; border-radius: 50%;
+    border: 3px solid var(--pink); box-shadow: var(--glow-pink);
+    overflow: hidden; background: #180e30; flex-shrink: 0; position: relative;
+    animation: ninaGentleBob 3s ease-in-out infinite alternate;
+  }
+  @keyframes ninaGentleBob {
+    0% { transform: translateY(0) rotate(-2deg); }
+    100% { transform: translateY(-4px) rotate(2deg); }
+  }
+  .nina-bubble {
+    flex: 1; background: linear-gradient(135deg, rgba(21, 35, 75, 0.95) 0%, rgba(13, 23, 54, 0.95) 100%);
+    border: 2px solid var(--cyan); border-radius: 20px;
+    padding: 8px 18px; font-size: clamp(1rem, 2.5vmin, 1.35rem);
+    color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: space-between;
+    box-shadow: var(--glow-cyan); position: relative;
+  }
+  .nina-bubble::before {
+    content: ''; position: absolute; left: -9px; top: 50%; transform: translateY(-50%);
+    border-top: 8px solid transparent; border-bottom: 8px solid transparent;
+    border-right: 9px solid var(--cyan);
+  }
+  .nina-audio-btn {
+    background: radial-gradient(circle at 30% 30%, #ffeaa7, #d49a00);
+    border: 2px solid #fff; border-radius: 50%; width: 44px; height: 44px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5), var(--glow-yellow);
+    flex-shrink: 0; transition: transform 0.1s;
+  }
+  .nina-audio-btn:active { transform: scale(0.92); }
+
+  /* Top Tournament Bar */
+  .top-bar {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 18px; font-size: 1rem; font-weight: 700; color: #cbd5e1;
+    background: #090e24; border-bottom: 2px solid rgba(0, 240, 255, 0.25); flex-shrink: 0; z-index: 55;
+  }
+  .progress-wrap {
+    flex: 1; max-width: 280px; height: 16px; background: #111a36;
+    border-radius: 12px; overflow: hidden; margin: 0 12px; border: 2px solid var(--cyan);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.7);
+  }
+  .progress-bar {
+    height: 100%; width: 10%;
+    background: linear-gradient(90deg, var(--cyan), var(--pink));
+    box-shadow: 0 0 14px var(--pink);
+    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Screens */
+  .screen {
+    flex: 1; width: 100%; height: calc(100% - 76px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 12px; position: relative; overflow: hidden;
+  }
+  .screen.hidden, .hidden { display: none !important; }
+
+  /* Giant Animal Touch Cards */
+  .animal-card {
+    background: linear-gradient(150deg, rgba(24, 38, 78, 0.95) 0%, rgba(13, 21, 48, 0.95) 100%);
+    border: 3.5px solid var(--purple); border-radius: 26px;
+    padding: 8px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; position: relative;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.15), var(--glow-purple);
+    cursor: pointer; transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s;
+    touch-action: manipulation;
+  }
+  .animal-card:active { transform: scale(0.96); }
+  .animal-card.correct {
+    border-color: var(--green) !important;
+    box-shadow: 0 0 32px var(--green), 0 8px 0 #023829 !important;
+    animation: correctPulse 0.45s ease-in-out;
+  }
+  .animal-card.wrong {
+    border-color: #ff2a5f !important;
+    animation: shakeCard 0.4s ease;
+  }
+  @keyframes shakeCard {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+  @keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+
+  .animal-img-box {
+    width: 100%; height: 100%; display: flex; align-items: center;
+    justify-content: center; position: relative; overflow: hidden;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+  }
+
+  /* Modals */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(3, 6, 18, 0.9);
+    backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center;
+    z-index: 99999; padding: 16px;
+  }
+  .modal-window {
+    background: linear-gradient(160deg, #131f45 0%, #090f26 100%);
+    border: 3px solid var(--cyan); border-radius: 30px;
+    width: min(94vw, 680px); max-height: 88dvh; display: flex; flex-direction: column;
+    box-shadow: 0 0 45px rgba(0, 240, 255, 0.45), 0 20px 40px rgba(0,0,0,0.8);
+    padding: 20px; overflow: hidden; position: relative; z-index: 100000;
+  }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 12px; border-bottom: 2px solid rgba(0, 240, 255, 0.25);
+  }
+  .modal-body {
+    flex: 1; overflow-y: auto; padding: 14px 4px;
+  }
+
+  /* Achievement Toast */
+  #achievementToast {
+    position: fixed; top: 18px; right: 18px;
+    background: linear-gradient(135deg, #1c2e60 0%, #101938 100%);
+    border: 3px solid var(--yellow); border-radius: 20px;
+    padding: 12px 20px; display: flex; align-items: center; gap: 14px;
+    color: #fff; font-weight: 700; box-shadow: var(--glow-yellow);
+    z-index: 100002; transform: translateY(-150%); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+  }
+  #achievementToast.show { transform: translateY(0); }
+
+  /* Welcome Screen Box */
+  .welcome-box {
+    background: linear-gradient(165deg, rgba(20, 32, 70, 0.94) 0%, rgba(10, 16, 40, 0.96) 100%);
+    border: 3px solid var(--cyan); box-shadow: var(--glow-cyan), 0 16px 36px rgba(0,0,0,0.6);
+    border-radius: 32px; padding: clamp(16px, 3.8vmin, 28px);
+    width: min(92vw, 560px); display: flex; flex-direction: column; gap: 14px; text-align: center;
+  }
+  .age-grid { display: flex; justify-content: center; gap: 10px; }
+  .age-btn {
+    width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--pink);
+    background: #142044; color: #fff; font-size: 1.35rem; font-weight: 700; cursor: pointer;
+    box-shadow: 0 4px 0 #5b0728; transition: transform 0.12s, background 0.15s;
+  }
+  .age-btn.selected {
+    background: linear-gradient(180deg, #ff3d95 0%, #b81458 100%);
+    box-shadow: var(--glow-pink); transform: scale(1.12);
+  }
+  .input-field {
+    width: 100%; min-height: 50px; border-radius: 16px; border: 2px solid var(--purple);
+    background: #090e21; color: #fff; font-family: 'Fredoka', cursive; font-size: 1.15rem;
+    padding: 8px 16px; outline: none; font-weight: 700; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+    letter-spacing: 0.08em;
+  }
+
+  .game-container {
+    width: 100%; flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: space-evenly; padding: 6px; position: relative;
+  }
+
+  /* CRITICAL: Spelling Game Single Row Guarantee */
+  .spell-row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100%;
+    max-width: 95vw;
+    gap: clamp(6px, 1.8vw, 14px);
+    overflow-x: auto;
+    padding: 4px;
+  }
+  .spell-slot, .spell-tile {
+    flex: 0 0 auto;
+    width: clamp(52px, 13vw, 82px);
+    height: clamp(56px, 14vw, 86px);
+    display: flex; align-items: center; justify-content: center;
+    font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+    font-weight: 800; border-radius: 18px; text-transform: uppercase;
+  }
+  .spell-slot {
+    border: 3px dashed var(--cyan); background: rgba(12, 22, 54, 0.7);
+    color: var(--yellow); box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+  }
+  .spell-slot.filled {
+    border: 3px solid var(--yellow); background: rgba(255, 209, 102, 0.15);
+  }
+  .spell-tile {
+    border: 3px solid var(--pink); background: linear-gradient(180deg, #ff3d95 0%, #a80c4f 100%);
+    color: #fff; cursor: pointer; box-shadow: 0 6px 0 #5b0728, var(--glow-pink);
+    touch-action: manipulation;
+  }
+  .spell-tile:active { transform: translateY(4px); box-shadow: 0 2px 0 #5b0728; }
+  .spell-tile.used {
+    opacity: 0.25; pointer-events: none; border-color: #555; box-shadow: none;
+  }
+
+  /* Dynamic Neon Line Match SVG Overlay */
+  #matchSvg {
+    position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20;
+  }
+  .match-line {
+    stroke-width: 6; stroke-linecap: round;
+    stroke: var(--cyan); filter: drop-shadow(0 0 10px #00f0ff);
+    transition: opacity 0.4s ease;
+  }
+  .match-line.locked {
+    stroke: var(--green); filter: drop-shadow(0 0 14px #06d6a0);
+  }
+
+  /* Wiggle Animation */
+  @keyframes wiggleBaby {
+    0% { transform: rotate(-5deg) scale(1); }
+    50% { transform: rotate(5deg) scale(1.06); }
+    100% { transform: rotate(-5deg) scale(1); }
+  }
+  .dancing-animal {
+    animation: wiggleBaby 0.9s ease-in-out infinite;
+  }
+</style>
+<style id="unifiedTypographyStyle">
+  body, button, input, select, textarea, .subtitle, .form-label, .modal-title, .modal-body, .score-text, .tracker, .btn, .step-text, .game-instruction, .codex-text, .medal-title, .option-card, .word-btn, .letter-tile, .card, p, span, div, h1, h2, h3, h4, h5, h6 {
+    font-family: 'Orbitron', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    letter-spacing: 0.07em;
+  }
+  button, input, select, textarea, .btn, label, p, span, div, .modal-body, .modal-header h2, .modal-header h3 {
+    text-transform: none;
+  }
+  .spell-slot, .spell-tile, .orbitron, h1, [style*="text-transform: uppercase"] {
+    text-transform: uppercase;
+  }
+</style></head>
+<body>
+<canvas id="starCanvas" width="1280" height="1024"></canvas>
+<canvas id="confettiCanvas"></canvas>
+<!-- Watermark animals backdrop -->
+<div class="bg-decor">
+<div class="bg-grid"></div>
+<div class="watermark-animal" style="top: 8%; left: 6%; width: 130px; height: 130px;">
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCWuAoPDCgkTGJvuEEoYNUhgH32Kd3vCYF5AdmPKLuPQUbP4DwgxYZuXIGdxwPRR_tRr5BHWW4GWirXWM5UK-EzKeoXs-AbG_qPZwjzVl_ikz08QpqS7dlXnDxNSWdr_2DYSwuMUBx9aI-6CnJ6PW5ILQjYr21EdhbRcN5F1eNaYsFkyivKvdIPyueN7Rsmb6HB88yq375UJ_eV0AYtHbeMGeiChlZ1w99eManFe1sgMa0hPpNLxSL_w" style="object-view-box: inset(5.6% 28.8% 6.1% 32.5%); width:100%; height:100%; object-fit:contain;">
+</div>
+<div class="watermark-animal" style="top: 55%; left: 4%; width: 150px; height: 150px; animation-delay: -5s;">
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjwpX4OfR_tT5tul1QejL1_IcriyqTdXeuMuiRqlC7l6EjFWTS8vLQalOeNnujpjv6t6kLpcCljOa5QkBc0IQ_n2XHFMrGHk-VEi6tTyABNiJXzwVk_x6VrVREWBI6991Qvo9fblCkpSRsBKnpOEvoD956_ARHfcLDktmwtsO933jQ1S-a937tAR_F9VcQXqJ7LAfY-5kPiZsoyvR8Jk0XQnImKMuFvarGSfALrdbaOiGyi9yiQGMeUg" style="object-view-box: inset(5.6% 27.0% 1.5% 23.7%); width:100%; height:100%; object-fit:contain;">
+</div>
+<div class="watermark-animal" style="top: 15%; right: 5%; width: 140px; height: 140px; animation-delay: -10s;">
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWcxNRe_tlQAUmQ89mPUD8aZbJYMbVktb5A6DR6NXVErAWctY6X8QII9Z4PCWRN7yBzY0Ei-kB4AKNmLFPF2z8poTzIG4tiRKunDesO_cM6itE3_9_XYmMPOdA4Dabg0Nc9fNP6IF7DuIkU5-OVSvX_ICtFCr1ks7tjnrlErhz49kIOw746jHKNqyzcFPdYIwJcsjCq9ZTcCTPbKw4XjJXQAetkEGN0dIzOAgQGriJPKBeUcOvYqdzag" style="object-view-box: inset(5.8% 28.9% 5.3% 26.8%); width:100%; height:100%; object-fit:contain;">
+</div>
+<div class="watermark-animal" style="bottom: 8%; right: 8%; width: 140px; height: 140px; animation-delay: -15s;">
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIJ5tkomTbW33YDAqZ540N2uFFtvVF4sakj9AxwKcZFRZ_OxdJxdFtijlLIzCZp-VQu9wwSSpQoM33U17560qGCMZU4A4uc3xPQK4Q5kFVB2BlANKHCg1rPaRImz9nIPhHXBIEv1bdXeUPmf-IDqEpBZj7i7QiFO_GqYnhn62PlQvVfnGCfLCf7cpA7fI1cxWNQZGlCjaNeVGsuC_VF-BoblStL4CBZdAiwa6azZ-LzL_oQTKCEN0PuQ" style="object-view-box: inset(5.6% 30.4% 2.3% 29.8%); width:100%; height:100%; object-fit:contain;">
+</div>
+</div>
+<!-- Achievement Toast -->
+<div id="achievementToast">
+<div class="badge-3d" id="toastIcon" style="width: 48px; height: 48px; font-size: 1.8rem;">⭐</div>
+<div>
+<div style="font-size: 0.85rem; color: var(--yellow); letter-spacing: 0.12em; font-weight:800;" class="">MEDAL UNLOCKED!</div>
+<div id="toastText" style="font-size: 1.15rem; letter-spacing: 0.08em;" class="">First Star!</div>
+</div>
+</div>
+<div id="app">
+<!-- Nina Mascot Top Stage Banner -->
+<header class="nina-stage" id="ninaStage">
+<div class="nina-avatar-wrap">
+<img alt="Nina" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHb10iBw0W4xcd3zWkUOjwxfKccjYipvXvXoryoREuCpJSNO4i0Cev-mLAKk7VTTqYrWrXWFtrPrGXER23zPQVOOxb9YbL_KvAAs-6Tf0EIFvIrIEscee4aKh17gTltLmODHDkm4BfRCksbcmkXHZrOfeUPQbmhd1oT8-MKwcCxM_vJFHpN9TW9w34azlkxVXhH8JFN92VefMu0xaDBR0IDpkiyJNM0az20b8bEbst3W1RRsiUmUst7A" style="object-view-box: inset(9.6% 29.6% 5.8% 28.0%); object-fit: contain; width: 100%; height: 100%;">
+</div>
+<div class="nina-bubble">
+<span id="ninaSpeech" style="font-family: Orbitron, sans-serif; font-weight: 700; letter-spacing: 0.08em; font-size: clamp(0.95rem, 2.2vmin, 1.25rem); text-transform: none;" class="">Hi, I am Nina! Let's play with animals!</span>
+<button class="nina-audio-btn" id="repeatSpeechBtn" title="Hear Nina again">
+<svg fill="#382500" height="24" viewBox="0 0 24 24" width="24">
+<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path>
+</svg>
+</button>
+</div>
+</header>
+<!-- Top Status Bar (Tournament) -->
+<div class="top-bar hidden" id="topBar">
+<span id="gameCountLabel" style="color: var(--cyan); font-weight: 800; font-family:'Orbitron';" class="">Game 1 of 10</span>
+<div class="progress-wrap">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+<div style="display: flex; align-items: center; gap: 12px;">
+<div style="display: flex; align-items: center; gap: 6px;">
+<span class="badge-3d" style="width: 28px; height: 28px; font-size: 0.95rem;">⭐</span>
+<span id="scoreDisplay" style="color: var(--yellow); font-size: 1.15rem; font-weight:800;" class="">0</span>
+</div>
+<button class="btn btn-purple" id="openMenuBtn" style="min-height: 40px; min-width: 40px; padding: 4px 14px; font-size: 0.95rem;">🐾 Codex</button>
+</div>
+</div>
+<!-- SCREEN 1: Welcome Screen -->
+<section class="screen" id="welcomeScreen">
+<div class="welcome-box">
+<h1 style="color: var(--cyan); font-size: clamp(1.6rem, 4.4vmin, 2.3rem); text-shadow: var(--glow-cyan);" class="">ANIMAL TOURNAMENT</h1>
+<p style="color: #cbd5e1; font-weight: 600; font-size: 1.1rem; letter-spacing: 0.08em;" class="">Fun English animal games for toddlers &amp; kids!</p>
+<div style="text-align: left;">
+<label style="font-size: 0.95rem; color: #a5b4fc; font-weight: 700; margin-bottom: 4px; display: block;" class="">YOUR NAME</label>
+<input class="input-field" id="playerNameInput" maxlength="15" type="text" value="Leo">
+</div>
+<div>
+<label style="font-size: 0.95rem; color: #a5b4fc; font-weight: 700; display: block; margin-bottom: 6px;" class="">YOUR AGE</label>
+<div class="age-grid">
+<button class="age-btn selected" data-age="4">4</button>
+<button class="age-btn" data-age="5">5</button>
+<button class="age-btn" data-age="6">6</button>
+<button class="age-btn" data-age="7">7</button>
+<button class="age-btn" data-age="8">8</button>
+</div>
+</div>
+<div style="text-align: left;">
+<label style="font-size: 0.95rem; color: #a5b4fc; font-weight: 700; margin-bottom: 4px; display: block;" class="">YOUR COUNTRY</label>
+<select class="input-field" id="playerCountrySelect" style="cursor: pointer;"><option value="ec">Ecuador</option><option value="mx">Mexico</option><option value="es">Spain</option><option value="us">United States</option><option value="co">Colombia</option><option value="ar">Argentina</option><option value="gb">United Kingdom</option><option value="br">Brazil</option><option value="fr">France</option><option value="jp">Japan</option><option value="ca">Canada</option><option value="de">Germany</option></select>
+</div>
+<div style="display: flex; gap: 12px; justify-content: center; margin-top: 8px;">
+<button class="btn btn-pink" id="howToPlayBtn" style="flex: 1 1 0%;">❓ How to Play</button>
+<button class="btn btn-green" id="startTourneyBtn" style="flex: 1.4; font-size: 1.35rem;">PLAY! 🚀</button>
+</div>
+</div>
+</section>
+<!-- SCREEN 2: Versus Rival Screen -->
+<section class="screen hidden" id="vsScreen">
+<div style="text-align: center; width: min(94vw, 680px);">
+<h2 style="font-size: clamp(1.8rem, 5vmin, 2.6rem); color: var(--pink); text-shadow: var(--glow-pink); margin-bottom: 22px;" class="">MATCH READY!</h2>
+<div style="display: flex; align-items: center; justify-content: space-evenly; gap: 14px;">
+<!-- Player -->
+<div style="background: rgba(14, 23, 52, 0.9); border: 3.5px solid var(--cyan); border-radius: 26px; padding: 20px; width: 44%; box-shadow: var(--glow-cyan);">
+<div id="vsPlayerFlag" style="font-size: 3rem; margin-bottom: 8px;"></div>
+<div id="vsPlayerName" style="font-size: 1.5rem; font-weight: 800; color: #fff;" class="">Leo</div>
+<div id="vsPlayerAge" style="color: #94a3b8; font-weight: 600; font-size: 1.1rem;" class="">Age 4</div>
+</div>
+<div class="orbitron" style="font-size: 2.6rem; color: var(--yellow); text-shadow: var(--glow-yellow);">VS</div>
+<!-- Rival -->
+<div style="background: rgba(14, 23, 52, 0.9); border: 3.5px solid var(--pink); border-radius: 26px; padding: 20px; width: 44%; box-shadow: var(--glow-pink);">
+<div id="vsRivalFlag" style="font-size: 3rem; margin-bottom: 8px;"></div>
+<div id="vsRivalName" style="font-size: 1.5rem; font-weight: 800; color: #fff;" class="">Maya</div>
+<div id="vsRivalAge" style="color: #94a3b8; font-weight: 600; font-size: 1.1rem;" class="">Age 4</div>
+</div>
+</div>
+<button class="btn btn-yellow" id="fightBtn" style="margin-top: 30px; padding: 14px 44px; font-size: 1.5rem; letter-spacing: 0.1em;">LET'S PLAY! ⚔️</button>
+</div>
+</section>
+<!-- SCREEN 3: Active Mini-Game Screen -->
+<section class="screen hidden" id="gameScreen">
+<div class="game-container" id="miniGameContainer"></div>
+</section>
+<!-- SCREEN 4: Final Screen -->
+<section class="screen hidden" id="finalScreen">
+<div style="width: min(94vw, 640px); text-align: center; background: rgba(14, 23, 50, 0.95); border: 3px solid var(--yellow); border-radius: 28px; padding: 24px; box-shadow: var(--glow-yellow);">
+<div class="badge-3d" style="width: 80px; height: 80px; font-size: 3.2rem; margin: 0 auto 12px;">🏆</div>
+<h2 id="finalTitle" style="color: var(--yellow); font-size: clamp(1.7rem, 4.4vmin, 2.4rem); margin-bottom: 10px; text-shadow: var(--glow-yellow);" class="">TOURNAMENT WINNER!</h2>
+<div id="finalResultText" style="font-size: 1.3rem; margin-bottom: 14px; font-weight: 600;" class="">You won the World Trophy! 🏆</div>
+<div style="display: flex; justify-content: center; gap: 24px; font-size: 1.35rem; font-weight: 700; margin-bottom: 16px;">
+<div style="color: var(--cyan); display: flex; align-items: center; gap: 8px;" class="">
+<span class="badge-3d" style="width: 32px; height: 32px; font-size: 1rem;">⭐</span>
+<span id="finalStars" class="">0</span> Stars
+        </div>
+<div style="color: var(--pink); display: flex; align-items: center; gap: 8px;" class="">
+<span class="badge-3d" style="width: 32px; height: 32px; font-size: 1rem; background: radial-gradient(circle at 35% 30%, #ff8ab6, #c20f5c);">🏅</span>
+<span id="finalMedals" class="">0</span> Medals
+        </div>
+</div>
+<h3 style="font-size: 1.15rem; color: #a5b4fc; margin-bottom: 8px;" class="">WORLD CHAMPIONS PODIUM</h3>
+<div id="leaderboardList" style="max-height: 170px; overflow-y: auto; background: #080d1e; border-radius: 16px; padding: 8px 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 18px;"></div>
+<button class="btn btn-green" id="playAgainBtn" style="padding: 12px 40px; font-size: 1.35rem;">PLAY AGAIN! 🔄</button>
+</div>
+</section>
+</div>
+<!-- MODAL: Menu Hub (Codex & Medals) -->
+<div class="modal-backdrop hidden" id="menuModal" style="display: none;">
+<div class="modal-window">
+<div class="modal-header">
+<h2 style="color: var(--cyan); font-size: 1.35rem;" class="">ANIMAL CHAMPION HUB</h2>
+<button class="btn btn-pink" id="closeMenuBtn" style="min-height: 42px; min-width: 42px; padding: 4px 12px;">✕</button>
+</div>
+<div style="display: flex; gap: 10px; padding: 12px 0;">
+<button class="btn btn-purple" id="tabCodexBtn" style="flex: 1;">🐾 Animals (50)</button>
+<button class="btn btn-purple" id="tabMedalsBtn" style="flex: 1;">🏅 Medals (9)</button>
+<button class="btn btn-yellow" id="soundToggleBtn" style="flex: 0.8;">🔊 Sound</button>
+</div>
+<div class="modal-body" id="modalContentArea"></div>
+</div>
+</div>
+<!-- MODAL: How To Play (FAILSAFE Unconditional Close) -->
+<div aria-hidden="true" class="modal-backdrop hidden" id="howToPlayModal" style="display: none;">
+<div class="modal-window" style="max-width: 520px; text-align: center;">
+<div class="modal-header">
+<h2 style="color: var(--pink); font-size: 1.25rem;" class="">HOW TO PLAY WITH NINA</h2>
+<button class="btn btn-pink" id="closeHowToBtn" style="min-height: 44px; min-width: 44px; padding: 4px 12px; cursor: pointer;">✕</button>
+</div>
+<div class="modal-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 220px;">
+<div class="badge-3d" id="slideBadge" style="width: 82px; height: 82px; font-size: 3rem;">🎧</div>
+<h3 id="slideTitle" style="color: var(--yellow); font-size: 1.35rem;" class="">Listen to Nina</h3>
+<p id="slideDesc" style="color: #cbd5e1; font-size: 1.15rem; font-weight: 600; max-width: 400px; letter-spacing: 0.08em; line-height: 1.5;" class="">Nina speaks animal names aloud in English! Tap the speaker to hear her again!</p>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; border-top: 2px solid rgba(255,255,255,0.1); padding-top: 14px;">
+<button class="btn btn-purple" id="prevSlideBtn" style="cursor: pointer;">◀ Back</button>
+<span id="slideIndicator" style="font-weight: 700; color: #a5b4fc; font-size: 1.1rem;" class="">1 / 4</span>
+<button class="btn btn-green" id="nextSlideBtn" style="cursor: pointer;">Next ▶</button>
+</div>
+</div>
+</div>
+<script>
+/* ====================================================================
+   50 ANIMALS DATASET (Full Original Set Preserved Exactly)
+==================================================================== */
+const ANIMALS = [
+  { id: 'cat', name: 'Cat', sound: 'Meow! Meow!', food: '🐟 Fish', img: 'images/1%20CAT.png', crop: 'inset(6.4% 23.6% 2.0% 31.1%)', habitat: 'farm' },
+  { id: 'dog', name: 'Dog', sound: 'Woof! Woof!', food: '🦴 Bone', img: 'images/2%20DOG.png', crop: 'inset(6.4% 28.6% 3.4% 27.9%)', habitat: 'farm' },
+  { id: 'cow', name: 'Cow', sound: 'Moo! Moo!', food: '🌾 Grass', img: 'images/3%20COW.png', crop: 'inset(6.9% 22.8% 0.7% 27.6%)', habitat: 'farm' },
+  { id: 'pig', name: 'Pig', sound: 'Oink! Oink!', food: '🍎 Apple', img: 'images/4%20PIG.png', crop: 'inset(4.5% 28.6% 3.4% 28.5%)', habitat: 'farm' },
+  { id: 'horse', name: 'Horse', sound: 'Neigh! Neigh!', food: '🥕 Carrot', img: 'images/5%20HORSE.png', crop: 'inset(1.0% 21.2% 0.0% 22.4%)', habitat: 'farm' },
+  { id: 'sheep', name: 'Sheep', sound: 'Baa! Baa!', food: '🌾 Grass', img: 'images/6%20SHEEP.png', crop: 'inset(4.8% 23.6% 0.4% 27.9%)', habitat: 'farm' },
+  { id: 'rabbit', name: 'Rabbit', sound: 'Squeak!', food: '🥕 Carrot', img: 'images/7%20RABBIT.png', crop: 'inset(3.7% 30.2% 2.0% 32.7%)', habitat: 'farm' },
+  { id: 'duck', name: 'Duck', sound: 'Quack! Quack!', food: '🍞 Bread', img: 'images/8%20DUCK.png', crop: 'inset(2.9% 30.7% 1.8% 33.5%)', habitat: 'farm' },
+  { id: 'chicken', name: 'Chicken', sound: 'Cluck! Cluck!', food: '🌽 Corn', img: 'images/9%20CHICKEN.png', crop: 'inset(1.8% 31.0% 1.0% 30.4%)', habitat: 'farm' },
+  { id: 'rooster', name: 'Rooster', sound: 'Cock-a-doodle-doo!', food: '🌽 Corn', img: 'images/10%20ROOSTER.png', crop: 'inset(2.6% 29.9% 0.0% 27.3%)', habitat: 'farm' },
+  { id: 'goat', name: 'Goat', sound: 'Meh! Meh!', food: '🌿 Leaves', img: 'images/11%20GOAT.png', crop: 'inset(6.9% 24.9% 0.4% 30.8%)', habitat: 'farm' },
+  { id: 'lion', name: 'Lion', sound: 'Roarrr!', food: '🥩 Meat', img: 'images/12%20LION.png', crop: 'inset(5.6% 28.8% 6.1% 32.5%)', habitat: 'safari' },
+  { id: 'elephant', name: 'Elephant', sound: 'Pawoo!', food: '🥜 Peanuts', img: 'images/13%20ELEPHANT.png', crop: 'inset(5.8% 28.9% 5.3% 26.8%)', habitat: 'safari' },
+  { id: 'tiger', name: 'Tiger', sound: 'Grrr!', food: '🥩 Meat', img: 'images/14%20TIGER.png', crop: 'inset(0.4% 30.4% 1.8% 26.8%)', habitat: 'safari' },
+  { id: 'giraffe', name: 'Giraffe', sound: 'Hummm!', food: '🌿 Leaves', img: 'images/15%20GIRAFFE.png', crop: 'inset(1.0% 32.5% 0.0% 27.4%)', habitat: 'safari' },
+  { id: 'zebra', name: 'Zebra', sound: 'Bray!', food: '🌾 Grass', img: 'images/16%20%20ZEBRA.png', crop: 'inset(1.8% 24.8% 0.4% 31.4%)', habitat: 'safari' },
+  { id: 'monkey', name: 'Monkey', sound: 'Ooh ooh aah aah!', food: '🍌 Banana', img: 'images/17%20MONKEY.png', crop: 'inset(5.8% 33.6% 4.5% 33.5%)', habitat: 'safari' },
+  { id: 'bear', name: 'Bear', sound: 'Growl!', food: '🍯 Honey', img: 'images/18%20BEAR.png', crop: 'inset(3.9% 29.9% 3.4% 29.8%)', habitat: 'forest' },
+  { id: 'wolf', name: 'Wolf', sound: 'Awoooo!', food: '🥩 Meat', img: 'images/19%20WOLF.png', crop: 'inset(1.5% 23.0% 0.0% 30.5%)', habitat: 'forest' },
+  { id: 'fox', name: 'Fox', sound: 'Yip yip!', food: '🍇 Berries', img: 'images/20%20FOX.png', crop: 'inset(1.5% 31.7% 1.5% 24.3%)', habitat: 'forest' },
+  { id: 'deer', name: 'Deer', sound: 'Bell!', food: '🌿 Leaves', img: 'images/21%20DEER.png', crop: 'inset(7.5% 29.3% 3.4% 27.4%)', habitat: 'forest' },
+  { id: 'panda', name: 'Panda', sound: 'Squeak!', food: '🎋 Bamboo', img: 'images/22%20PANDA.png', crop: 'inset(5.6% 30.4% 2.3% 29.8%)', habitat: 'forest' },
+  { id: 'kangaroo', name: 'Kangaroo', sound: 'Boing boing!', food: '🌾 Grass', img: 'images/23%20KANGAROO.png', crop: 'inset(0.0% 33.0% 0.0% 25.7%)', habitat: 'safari' },
+  { id: 'koala', name: 'Koala', sound: 'Grunt!', food: '🍃 Eucalyptus', img: 'images/24%20KOALA.png', crop: 'inset(2.6% 22.4% 0.0% 26.7%)', habitat: 'forest' },
+  { id: 'hippo', name: 'Hippo', sound: 'Grunt roar!', food: '🌾 Grass', img: 'images/25%20HIPPO.png', crop: 'inset(5.6% 27.1% 3.4% 28.6%)', habitat: 'safari' },
+  { id: 'bird', name: 'Bird', sound: 'Tweet tweet!', food: '🪱 Worm', img: 'images/26%20BIRD.png', crop: 'inset(5.6% 31.9% 5.8% 24.3%)', habitat: 'garden' },
+  { id: 'owl', name: 'Owl', sound: 'Hoo hoo!', food: '🪲 Bug', img: 'images/27%20OWL.png', crop: 'inset(6.9% 30.2% 7.2% 30.2%)', habitat: 'forest' },
+  { id: 'penguin', name: 'Penguin', sound: 'Honk honk!', food: '🐟 Fish', img: 'images/28%20PENGUIN.png', crop: 'inset(3.7% 27.6% 0.1% 27.9%)', habitat: 'ocean' },
+  { id: 'butterfly', name: 'Butterfly', sound: 'Flutter flutter!', food: '🌸 Flower Nectar', img: 'images/29%20BUTTERFLAY.png', crop: 'inset(2.9% 19.2% 1.5% 18.4%)', habitat: 'garden' },
+  { id: 'bee', name: 'Bee', sound: 'Buzzzz!', food: '🌸 Pollen', img: 'images/30%20BEE.png', crop: 'inset(5.3% 25.1% 0.7% 30.2%)', habitat: 'garden' },
+  { id: 'ladybug', name: 'Ladybug', sound: 'Tiny flutter!', food: '🌿 Leaves', img: 'images/31%20LADYBUG.png', crop: 'inset(1.5% 21.4% 5.3% 22.8%)', habitat: 'garden' },
+  { id: 'bat', name: 'Bat', sound: 'Screech!', food: '🍎 Fruit', img: 'images/32%20BAT.png', crop: 'inset(3.1% 31.1% 4.8% 28.6%)', habitat: 'forest' },
+  { id: 'snail', name: 'Snail', sound: 'Slurp!', food: '🥬 Green Leaf', img: 'images/33%20SNAIL.png', crop: 'inset(4.8% 26.8% 3.1% 23.3%)', habitat: 'garden' },
+  { id: 'fish', name: 'Fish', sound: 'Blub blub!', food: '🌿 Seaweed', img: 'images/34%20FISH.png', crop: 'inset(5.6% 14.9% 9.1% 16.9%)', habitat: 'ocean' },
+  { id: 'dolphin', name: 'Dolphin', sound: 'Click whistle!', food: '🐟 Fish', img: 'images/35%20DOLPHIN.png', crop: 'inset(5.6% 27.0% 1.5% 23.7%)', habitat: 'ocean' },
+  { id: 'whale', name: 'Whale', sound: 'Whooooosh!', food: '🦐 Shrimp', img: 'images/36%20WHALE.png', crop: 'inset(10.4% 7.8% 5.6% 2.9%)', habitat: 'ocean' },
+  { id: 'shark', name: 'Shark', sound: 'Chomp chomp!', food: '🐟 Fish', img: 'images/37%20SHARK.png', crop: 'inset(6.9% 10.0% 8.0% 11.3%)', habitat: 'ocean' },
+  { id: 'octopus', name: 'Octopus', sound: 'Squirt squirt!', food: '🦀 Crab', img: 'images/38%20OCTOPUS.png', crop: 'inset(2.6% 3.9% 5.3% 6.7%)', habitat: 'ocean' },
+  { id: 'crab', name: 'Crab', sound: 'Click-clack!', food: '🌿 Seaweed', img: 'images/39%20CRAB.png', crop: 'inset(17.8% 8.4% 7.3% 7.0%)', habitat: 'ocean' },
+  { id: 'starfish', name: 'Starfish', sound: 'Shhhh ocean!', food: '🐚 Shellfish', img: 'images/40%20STARFISH.png', crop: 'inset(3.3% 19.6% 2.8% 19.6%)', habitat: 'ocean' },
+  { id: 'seal', name: 'Seal', sound: 'Arf! Arf!', food: '🐟 Fish', img: 'images/41%20SEAL.png', crop: 'inset(8.8% 5.6% 8.6% 9.6%)', habitat: 'ocean' },
+  { id: 'turtle', name: 'Turtle', sound: 'Snap snap!', food: '🥬 Green Leaf', img: 'images/42%20TURTLE.png', crop: 'inset(15.1% 21.1% 6.1% 19.9%)', habitat: 'ocean' },
+  { id: 'frog', name: 'Frog', sound: 'Ribbit! Ribbit!', food: '🪰 Fly', img: 'images/43%20FROG.png', crop: 'inset(11.5% 15.0% 12.9% 6.3%)', habitat: 'garden' },
+  { id: 'snake', name: 'Snake', sound: 'Hisssss!', food: '🥚 Egg', img: 'images/44%20SNAKE.png', crop: 'inset(13.2% 10.6% 9.5% 11.1%)', habitat: 'garden' },
+  { id: 'mouse', name: 'Mouse', sound: 'Squeak! Squeak!', food: '🧀 Cheese', img: 'images/45%20MOUSE.png', crop: 'inset(9.6% 23.4% 8.0% 20.3%)', habitat: 'garden' },
+  { id: 'hedgehog', name: 'Hedgehog', sound: 'Snuffle!', food: '🍎 Apple', img: 'images/46%20HEDGEHOG.png', crop: 'inset(3.7% 19.9% 4.2% 20.3%)', habitat: 'forest' },
+  { id: 'donkey', name: 'Donkey', sound: 'Hee-haw!', food: '🥕 Carrot', img: 'images/47%20DONKEY.png', crop: 'inset(0.7% 31.6% 0.4% 27.7%)', habitat: 'farm' },
+  { id: 'camel', name: 'Camel', sound: 'Grumble!', food: '🌾 Hay', img: 'images/48%20CAMEL.png', crop: 'inset(2.9% 25.8% 0.0% 26.7%)', habitat: 'safari' },
+  { id: 'rhino', name: 'Rhino', sound: 'Snort!', food: '🌿 Leaves', img: 'images/49%20RHINO.png', crop: 'inset(7.5% 25.5% 3.9% 25.5%)', habitat: 'safari' },
+  { id: 'squirrel', name: 'Squirrel', sound: 'Chitter!', food: '🌰 Acorn', img: 'images/50%20SQUIRREL.png', crop: 'inset(3.4% 20.0% 1.8% 14.7%)', habitat: 'forest' }
+];
+
+/* Fictional Rivals */
+const RIVAL_KIDS = [
+  { name: 'Maya', age: 4, code: 'ec', country: 'Ecuador' },
+  { name: 'Mateo', age: 4, code: 'mx', country: 'Mexico' },
+  { name: 'Chloe', age: 4, code: 'fr', country: 'France' },
+  { name: 'Kenzo', age: 5, code: 'jp', country: 'Japan' },
+  { name: 'Sofia', age: 4, code: 'es', country: 'Spain' },
+  { name: 'Lucas', age: 5, code: 'br', country: 'Brazil' },
+  { name: 'Emma', age: 4, code: 'us', country: 'USA' },
+  { name: 'Liam', age: 4, code: 'gb', country: 'UK' }
+];
+
+/* Countries */
+const COUNTRIES = [
+  { name: 'Ecuador', code: 'ec' }, { name: 'Mexico', code: 'mx' }, { name: 'Spain', code: 'es' },
+  { name: 'United States', code: 'us' }, { name: 'Colombia', code: 'co' }, { name: 'Argentina', code: 'ar' },
+  { name: 'United Kingdom', code: 'gb' }, { name: 'Brazil', code: 'br' }, { name: 'France', code: 'fr' },
+  { name: 'Japan', code: 'jp' }, { name: 'Canada', code: 'ca' }, { name: 'Germany', code: 'de' }
+];
+
+/* 9 Illustrated Badges */
+const ACHIEVEMENTS = [
+  { id: 'first_win', name: 'First Star', icon: '⭐', desc: 'Score your first correct animal answer!' },
+  { id: 'streak_3', name: 'Triple Strike', icon: '🔥', desc: 'Answer 3 animals in a row!' },
+  { id: 'streak_5', name: 'Super Toddler', icon: '⚡', desc: 'Answer 5 animals without a single mistake!' },
+  { id: 'pts_200', name: 'Rising Champion', icon: '🥉', desc: 'Score 200 points in the tournament!' },
+  { id: 'pts_500', name: 'Silver Star', icon: '🥈', desc: 'Score 500 tournament points!' },
+  { id: 'pts_1000', name: 'Golden Hero', icon: '🥇', desc: 'Reach 1000 total tournament points!' },
+  { id: 'learn_15', name: 'Animal Friend', icon: '🦁', desc: 'Discover 15 animal friends!' },
+  { id: 'learn_30', name: 'Safari Master', icon: '🌍', desc: 'Discover 30 animal friends!' },
+  { id: 'beat_rival', name: 'Tournament Trophy', icon: '🏆', desc: 'Win the World Tournament trophy!' }
+];
+
+/* Short spelling friendly animal words */
+const SPELLING_ANIMALS = ANIMALS.filter(a => a.name.length >= 3 && a.name.length <= 4);
+
+/* ====================================================================
+   APP STATE & FAILSAFE AUDIO / TIMERS
+==================================================================== */
+const state = {
+  playerName: 'Leo',
+  playerAge: 4,
+  playerCountry: 'ec',
+  soundEnabled: true,
+  activeTimers: [],
+  score: 0,
+  rivalScore: 0,
+  starsTotal: 0,
+  streak: 0,
+  learnedAnimals: new Set(),
+  achievements: new Set(),
+  rival: null,
+  gameQueue: [],
+  currentGameIdx: 0,
+  roundIdx: 0,
+  subMistakes: 0,
+  lastInstruction: '',
+  acceptingInput: true
+};
+
+try {
+  const saved = localStorage.getItem('ninaToddlerAchievements');
+  if (saved) JSON.parse(saved).forEach(id => state.achievements.add(id));
+} catch(e) {}
+
+function flagImg(code) {
+  return `<img src="https://flagcdn.com/w80/${code}.png" alt="${code}" style="width: 44px; height: 28px; object-fit: cover; border-radius: 6px; vertical-align: middle; box-shadow:0 3px 6px rgba(0,0,0,0.5);" onerror="this.outerHTML='🌐'">`;
+}
+
+function animalImg(a) {
+  return `<img src="${a.img}" alt="${a.name}" style="object-view-box: ${a.crop}; object-fit: contain; width:100%; height:100%; pointer-events:none;">`;
+}
+
+function clearGameTimers() {
+  state.activeTimers.forEach(id => {
+    clearTimeout(id);
+    clearInterval(id);
+  });
+  state.activeTimers = [];
+}
+function registerTimer(id) {
+  state.activeTimers.push(id);
+  return id;
+}
+
+function speak(text) {
+  state.lastInstruction = text;
+  const speechEl = document.getElementById('ninaSpeech');
+  if (speechEl) speechEl.textContent = text;
+  if (!state.soundEnabled) return;
+
+  if ('speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+      setTimeout(() => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-US';
+        u.rate = 0.88;
+        u.pitch = 1.25;
+        const voices = window.speechSynthesis.getVoices();
+        const friendly = voices.find(v => v.lang && v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Victoria') || v.name.includes('Karen') || v.localService)) ||
+                         voices.find(v => v.lang && v.lang.startsWith('en')) || null;
+        if (friendly) u.voice = friendly;
+        window.speechSynthesis.speak(u);
+      }, 50);
+    } catch(err) {
+      console.warn('SpeechSynthesis error:', err);
+    }
+  }
+}
+
+function pickAnimals(n, filterFn = null) {
+  const pool = filterFn ? ANIMALS.filter(filterFn) : [...ANIMALS];
+  const shuffled = [...pool].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, n);
+}
+
+/* Starfield Animation */
+(function initStarfield() {
+  const c = document.getElementById('starCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let stars = [];
+  function resize() {
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    stars = Array.from({ length: 65 }, () => ({
+      x: Math.random() * c.width,
+      y: Math.random() * c.height,
+      r: Math.random() * 1.5 + 0.5,
+      alpha: Math.random(),
+      speed: Math.random() * 0.02 + 0.005
+    }));
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    stars.forEach(s => {
+      s.alpha += s.speed;
+      const a = (Math.sin(s.alpha) + 1) / 2;
+      ctx.fillStyle = `rgba(255, 255, 255, ${a * 0.8 + 0.2})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* Confetti System */
+let confettiParticles = [];
+let confettiRunning = false;
+function launchConfetti(count = 45) {
+  const canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#00f0ff', '#ff2a85', '#ffd166', '#06d6a0', '#b545ff', '#ffffff'];
+  for (let i = 0; i < count; i++) {
+    confettiParticles.push({
+      x: window.innerWidth / 2,
+      y: window.innerHeight * 0.45,
+      vx: (Math.random() - 0.5) * 16,
+      vy: (Math.random() - 0.85) * 16,
+      size: Math.random() * 10 + 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      life: 1
+    });
+  }
+
+  if (!confettiRunning) {
+    confettiRunning = true;
+    requestAnimationFrame(renderConfetti);
+  }
+}
+
+function renderConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = confettiParticles.length - 1; i >= 0; i--) {
+    const p = confettiParticles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.38;
+    p.life -= 0.02;
+
+    if (p.life <= 0) {
+      confettiParticles.splice(i, 1);
+    } else {
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  if (confettiParticles.length > 0) {
+    requestAnimationFrame(renderConfetti);
+  } else {
+    confettiRunning = false;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+function unlockAchievement(id) {
+  if (state.achievements.has(id)) return;
+  state.achievements.add(id);
+  try {
+    localStorage.setItem('ninaToddlerAchievements', JSON.stringify([...state.achievements]));
+  } catch(e){}
+
+  const a = ACHIEVEMENTS.find(x => x.id === id);
+  if (!a) return;
+
+  const toast = document.getElementById('achievementToast');
+  if (!toast) return;
+  document.getElementById('toastIcon').textContent = a.icon;
+  document.getElementById('toastText').textContent = a.name;
+  toast.classList.add('show');
+  registerTimer(setTimeout(() => toast.classList.remove('show'), 2600));
+}
+
+function handleCorrect(animal, bonusPts = 30) {
+  state.learnedAnimals.add(animal.id);
+  state.streak++;
+  const earned = bonusPts + (state.streak > 2 ? 15 : 0);
+  state.score += earned;
+  state.rivalScore += Math.floor(bonusPts * 0.7 + Math.random() * 6);
+  updateTopBar();
+  launchConfetti(35);
+
+  unlockAchievement('first_win');
+  if (state.streak >= 3) unlockAchievement('streak_3');
+  if (state.streak >= 5) unlockAchievement('streak_5');
+  if (state.score >= 200) unlockAchievement('pts_200');
+  if (state.score >= 500) unlockAchievement('pts_500');
+  if (state.score >= 1000) unlockAchievement('pts_1000');
+  if (state.learnedAnimals.size >= 15) unlockAchievement('learn_15');
+  if (state.learnedAnimals.size >= 30) unlockAchievement('learn_30');
+
+  speak(`Yay! ${animal.name}! Great job!`);
+}
+
+function handleWrong(animal, onRetry, onReveal) {
+  state.streak = 0;
+  state.subMistakes++;
+  if (state.subMistakes === 1) {
+    speak("Oops! Try again! You can do it!");
+    if (onRetry) onRetry();
+  } else {
+    speak(`Look! It is the ${animal.name}!`);
+    if (onReveal) onReveal();
+  }
+}
+
+function nextQuestion(callback) {
+  state.acceptingInput = false;
+  registerTimer(setTimeout(() => {
+    state.roundIdx++;
+    state.subMistakes = 0;
+    state.acceptingInput = true;
+    if (state.roundIdx >= 2) {
+      endMiniGame();
+    } else {
+      callback();
+    }
+  }, 1300));
+}
+
+/* ====================================================================
+   10 COMPLETE MINI-GAMES TAILORED FOR AGES 4 TO 8
+==================================================================== */
+
+// GAME 1: Listen & Tap
+function renderListenTap(container) {
+  clearGameTimers();
+  const count = state.playerAge >= 6 ? 4 : 3;
+  const picks = pickAnimals(count);
+  const target = picks[Math.floor(Math.random() * picks.length)];
+
+  speak(`Where is the ${target.name}? Tap the ${target.name}!`);
+
+  container.innerHTML = `
+    <div style="font-size: 1.35rem; color: var(--yellow); font-weight: 700; margin-bottom: 12px; letter-spacing: 0.1em;">
+      Tap the: <strong style="color: var(--cyan); text-transform: uppercase;">${target.name}</strong>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(${count === 4 ? '2' : '3'}, 1fr); gap: 14px; width: min(94vw, 560px); height: min(52vmin, 290px);">
+      ${picks.map(a => `
+        <div class="animal-card" data-id="${a.id}">
+          <div class="animal-img-box">${animalImg(a)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  container.querySelectorAll('.animal-card').forEach(card => {
+    card.onclick = () => {
+      if (!state.acceptingInput) return;
+      const aId = card.dataset.id;
+      if (aId === target.id) {
+        card.classList.add('correct');
+        handleCorrect(target);
+        nextQuestion(() => renderListenTap(container));
+      } else {
+        card.classList.add('wrong');
+        registerTimer(setTimeout(() => card.classList.remove('wrong'), 400));
+        handleWrong(target, null, () => {
+          const right = container.querySelector(`[data-id="${target.id}"]`);
+          if (right) right.classList.add('correct');
+          nextQuestion(() => renderListenTap(container));
+        });
+      }
+    };
+  });
+}
+
+// GAME 2: Connect the Animal (Match Name with Real Glowing Neon Lines)
+function renderConnectAnimal(container) {
+  clearGameTimers();
+  const pairCount = 3;
+  const picks = pickAnimals(pairCount);
+  const leftWords = [...picks].sort(() => 0.5 - Math.random());
+  const rightAnimals = [...picks].sort(() => 0.5 - Math.random());
+
+  speak("Draw a line to match each word to its animal!");
+
+  container.innerHTML = `
+    <div style="font-size: 1.25rem; color: var(--yellow); font-weight: 700; margin-bottom: 8px;">
+      Tap a word, then tap its matching picture!
+    </div>
+    <div style="position: relative; width: min(94vw, 560px); height: min(60vmin, 340px); display: flex; justify-content: space-between; align-items: center;">
+      <svg id="matchSvg"></svg>
+      <!-- Left Column: Word Cards -->
+      <div style="display: flex; flex-direction: column; gap: 14px; width: 44%; z-index: 25;">
+        ${leftWords.map(a => `
+          <div class="word-card" data-id="${a.id}" style="background: rgba(16, 27, 60, 0.95); border: 3px solid var(--cyan); border-radius: 18px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: var(--glow-cyan);">
+            <span style="font-size: 1.25rem; font-weight: 800; color: #fff; text-transform: uppercase;">${a.name}</span>
+            <button class="word-sound-btn" data-name="${a.name}" style="background: rgba(0, 240, 255, 0.2); border: 2px solid var(--cyan); border-radius: 50%; width: 34px; height: 34px; cursor: pointer; color:#fff; font-size: 0.9rem;">🔊</button>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Right Column: Animal Picture Cards -->
+      <div style="display: flex; flex-direction: column; gap: 14px; width: 44%; z-index: 25;">
+        ${rightAnimals.map(a => `
+          <div class="animal-card right-card" data-id="${a.id}" style="height: 84px; padding: 6px;">
+            <div class="animal-img-box">${animalImg(a)}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  const svg = container.querySelector('#matchSvg');
+  let selectedWord = null;
+  let matchedCount = 0;
+
+  container.querySelectorAll('.word-sound-btn').forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      speak(btn.dataset.name);
+    };
+  });
+
+  const wordCards = container.querySelectorAll('.word-card');
+  const rightCards = container.querySelectorAll('.right-card');
+
+  wordCards.forEach(wc => {
+    wc.onclick = () => {
+      if (wc.classList.contains('locked')) return;
+      wordCards.forEach(c => { if (!c.classList.contains('locked')) c.style.borderColor = 'var(--cyan)'; });
+      wc.style.borderColor = 'var(--yellow)';
+      selectedWord = wc;
+      speak(wc.querySelector('span').textContent);
+    };
+  });
+
+  rightCards.forEach(rc => {
+    rc.onclick = () => {
+      if (!selectedWord || rc.classList.contains('locked')) return;
+      const wId = selectedWord.dataset.id;
+      const rId = rc.dataset.id;
+
+      // Calculate SVG Coordinates
+      const cRect = container.getBoundingClientRect();
+      const wRect = selectedWord.getBoundingClientRect();
+      const rRect = rc.getBoundingClientRect();
+
+      const x1 = wRect.right - cRect.left;
+      const y1 = wRect.top + wRect.height / 2 - cRect.top;
+      const x2 = rRect.left - cRect.left;
+      const y2 = rRect.top + rRect.height / 2 - cRect.top;
+
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', x1);
+      line.setAttribute('y1', y1);
+      line.setAttribute('x2', x2);
+      line.setAttribute('y2', y2);
+      line.setAttribute('class', 'match-line');
+      svg.appendChild(line);
+
+      if (wId === rId) {
+        line.classList.add('locked');
+        selectedWord.classList.add('locked');
+        rc.classList.add('locked', 'correct');
+        selectedWord.style.borderColor = 'var(--green)';
+        rc.style.borderColor = 'var(--green)';
+        matchedCount++;
+        const target = ANIMALS.find(x => x.id === wId);
+        handleCorrect(target, 25);
+        selectedWord = null;
+
+        if (matchedCount >= pairCount) {
+          state.roundIdx = 2;
+          registerTimer(setTimeout(endMiniGame, 1200));
+        }
+      } else {
+        rc.classList.add('wrong');
+        speak("Try another one!");
+        registerTimer(setTimeout(() => {
+          rc.classList.remove('wrong');
+          line.style.opacity = '0';
+          setTimeout(() => line.remove(), 400);
+        }, 500));
+        selectedWord = null;
+        wordCards.forEach(c => { if (!c.classList.contains('locked')) c.style.borderColor = 'var(--cyan)'; });
+      }
+    };
+  });
+}
+
+// GAME 3: Memory Match (3 or 4 pairs)
+function renderMemoryMatch(container) {
+  clearGameTimers();
+  const pairCount = state.playerAge >= 6 ? 4 : 3;
+  const picked = pickAnimals(pairCount);
+  let deck = [];
+  picked.forEach(a => {
+    deck.push({ ...a, uid: a.id + '_1' });
+    deck.push({ ...a, uid: a.id + '_2' });
+  });
+  deck.sort(() => 0.5 - Math.random());
+
+  let flipped = [];
+  let matchedPairs = 0;
+  let lock = false;
+
+  speak("Find the animal pairs! Tap a card!");
+
+  container.innerHTML = `
+    <div style="font-size: 1.25rem; color: var(--yellow); font-weight: 700; margin-bottom: 8px;">Find the matching animal pairs!</div>
+    <div style="display: grid; grid-template-columns: repeat(${pairCount === 4 ? '4' : '3'}, 1fr); gap: 10px; width: min(94vw, 540px); height: min(56vmin, 320px);">
+      ${deck.map(item => `
+        <div class="animal-card memory-card" data-uid="${item.uid}" style="background: #142045; cursor: pointer;">
+          <div class="card-back" style="font-size: 2.2rem; color: var(--cyan);">❓</div>
+          <div class="card-front animal-img-box hidden">${animalImg(item)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  const cards = container.querySelectorAll('.memory-card');
+  cards.forEach(card => {
+    card.onclick = () => {
+      if (lock || card.classList.contains('revealed') || card.classList.contains('matched')) return;
+
+      const back = card.querySelector('.card-back');
+      const front = card.querySelector('.card-front');
+      back.classList.add('hidden');
+      front.classList.remove('hidden');
+      card.classList.add('revealed');
+      card.style.borderColor = 'var(--cyan)';
+
+      const currentAnim = deck.find(x => x.uid === card.dataset.uid);
+      if (currentAnim) speak(currentAnim.name);
+
+      flipped.push({ card, item: currentAnim });
+
+      if (flipped.length === 2) {
+        lock = true;
+        const [c1, c2] = flipped;
+        if (c1.item.id === c2.item.id) {
+          c1.card.classList.add('correct', 'matched');
+          c2.card.classList.add('correct', 'matched');
+          matchedPairs++;
+          handleCorrect(c1.item, 25);
+          flipped = [];
+          lock = false;
+          if (matchedPairs >= pairCount) {
+            state.roundIdx = 2;
+            registerTimer(setTimeout(endMiniGame, 1200));
+          }
+        } else {
+          registerTimer(setTimeout(() => {
+            c1.card.querySelector('.card-back').classList.remove('hidden');
+            c1.card.querySelector('.card-front').classList.add('hidden');
+            c2.card.querySelector('.card-back').classList.remove('hidden');
+            c2.card.querySelector('.card-front').classList.add('hidden');
+            c1.card.classList.remove('revealed');
+            c2.card.classList.remove('revealed');
+            c1.card.style.borderColor = 'var(--purple)';
+            c2.card.style.borderColor = 'var(--purple)';
+            flipped = [];
+            lock = false;
+          }, 850));
+        }
+      }
+    };
+  });
+}
+
+// GAME 4: Easy Spelling / Spell with Nina (GUARANTEED SINGLE HORIZONTAL ROW)
+function renderEasySpelling(container) {
+  clearGameTimers();
+  const target = SPELLING_ANIMALS[Math.floor(Math.random() * SPELLING_ANIMALS.length)];
+  const letters = target.name.toUpperCase().split('');
+  let currentFilled = [];
+
+  // Scrambled letters + 1 friendly extra distractor letter
+  const extraLetters = ['A', 'E', 'O', 'S', 'T', 'N', 'L'].filter(l => !letters.includes(l));
+  const distractor = extraLetters[Math.floor(Math.random() * extraLetters.length)] || 'B';
+  const tilePool = [...letters, distractor].sort(() => 0.5 - Math.random());
+
+  speak(`Let's spell ${target.name}! Tap the letters!`);
+
+  container.innerHTML = `
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;">
+      <div style="font-size: 1.25rem; color: var(--yellow); font-weight: 700;">
+        Spell: <strong style="color: var(--cyan);">${target.name}</strong>
+      </div>
+      <!-- Big animal image display -->
+      <div style="width: min(76vw, 240px); height: min(34vmin, 160px); background: rgba(14, 23, 50, 0.85); border: 3px solid var(--cyan); border-radius: 22px; padding: 8px; box-shadow: var(--glow-cyan);">
+        <div class="animal-img-box">${animalImg(target)}</div>
+      </div>
+
+      <!-- Letter Slots (STRICT Single Horizontal Row) -->
+      <div class="spell-row" id="spellingSlots">
+        ${letters.map((_, i) => `<div class="spell-slot" data-index="${i}">_</div>`).join('')}
+      </div>
+
+      <!-- Scrambled Letter Tiles (STRICT Single Horizontal Row) -->
+      <div class="spell-row" id="spellingTiles" style="margin-top: 6px;">
+        ${tilePool.map((letter, i) => `
+          <button class="spell-tile" data-letter="${letter}" data-tile-id="${i}">
+            ${letter}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  const slots = container.querySelectorAll('.spell-slot');
+  const tiles = container.querySelectorAll('.spell-tile');
+
+  tiles.forEach(tile => {
+    tile.onclick = () => {
+      if (!state.acceptingInput || tile.classList.contains('used')) return;
+      if (currentFilled.length < letters.length) {
+        const nextIdx = currentFilled.length;
+        const letter = tile.dataset.letter;
+
+        // Check if letter is correct at nextIdx
+        if (letter === letters[nextIdx]) {
+          tile.classList.add('used');
+          currentFilled.push(letter);
+          slots[nextIdx].textContent = letter;
+          slots[nextIdx].classList.add('filled');
+          speak(letter);
+
+          if (currentFilled.length === letters.length) {
+            handleCorrect(target);
+            nextQuestion(() => renderEasySpelling(container));
+          }
+        } else {
+          tile.style.transform = 'scale(0.85)';
+          speak(`Try another letter!`);
+          registerTimer(setTimeout(() => tile.style.transform = '', 300));
+        }
+      }
+    };
+  });
+}
+
+// GAME 5: Animal Sounds & Echo
+function renderAnimalSounds(container) {
+  clearGameTimers();
+  const picks = pickAnimals(3);
+  const target = picks[Math.floor(Math.random() * picks.length)];
+
+  speak(`Listen! ${target.sound} Who makes that sound?`);
+
+  container.innerHTML = `
+    <div style="text-align: center; margin-bottom: 10px;">
+      <div style="font-size: 1.6rem; color: var(--yellow); font-weight: 800;">"${target.sound}"</div>
+      <div style="font-size: 1.15rem; color: #cbd5e1;">Who makes this animal sound?</div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: min(94vw, 560px); height: min(50vmin, 280px);">
+      ${picks.map(a => `
+        <div class="animal-card" data-id="${a.id}">
+          <div class="animal-img-box">${animalImg(a)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  container.querySelectorAll('.animal-card').forEach(card => {
+    card.onclick = () => {
+      if (!state.acceptingInput) return;
+      const aId = card.dataset.id;
+      if (aId === target.id) {
+        card.classList.add('correct');
+        handleCorrect(target);
+        nextQuestion(() => renderAnimalSounds(container));
+      } else {
+        card.classList.add('wrong');
+        registerTimer(setTimeout(() => card.classList.remove('wrong'), 400));
+        handleWrong(target, null, () => {
+          const right = container.querySelector(`[data-id="${target.id}"]`);
+          if (right) right.classList.add('correct');
+          nextQuestion(() => renderAnimalSounds(container));
+        });
+      }
+    };
+  });
+}
+
+// GAME 6: Where Does It Live? (Habitat Home)
+function renderWhereLive(container) {
+  clearGameTimers();
+  const habitats = [
+    { id: 'ocean', label: 'Ocean', icon: '🌊' },
+    { id: 'farm', label: 'Farm', icon: '🚜' },
+    { id: 'safari', label: 'Safari', icon: '🌴' },
+    { id: 'forest', label: 'Forest', icon: '🌲' },
+    { id: 'garden', label: 'Garden', icon: '🌻' }
+  ];
+  const chosenHabitat = habitats[Math.floor(Math.random() * habitats.length)];
+  const correctAnimal = pickAnimals(1, a => a.habitat === chosenHabitat.id)[0];
+  const wrongAnimals = pickAnimals(2, a => a.habitat !== chosenHabitat.id);
+  const choices = [correctAnimal, ...wrongAnimals].sort(() => 0.5 - Math.random());
+
+  speak(`Who lives in the ${chosenHabitat.label}? Tap the animal!`);
+
+  container.innerHTML = `
+    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
+      <span style="font-size: 2.8rem;">${chosenHabitat.icon}</span>
+      <div style="font-size: 1.45rem; color: var(--cyan); font-weight: 800;">Home: ${chosenHabitat.label}</div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: min(94vw, 560px); height: min(50vmin, 280px);">
+      ${choices.map(a => `
+        <div class="animal-card habitat-pick" data-id="${a.id}">
+          <div class="animal-img-box">${animalImg(a)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  container.querySelectorAll('.habitat-pick').forEach(card => {
+    card.onclick = () => {
+      if (!state.acceptingInput) return;
+      const aId = card.dataset.id;
+      if (aId === correctAnimal.id) {
+        card.classList.add('correct');
+        speak(`Yes! The ${correctAnimal.name} lives in the ${chosenHabitat.label}!`);
+        handleCorrect(correctAnimal);
+        nextQuestion(() => renderWhereLive(container));
+      } else {
+        card.classList.add('wrong');
+        registerTimer(setTimeout(() => card.classList.remove('wrong'), 400));
+        handleWrong(correctAnimal, null, () => {
+          const right = container.querySelector(`[data-id="${correctAnimal.id}"]`);
+          if (right) right.classList.add('correct');
+          nextQuestion(() => renderWhereLive(container));
+        });
+      }
+    };
+  });
+}
+
+// GAME 7: How Many Animals? (Counting Fun)
+function renderHowMany(container) {
+  clearGameTimers();
+  const maxCount = state.playerAge >= 6 ? 5 : 3;
+  const count = Math.floor(Math.random() * maxCount) + 1;
+  const animal = pickAnimals(1)[0];
+  const numberWords = ['One', 'Two', 'Three', 'Four', 'Five'];
+
+  speak(`How many ${animal.name}s? Count them together!`);
+
+  container.innerHTML = `
+    <div style="font-size: 1.3rem; color: var(--yellow); font-weight: 700; margin-bottom: 8px;">
+      Count the ${animal.name}s:
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; width: min(94vw, 540px); min-height: min(44vmin, 230px); background: rgba(12, 21, 50, 0.9); border: 3px solid var(--purple); border-radius: 24px; padding: 14px; box-shadow: var(--glow-purple);">
+      ${Array.from({ length: count }).map(() => `
+        <div style="width: clamp(68px, 16vmin, 110px); height: clamp(68px, 16vmin, 110px); animation: wiggleBaby 1.5s ease-in-out infinite;">
+          ${animalImg(animal)}
+        </div>
+      `).join('')}
+    </div>
+    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 14px;">
+      ${Array.from({ length: maxCount }).map((_, i) => `
+        <button class="btn btn-cyan num-btn" data-num="${i + 1}" style="min-width: 65px; height: 64px; font-size: 1.8rem; font-weight: 800;">
+          ${i + 1}
+        </button>
+      `).join('')}
+    </div>
+  `;
+
+  container.querySelectorAll('.num-btn').forEach(btn => {
+    btn.onclick = () => {
+      if (!state.acceptingInput) return;
+      const val = parseInt(btn.dataset.num, 10);
+      if (val === count) {
+        btn.classList.add('correct');
+        speak(`${numberWords[count - 1]} ${animal.name}! Fantastic!`);
+        handleCorrect(animal);
+        nextQuestion(() => renderHowMany(container));
+      } else {
+        btn.classList.add('wrong');
+        registerTimer(setTimeout(() => btn.classList.remove('wrong'), 400));
+        handleWrong(animal, null, () => {
+          const right = container.querySelector(`[data-num="${count}"]`);
+          if (right) right.classList.add('correct');
+          nextQuestion(() => renderHowMany(container));
+        });
+      }
+    };
+  });
+}
+
+// GAME 8: Who Is Hiding? (Shadow Guess)
+function renderShadowGuess(container) {
+  clearGameTimers();
+  const count = 3;
+  const picks = pickAnimals(count);
+  const target = picks[Math.floor(Math.random() * picks.length)];
+
+  speak("Who is hiding here? Can you guess the shadow?");
+
+  container.innerHTML = `
+    <div style="font-size: 1.25rem; color: var(--yellow); font-weight: 700; margin-bottom: 6px;">Who is hiding?</div>
+    <div id="shadowBox" style="width: min(78vw, 260px); height: min(38vmin, 180px); background: #0b142d; border: 3px dashed var(--yellow); border-radius: 22px; padding: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; box-shadow: var(--glow-yellow);">
+      <div id="shadowImgWrap" style="width: 100%; height: 100%; filter: brightness(0); transition: filter 0.4s ease;">
+        ${animalImg(target)}
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: min(94vw, 560px); height: min(44vmin, 240px);">
+      ${picks.map(a => `
+        <div class="animal-card shadow-pick" data-id="${a.id}">
+          <div class="animal-img-box">${animalImg(a)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  container.querySelectorAll('.shadow-pick').forEach(card => {
+    card.onclick = () => {
+      if (!state.acceptingInput) return;
+      const aId = card.dataset.id;
+      if (aId === target.id) {
+        card.classList.add('correct');
+        const wrap = document.getElementById('shadowImgWrap');
+        if (wrap) wrap.style.filter = 'brightness(1)';
+        handleCorrect(target);
+        nextQuestion(() => renderShadowGuess(container));
+      } else {
+        card.classList.add('wrong');
+        registerTimer(setTimeout(() => card.classList.remove('wrong'), 400));
+        handleWrong(target, null, () => {
+          const wrap = document.getElementById('shadowImgWrap');
+          if (wrap) wrap.style.filter = 'brightness(1)';
+          const right = container.querySelector(`[data-id="${target.id}"]`);
+          if (right) right.classList.add('correct');
+          nextQuestion(() => renderShadowGuess(container));
+        });
+      }
+    };
+  });
+}
+
+// GAME 9: Bubble Pop Tournament (15 Seconds Gentle Celebration)
+function renderBubblePop(container) {
+  clearGameTimers();
+  const target = pickAnimals(1)[0];
+  const otherAnimals = pickAnimals(3).filter(a => a.id !== target.id);
+  let caught = 0;
+  let timeLeft = 15;
+
+  speak(`Pop the ${target.name} bubbles! Tap as many as you can!`);
+
+  container.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; width: min(94vw, 560px); font-size: 1.25rem; font-weight: 700; color: var(--yellow); margin-bottom: 6px;">
+      <span>Pop: <strong style="color: var(--cyan); text-transform: uppercase;">${target.name}</strong></span>
+      <span>⏱️ <span id="bubbleTimer">${timeLeft}s</span></span>
+      <span>Popped: <span id="bubbleCount">0</span> 🎈</span>
+    </div>
+    <div id="bubbleArea" style="position: relative; width: min(94vw, 560px); height: min(64vmin, 380px); background: radial-gradient(circle, #0e1c40, #060a1c); border: 3px solid var(--cyan); border-radius: 26px; overflow: hidden; box-shadow: var(--glow-cyan);">
+    </div>
+  `;
+
+  const bubbleArea = document.getElementById('bubbleArea');
+  const timerDisplay = document.getElementById('bubbleTimer');
+  const countDisplay = document.getElementById('bubbleCount');
+
+  function spawnBubble() {
+    if (!bubbleArea) return;
+    const isTarget = Math.random() < 0.55;
+    const anim = isTarget ? target : otherAnimals[Math.floor(Math.random() * otherAnimals.length)];
+
+    const bubble = document.createElement('div');
+    bubble.style.position = 'absolute';
+    const size = Math.floor(Math.random() * 20) + 74;
+    bubble.style.width = `${size}px`;
+    bubble.style.height = `${size}px`;
+    bubble.style.borderRadius = '50%';
+    bubble.style.border = isTarget ? '3px solid var(--cyan)' : '2px solid var(--purple)';
+    bubble.style.boxShadow = isTarget ? '0 0 16px #00f0ff, inset 0 0 12px #00f0ff' : 'none';
+    bubble.style.background = 'radial-gradient(circle at 35% 35%, #25396b, #0d1530)';
+    bubble.style.cursor = 'pointer';
+    bubble.style.bottom = '-90px';
+    bubble.style.left = `${Math.random() * Math.max(20, bubbleArea.clientWidth - size - 10)}px`;
+    bubble.innerHTML = `<div style="width: 100%; height: 100%; padding: 8px;">${animalImg(anim)}</div>`;
+
+    bubbleArea.appendChild(bubble);
+
+    let bottomPos = -90;
+    const speed = Math.random() * 1.5 + 1.2;
+    const moveTimer = registerTimer(setInterval(() => {
+      bottomPos += speed;
+      bubble.style.bottom = `${bottomPos}px`;
+      if (bottomPos > bubbleArea.clientHeight + 40) {
+        clearInterval(moveTimer);
+        bubble.remove();
+      }
+    }, 20));
+
+    bubble.onclick = () => {
+      clearInterval(moveTimer);
+      if (isTarget) {
+        caught++;
+        if (countDisplay) countDisplay.textContent = caught;
+        bubble.style.transform = 'scale(1.35)';
+        bubble.style.opacity = '0';
+        launchConfetti(8);
+      } else {
+        bubble.style.transform = 'scale(0.8)';
+        bubble.style.opacity = '0.3';
+      }
+      setTimeout(() => bubble.remove(), 120);
+    };
+  }
+
+  const spawnTimer = registerTimer(setInterval(spawnBubble, 600));
+
+  const clockTimer = registerTimer(setInterval(() => {
+    timeLeft--;
+    if (timerDisplay) timerDisplay.textContent = `${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(clockTimer);
+      clearInterval(spawnTimer);
+      handleCorrect(target, Math.max(20, caught * 15));
+      state.roundIdx = 2;
+      registerTimer(setTimeout(endMiniGame, 1200));
+    }
+  }, 1000));
+}
+
+// GAME 10: Odd One Out
+function renderOddOneOut(container) {
+  clearGameTimers();
+  const habitats = ['farm', 'safari', 'ocean', 'garden', 'forest'];
+  const baseHabitat = habitats[Math.floor(Math.random() * habitats.length)];
+  const oddHabitat = habitats.filter(h => h !== baseHabitat)[Math.floor(Math.random() * 4)];
+
+  const basePicks = pickAnimals(2, a => a.habitat === baseHabitat);
+  const oddPick = pickAnimals(1, a => a.habitat === oddHabitat)[0];
+
+  const cards = [...basePicks, oddPick].sort(() => 0.5 - Math.random());
+
+  speak("Which animal does not belong here? Find the odd one!");
+
+  container.innerHTML = `
+    <div style="font-size: 1.25rem; color: var(--yellow); font-weight: 700; margin-bottom: 8px;">
+      Tap the friend that lives somewhere else:
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: min(94vw, 560px); height: min(50vmin, 280px);">
+      ${cards.map(a => `
+        <div class="animal-card odd-card" data-id="${a.id}">
+          <div class="animal-img-box">${animalImg(a)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  container.querySelectorAll('.odd-card').forEach(card => {
+    card.onclick = () => {
+      if (!state.acceptingInput) return;
+      const aId = card.dataset.id;
+      if (aId === oddPick.id) {
+        card.classList.add('correct');
+        speak(`Awesome! The ${oddPick.name} does not belong with the others!`);
+        handleCorrect(oddPick);
+        nextQuestion(() => renderOddOneOut(container));
+      } else {
+        card.classList.add('wrong');
+        registerTimer(setTimeout(() => card.classList.remove('wrong'), 400));
+        handleWrong(oddPick, null, () => {
+          const right = container.querySelector(`[data-id="${oddPick.id}"]`);
+          if (right) right.classList.add('correct');
+          nextQuestion(() => renderOddOneOut(container));
+        });
+      }
+    };
+  });
+}
+
+/* 10 MINI-GAMES REGISTRY */
+const MINI_GAMES = [
+  { id: 'listen_tap', title: 'Listen & Tap', fn: renderListenTap },
+  { id: 'connect_animal', title: 'Connect Animal', fn: renderConnectAnimal },
+  { id: 'memory_match', title: 'Memory Match', fn: renderMemoryMatch },
+  { id: 'easy_spelling', title: 'Easy Spelling', fn: renderEasySpelling },
+  { id: 'animal_sounds', title: 'Animal Sounds', fn: renderAnimalSounds },
+  { id: 'where_live', title: 'Where Does It Live?', fn: renderWhereLive },
+  { id: 'how_many', title: 'How Many Animals?', fn: renderHowMany },
+  { id: 'shadow_guess', title: 'Who Is Hiding?', fn: renderShadowGuess },
+  { id: 'bubble_pop', title: 'Bubble Pop', fn: renderBubblePop },
+  { id: 'odd_out', title: 'Odd One Out', fn: renderOddOneOut }
+];
+
+/* ====================================================================
+   TOURNAMENT FLOW CONTROLLER
+==================================================================== */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  const target = document.getElementById(id);
+  if (target) target.classList.remove('hidden');
+
+  const topBar = document.getElementById('topBar');
+  if (id === 'gameScreen') {
+    topBar.classList.remove('hidden');
+  } else {
+    topBar.classList.add('hidden');
+  }
+}
+
+function updateTopBar() {
+  const scoreEl = document.getElementById('scoreDisplay');
+  const countEl = document.getElementById('gameCountLabel');
+  const barEl = document.getElementById('progressBar');
+  if (scoreEl) scoreEl.textContent = state.score;
+  if (countEl) countEl.textContent = `Game ${state.currentGameIdx + 1} of 10`;
+  if (barEl) {
+    const pct = ((state.currentGameIdx + 1) / 10) * 100;
+    barEl.style.width = `${pct}%`;
+  }
+}
+
+function startTournament() {
+  clearGameTimers();
+  state.score = 0;
+  state.rivalScore = 20;
+  state.starsTotal = 0;
+  state.streak = 0;
+  state.currentGameIdx = 0;
+  state.roundIdx = 0;
+
+  state.rival = RIVAL_KIDS[Math.floor(Math.random() * RIVAL_KIDS.length)];
+
+  document.getElementById('vsPlayerName').textContent = state.playerName;
+  document.getElementById('vsPlayerAge').textContent = `Age ${state.playerAge}`;
+  document.getElementById('vsPlayerFlag').innerHTML = flagImg(state.playerCountry);
+
+  document.getElementById('vsRivalName').textContent = state.rival.name;
+  document.getElementById('vsRivalAge').textContent = `Age ${state.rival.age}`;
+  document.getElementById('vsRivalFlag').innerHTML = flagImg(state.rival.code);
+
+  // Exactly 10 Mini-games
+  state.gameQueue = [...MINI_GAMES].sort(() => 0.5 - Math.random());
+
+  showScreen('vsScreen');
+  speak(`Ready ${state.playerName}! Your rival is ${state.rival.name} from ${state.rival.country}!`);
+}
+
+function startNextMiniGame() {
+  clearGameTimers();
+  if (state.currentGameIdx >= state.gameQueue.length) {
+    finishTournament();
+    return;
+  }
+  showScreen('gameScreen');
+  updateTopBar();
+  state.roundIdx = 0;
+  state.subMistakes = 0;
+  state.acceptingInput = true;
+
+  const current = state.gameQueue[state.currentGameIdx];
+  const container = document.getElementById('miniGameContainer');
+  if (container) {
+    container.innerHTML = '';
+    current.fn(container);
+  }
+}
+
+function endMiniGame() {
+  clearGameTimers();
+  const earnedStars = state.subMistakes === 0 ? 3 : (state.subMistakes === 1 ? 2 : 1);
+  state.starsTotal += earnedStars;
+
+  state.currentGameIdx++;
+  if (state.currentGameIdx < state.gameQueue.length) {
+    speak("Mini-game complete! Next challenge!");
+    registerTimer(setTimeout(startNextMiniGame, 1000));
+  } else {
+    finishTournament();
+  }
+}
+
+function finishTournament() {
+  clearGameTimers();
+  showScreen('finalScreen');
+
+  const won = state.score >= state.rivalScore;
+  if (won) unlockAchievement('beat_rival');
+
+  document.getElementById('finalStars').textContent = state.starsTotal;
+  document.getElementById('finalMedals').textContent = state.achievements.size;
+
+  const resultTitle = won ? "VICTORY! WORLD CHAMPION!" : "SUPER MATCH CHAMPION!";
+  document.getElementById('finalTitle').textContent = resultTitle;
+  document.getElementById('finalResultText').textContent = won
+    ? `You won against ${state.rival.name}! High five! 🏆`
+    : `Great animal game against ${state.rival.name}! ⭐`;
+
+  speak(won ? `Congratulations ${state.playerName}! You won the tournament trophy!` : "Great tournament! You are an amazing animal champion!");
+
+  // Leaderboard ranking list
+  const rivalsList = RIVAL_KIDS.map(k => ({
+    name: k.name,
+    age: k.age,
+    code: k.code,
+    score: Math.floor(Math.random() * 250) + 300
+  }));
+  rivalsList.push({
+    name: state.playerName,
+    age: state.playerAge,
+    code: state.playerCountry,
+    score: state.score,
+    isPlayer: true
+  });
+  rivalsList.sort((a, b) => b.score - a.score);
+
+  const boardEl = document.getElementById('leaderboardList');
+  if (boardEl) {
+    boardEl.innerHTML = rivalsList.slice(0, 6).map((k, i) => `
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; margin-bottom: 4px; border-radius: 8px; background: ${k.isPlayer ? '#1b2c58' : 'transparent'}; border: ${k.isPlayer ? '2px solid var(--cyan)' : 'none'};">
+        <span style="font-weight: 800; width: 32px; color: ${i === 0 ? 'var(--yellow)' : '#94a3b8'};">#${i + 1}</span>
+        <span style="display: flex; align-items: center; gap: 8px; flex: 1;">
+          ${flagImg(k.code)} <strong>${k.name}</strong> <small style="color: #94a3b8;">(Age ${k.age})</small>
+        </span>
+        <span style="color: var(--yellow); font-weight: 700;">${k.score} pts</span>
+      </div>
+    `).join('');
+  }
+}
+
+/* ====================================================================
+   MODALS: ANIMAL CODEX & FAILSAFE TUTORIAL
+==================================================================== */
+function openHub(tab = 'codex') {
+  const modal = document.getElementById('menuModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+  }
+  renderHubTab(tab);
+}
+
+function closeHub() {
+  const modal = document.getElementById('menuModal');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+  }
+}
+
+function renderHubTab(tab) {
+  const content = document.getElementById('modalContentArea');
+  if (!content) return;
+  if (tab === 'codex') {
+    content.innerHTML = `
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 10px;">
+        ${ANIMALS.map(a => {
+          const learned = state.learnedAnimals.has(a.id);
+          return `
+            <div class="animal-card codex-card" data-id="${a.id}" style="height: 96px; padding: 6px; filter: ${learned ? 'none' : 'grayscale(1) brightness(0.35)'};">
+              <div class="animal-img-box">${animalImg(a)}</div>
+              <div style="font-size: 0.76rem; font-weight: 700; color: #fff; margin-top: 2px;">${learned ? a.name : '???'}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    content.querySelectorAll('.codex-card').forEach(c => {
+      c.onclick = () => {
+        const a = ANIMALS.find(x => x.id === c.dataset.id);
+        if (state.learnedAnimals.has(a.id)) {
+          speak(`${a.name}! It says ${a.sound}`);
+        } else {
+          speak("Mystery animal! Play games to discover it!");
+        }
+      };
+    });
+  } else {
+    content.innerHTML = `
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
+        ${ACHIEVEMENTS.map(m => {
+          const unlocked = state.achievements.has(m.id);
+          return `
+            <div style="background: #111a36; border: 2px solid ${unlocked ? 'var(--yellow)' : '#2a3556'}; border-radius: 18px; padding: 12px; text-align: center; opacity: ${unlocked ? '1' : '0.45'};">
+              <div class="badge-3d" style="width: 50px; height: 50px; font-size: 2rem; margin-bottom: 6px;">${m.icon}</div>
+              <div style="font-weight: 700; color: #fff; font-size: 1rem;">${m.name}</div>
+              <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px;">${m.desc}</div>
+              <div style="font-size: 0.8rem; color: ${unlocked ? 'var(--green)' : '#64748b'}; margin-top: 6px; font-weight: 700;">
+                ${unlocked ? 'UNLOCKED' : 'LOCKED'}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+}
+
+/* FAILSAFE HOW TO PLAY TUTORIAL */
+const HOW_TO_SLIDES = [
+  { icon: '🎧', title: 'Listen to Nina', text: 'Nina speaks animal names aloud in English! Tap the speaker to hear her again!' },
+  { icon: '🐾', title: 'Big Pictures & Touch', text: 'Touch the big colorful pictures! No need to read complicated words.' },
+  { icon: '🎮', title: '10 Fun Animal Games', text: 'Bubble popping, animal sounds, connecting lines, spelling in a row, and counting!' },
+  { icon: '🏆', title: 'Win Tournament Medals', text: 'Earn shiny stars, discover all 50 animals in your Codex, and win the big trophy!' }
+];
+let currentSlide = 0;
+
+function closeTutorial() {
+  const modal = document.getElementById('howToPlayModal');
+  if (modal) {
+    modal.style.display = 'none';
+    modal.classList.add('hidden');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+  if ('speechSynthesis' in window) {
+    try { window.speechSynthesis.cancel(); } catch(e){}
+  }
+}
+
+function openTutorial() {
+  const modal = document.getElementById('howToPlayModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+    showSlide(0);
+  }
+}
+
+function showSlide(idx) {
+  if (idx < 0 || idx >= HOW_TO_SLIDES.length) return;
+  currentSlide = idx;
+  const s = HOW_TO_SLIDES[idx];
+
+  const badgeEl = document.getElementById('slideBadge');
+  const titleEl = document.getElementById('slideTitle');
+  const descEl = document.getElementById('slideDesc');
+  const indEl = document.getElementById('slideIndicator');
+  const nextBtn = document.getElementById('nextSlideBtn');
+
+  if (badgeEl) badgeEl.textContent = s.icon;
+  if (titleEl) titleEl.textContent = s.title;
+  if (descEl) descEl.textContent = s.text;
+  if (indEl) indEl.textContent = `${idx + 1} / ${HOW_TO_SLIDES.length}`;
+
+  if (nextBtn) {
+    nextBtn.textContent = (idx === HOW_TO_SLIDES.length - 1) ? "Let's Play! ▶" : 'Next ▶';
+  }
+  speak(`${s.title}. ${s.text}`);
+}
+
+function nextTutorialStep() {
+  if (currentSlide >= HOW_TO_SLIDES.length - 1) {
+    closeTutorial();
+    speak("Ready to play! Tap PLAY!");
+  } else {
+    showSlide(currentSlide + 1);
+  }
+}
+
+function prevTutorialStep() {
+  if (currentSlide > 0) showSlide(currentSlide - 1);
+}
+
+/* ====================================================================
+   INITIALIZATION & EVENT BINDINGS
+==================================================================== */
+window.addEventListener('DOMContentLoaded', () => {
+  closeTutorial();
+  closeHub();
+
+  // Populate countries
+  const cSelect = document.getElementById('playerCountrySelect');
+  if (cSelect) {
+    cSelect.innerHTML = COUNTRIES.map(c => `<option value="${c.code}">${c.name}</option>`).join('');
+    cSelect.value = 'ec';
+  }
+
+  // Age selection
+  document.querySelectorAll('.age-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.playerAge = parseInt(btn.dataset.age, 10);
+    };
+  });
+
+  // Start tournament
+  const startBtn = document.getElementById('startTourneyBtn');
+  if (startBtn) {
+    startBtn.onclick = () => {
+      const input = document.getElementById('playerNameInput');
+      state.playerName = (input && input.value.trim()) ? input.value.trim() : 'Leo';
+      if (cSelect) state.playerCountry = cSelect.value;
+      startTournament();
+    };
+  }
+
+  // VS fight
+  const fightBtn = document.getElementById('fightBtn');
+  if (fightBtn) fightBtn.onclick = startNextMiniGame;
+
+  // Play again
+  const playAgainBtn = document.getElementById('playAgainBtn');
+  if (playAgainBtn) playAgainBtn.onclick = () => showScreen('welcomeScreen');
+
+  // Repeat Nina speech
+  const repeatBtn = document.getElementById('repeatSpeechBtn');
+  if (repeatBtn) {
+    repeatBtn.onclick = () => {
+      if (state.lastInstruction) speak(state.lastInstruction);
+    };
+  }
+
+  // Hub controls
+  const openMenuBtn = document.getElementById('openMenuBtn');
+  if (openMenuBtn) openMenuBtn.onclick = () => openHub('codex');
+
+  const closeMenuBtn = document.getElementById('closeMenuBtn');
+  if (closeMenuBtn) closeMenuBtn.onclick = closeHub;
+
+  const tabCodexBtn = document.getElementById('tabCodexBtn');
+  if (tabCodexBtn) tabCodexBtn.onclick = () => renderHubTab('codex');
+
+  const tabMedalsBtn = document.getElementById('tabMedalsBtn');
+  if (tabMedalsBtn) tabMedalsBtn.onclick = () => renderHubTab('medals');
+
+  // Sound toggle
+  const soundToggle = document.getElementById('soundToggleBtn');
+  if (soundToggle) {
+    soundToggle.onclick = () => {
+      state.soundEnabled = !state.soundEnabled;
+      soundToggle.textContent = state.soundEnabled ? '🔊 Sound' : '🔇 Muted';
+      if (!state.soundEnabled && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }
+
+  // Tutorial controls (Direct, failsafe)
+  const howToPlayBtn = document.getElementById('howToPlayBtn');
+  if (howToPlayBtn) howToPlayBtn.onclick = openTutorial;
+
+  const closeHowToBtn = document.getElementById('closeHowToBtn');
+  if (closeHowToBtn) closeHowToBtn.onclick = closeTutorial;
+
+  const nextSlideBtn = document.getElementById('nextSlideBtn');
+  if (nextSlideBtn) nextSlideBtn.onclick = nextTutorialStep;
+
+  const prevSlideBtn = document.getElementById('prevSlideBtn');
+  if (prevSlideBtn) prevSlideBtn.onclick = prevTutorialStep;
+});
+</script>
+
+
+</body></html>
