@@ -15,14 +15,19 @@
 
     <style>
         :root {
-            --neon-pink: #FF2E93;
-            --neon-cyan: #00F0FF;
-            --neon-yellow: #FFEA00;
-            --neon-purple: #9D00FF;
-            --neon-green: #00FF66;
-            --dark-cyber: #0B0E1B;
-            --card-glass: rgba(20, 26, 48, 0.75);
-            --border-glass: rgba(0, 240, 255, 0.4);
+            --bg-dark: #070a1e;
+            --bg-darker: #040612;
+            --neon-cyan: #22d3ee;
+            --neon-pink: #ff2d95;
+            --neon-purple: #a855f7;
+            --neon-yellow: #facc15;
+            --neon-green: #4ade80;
+            --dark-cyber: #040612;
+            --card-glass: rgba(13, 20, 48, 0.75);
+            --border-glass: rgba(34, 211, 238, 0.35);
+            --font-orbitron: 'Orbitron', -apple-system, sans-serif;
+            --font-fredoka: 'Fredoka', cursive, sans-serif;
+            --font-baloo: 'Baloo 2', cursive, sans-serif;
         }
 
         * {
@@ -34,24 +39,123 @@
             touch-action: manipulation;
         }
 
-        @keyframes auroraShift {
-            0%, 100% { background-position: 50% 20%, 20% 80%; }
-            50% { background-position: 60% 30%, 30% 70%; }
+
+        /* Header Brand Area matching drag name.html */
+        .brand-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nw-badge {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #0ea5e9, #ff2d95);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-orbitron);
+            font-weight: 900;
+            font-size: 17px;
+            color: #ffffff;
+            box-shadow: 0 0 16px rgba(14, 165, 233, 0.5), inset 0 0 8px rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            flex-shrink: 0;
+        }
+
+        .brand-title-wrap {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-family: var(--font-orbitron);
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.6), 0 0 20px rgba(34, 211, 238, 0.3);
+        }
+        .brand-title span {
+            color: var(--neon-cyan);
+        }
+
+        .game-pill-badge {
+            align-self: flex-start;
+            margin-top: 2px;
+            font-family: var(--font-orbitron);
+            font-size: 9px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            background: rgba(34, 211, 238, 0.12);
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 8px rgba(34, 211, 238, 0.2);
+        }
+
+        .nina-halo {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            width: 170px;
+            height: 170px;
+            background: radial-gradient(circle, rgba(255, 45, 149, 0.35) 0%, rgba(34, 211, 238, 0.2) 50%, transparent 70%);
+            filter: blur(20px);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: mascotHalo 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes mascotHalo {
+            0% { transform: scale(0.9); opacity: 0.4; }
+            100% { transform: scale(1.2); opacity: 0.75; }
+        }
+
+        /* Ambient animated neon dust glow */
+        .cyber-glow-orb {
+            position: fixed;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(80px);
+            opacity: 0.35;
+            animation: pulseGlow 8s infinite alternate ease-in-out;
+        }
+        .orb-left {
+            top: -100px;
+            left: -100px;
+            background: radial-gradient(circle, var(--neon-cyan), transparent 70%);
+        }
+        .orb-right {
+            bottom: -100px;
+            right: -100px;
+            background: radial-gradient(circle, var(--neon-pink), transparent 70%);
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.25; }
+            100% { transform: scale(1.15) translate(20px, 20px); opacity: 0.45; }
         }
 
         body {
-            font-family: 'Baloo 2', 'Fredoka', sans-serif;
-            background-color: var(--dark-cyber);
-            color: #FFFFFF;
+            font-family: 'Fredoka', 'Baloo 2', cursive, sans-serif;
+            background-color: var(--bg-darker);
+            background-image:
+                radial-gradient(circle at 50% 10%, rgba(34, 211, 238, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(255, 45, 149, 0.1) 0%, transparent 45%),
+                linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+            color: #ffffff;
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            background:
-                radial-gradient(circle at 50% 20%, rgba(157, 0, 255, 0.18) 0%, transparent 55%),
-                radial-gradient(circle at 20% 80%, rgba(0, 240, 255, 0.14) 0%, transparent 55%),
-                radial-gradient(circle at 50% 20%, #1a103c 0%, #080a14 70%, #030408 100%);
-            background-size: 140% 140%, 140% 140%, 100% 100%;
-            animation: auroraShift 14s ease-in-out infinite;
         }
 
         .cyber-grid {
@@ -331,12 +435,12 @@
         }
 
         .btn-12d {
-            font-family: 'Baloo 2', 'Fredoka', sans-serif;
+            font-family: var(--font-fredoka), var(--font-baloo), sans-serif;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-radius: 20px;
-            padding: 10px 18px;
+            font-size: 16px;
+            letter-spacing: 0.8px;
+            border-radius: 9999px;
+            padding: 12px 24px;
             position: relative;
             overflow: hidden;
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -345,14 +449,14 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            gap: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
         }
 
         .btn-12d:hover {
-            transform: translateY(-3px) scale(1.03);
-            box-shadow: 0 10px 25px rgba(0, 240, 255, 0.5);
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 12px 30px var(--glow-c, rgba(34, 211, 238, 0.6));
         }
 
         .btn-12d:active {
@@ -498,34 +602,35 @@
         }
 
         .animal-thumb {
-            width: 210px;
-            height: 210px;
+            width: clamp(180px, 28vh, 260px);
+            height: clamp(180px, 28vh, 260px);
             object-fit: contain;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 14px rgba(0,240,255,0.35));
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6)) drop-shadow(0 0 18px rgba(34,211,238,0.5));
             animation: imgFloat 3.4s ease-in-out infinite;
+            transition: transform 0.3s ease;
         }
 
         .memory-thumb {
-            width: 235px;
-            height: 235px;
+            width: clamp(140px, 24vh, 240px);
+            height: clamp(140px, 24vh, 240px);
             object-fit: contain;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 14px rgba(255,46,147,0.35));
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6)) drop-shadow(0 0 18px rgba(255,45,149,0.5));
             animation: imgFloat 3.4s ease-in-out infinite;
         }
 
         .animal-thumb-lg {
-            width: 280px;
-            height: 280px;
+            width: clamp(220px, 34vh, 320px);
+            height: clamp(220px, 34vh, 320px);
             object-fit: contain;
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6)) drop-shadow(0 0 18px rgba(0,240,255,0.4));
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.65)) drop-shadow(0 0 24px rgba(34,211,238,0.6));
             animation: imgFloat 3.8s ease-in-out infinite;
         }
 
         .animal-thumb-xl {
-            width: 240px;
-            height: 240px;
+            width: clamp(240px, 36vh, 350px);
+            height: clamp(240px, 36vh, 350px);
             object-fit: contain;
-            filter: drop-shadow(0 6px 14px rgba(0,0,0,0.6)) drop-shadow(0 0 18px rgba(255,234,0,0.4));
+            filter: drop-shadow(0 12px 24px rgba(0,0,0,0.7)) drop-shadow(0 0 28px rgba(250,204,21,0.6));
             animation: imgFloat 3.6s ease-in-out infinite;
         }
 
@@ -1105,16 +1210,22 @@
             .category-btn { min-height: 96px; padding: 14px 8px; font-size: 1.4rem; }
         }
         .name-pill {
-            background: linear-gradient(135deg, var(--neon-yellow), #ffb300);
-            color: #1a1a2e;
-            font-weight: 800;
-            font-size: 1.5rem;
-            padding: 14px 26px;
-            border-radius: 999px;
+            font-family: var(--font-fredoka), sans-serif;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.4rem;
+            padding: 12px 28px;
+            border-radius: 9999px;
+            border: 1.5px solid rgba(250, 204, 21, 0.8);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
             cursor: grab;
             user-select: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            transition: opacity 0.15s ease;
+            transition: all 0.2s ease;
+        }
+        .name-pill:hover {
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 10px 25px rgba(250, 204, 21, 0.6);
         }
         .name-pill:active { cursor: grabbing; }
         .name-pill.locked { opacity: 0; pointer-events: none; }
@@ -1143,6 +1254,8 @@
     </style>
 </head>
 <body>
+    <div class="cyber-glow-orb orb-left"></div>
+    <div class="cyber-glow-orb orb-right"></div>
 
     <div class="cyber-grid"></div>
     <div class="star-layer" id="star-layer"></div>
@@ -1199,14 +1312,12 @@
 
     <div class="relative z-10 min-h-screen flex flex-col items-center p-3 sm:p-5 max-w-6xl mx-auto">
 
-        <header class="w-full flex flex-wrap items-center justify-between gap-3 mb-4">
-            <div class="flex items-center gap-3 cursor-pointer" id="logo-btn">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-400 to-pink-500 flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/40 border border-white/40">
-                    🦊
-                </div>
-                <div>
-                    <h1 class="neon-title text-xl sm:text-3xl tracking-wider">NINA'S WORLD</h1>
-                    <p class="text-xs text-cyan-300 font-semibold tracking-widest uppercase">Cyber Animal World (50 Animals · 10 Games)</p>
+        <header class="w-full flex flex-wrap items-center justify-between gap-3 mb-4 site-header-wrap">
+            <div class="brand-area cursor-pointer" id="logo-btn">
+                <div class="nw-badge">NW</div>
+                <div class="brand-title-wrap">
+                    <div class="brand-title">NINA'S <span>WORLD</span></div>
+                    <div class="game-pill-badge">World Tournament</div>
                 </div>
             </div>
 
@@ -1261,9 +1372,10 @@
 
     <div class="nina-mascot-container">
         <div class="speech-bubble-12d" id="nina-speech">
-            Welcome to Nina's World! Let's learn all 50 animals in English! 🎧✨
+            <span>✨</span> <span id="speech-text">Welcome to Nina's World! Let's learn all 50 animals in English!</span>
         </div>
-        <img class="nina-character-img" id="nina-avatar" src="images/nina_new.png" alt="Nina">
+        <div class="nina-halo"></div>
+        <img class="nina-character-img" id="nina-avatar" src="images/nina_new.png" alt="Nina Mascot">
     </div>
 
     <div class="modal-overlay" id="modal-codex">
