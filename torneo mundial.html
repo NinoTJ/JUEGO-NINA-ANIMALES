@@ -1273,18 +1273,16 @@
                 <img src="images/22%20PANDA.png" class="wm-animal wm-5" alt="">
                 <img src="images/7%20RABBIT.png" class="wm-animal wm-6" alt="">
             </div>
-            <div class="flex flex-col items-center text-center flex-1 relative z-10">
-                <h2 class="neon-title text-3xl sm:text-4xl mb-2">Nina's World</h2>
-                <p class="text-gray-200 text-base mb-5">What is your name, age and country?</p>
-                <input type="text" class="nina-input" id="input-player-name" placeholder="Your name (example: Nina)" maxlength="20">
-                <input type="number" class="nina-input" id="input-player-age" placeholder="Your age" min="1" max="12">
-                <input type="text" class="nina-input" id="input-player-country" list="country-options" placeholder="Your country (example: Ecuador)" maxlength="30" autocomplete="off">
+            <div class="flex flex-col items-center text-center w-full max-w-lg mx-auto relative z-10 py-2">
+                <div class="nw-badge mb-3" style="width:60px; height:60px; font-size:24px; border-radius:16px;">NW</div>
+                <h2 class="neon-title text-4xl sm:text-5xl mb-2 tracking-wider">NINA'S WORLD</h2>
+                <p class="text-cyan-200 text-lg sm:text-xl font-bold mb-6">What is your name, age and country?</p>
+                <input type="text" class="nina-input text-xl py-3 px-5 mb-3" id="input-player-name" placeholder="Your name (example: Nina)" maxlength="20">
+                <input type="number" class="nina-input text-xl py-3 px-5 mb-3" id="input-player-age" placeholder="Your age" min="1" max="12">
+                <input type="text" class="nina-input text-xl py-3 px-5 mb-5" id="input-player-country" list="country-options" placeholder="Your country (example: Ecuador)" maxlength="30" autocomplete="off">
                 <datalist id="country-options"></datalist>
-                <button class="btn-12d btn-cyan w-full text-xl py-4" id="btn-start-game">START 🚀</button>
-                <button class="btn-12d btn-pink w-full text-sm py-2 mt-2" id="btn-how-to-play">❓ HOW TO PLAY</button>
-            </div>
-            <div class="flex flex-col items-center justify-center flex-1 relative z-10">
-                <img src="images/nina_new.png" alt="Nina" class="welcome-nina-img">
+                <button class="btn-12d btn-cyan w-full text-2xl py-4 mb-3 shadow-xl" id="btn-start-game">START 🚀</button>
+                <button class="btn-12d btn-pink w-full text-lg py-3" id="btn-how-to-play">❓ HOW TO PLAY</button>
             </div>
         </div>
     </div>
@@ -2662,7 +2660,11 @@
             speakTarget();
 
             document.querySelectorAll('.quiz-choice-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+                let handled = false;
+                const onSelect = (e) => {
+                    if (handled) return;
+                    handled = true;
+                    if (e.cancelable) e.preventDefault();
                     if (btn.dataset.id === target.id) {
                         handleRoundCorrect('listen_tap', target.id, 150, `Awesome! You found the ${target.name}! 🎉`);
                     } else {
@@ -2670,7 +2672,9 @@
                         setNinaSpeech(`Oops! That's not the ${target.name}. Let's try something else!`);
                         advanceAfterMistake(1200);
                     }
-                });
+                };
+                btn.addEventListener('pointerdown', onSelect);
+                btn.addEventListener('click', onSelect);
             });
         }
 
@@ -3553,7 +3557,11 @@
             audio.speak(`A ${target.name}`);
 
             document.querySelectorAll('.quiz-choice-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+                let handled = false;
+                const onSelect = (e) => {
+                    if (handled) return;
+                    handled = true;
+                    if (e.cancelable) e.preventDefault();
                     if (btn.dataset.id === target.id) {
                         handleRoundCorrect('quiz', target.id, 120, `That's right! ${target.name}! 🎉`);
                     } else {
@@ -3561,7 +3569,9 @@
                         setNinaSpeech(`Not quite! Let's try something else!`);
                         advanceAfterMistake(1200);
                     }
-                });
+                };
+                btn.addEventListener('pointerdown', onSelect);
+                btn.addEventListener('click', onSelect);
             });
         }
 
